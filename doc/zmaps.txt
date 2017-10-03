@@ -1,0 +1,32 @@
+*zmaps.txt* DrChip's Calc Interface				Nov 15, 2013
+
+Author:  Charles E. Campbell  <NdrOchip@ScampbellPfamily.AbizM>
+Copyright: (c) 2011-2012 by Charles E. Campbell		*zmaps-copyright*
+	   NO WARRANTY, EXPRESS OR IMPLIED.  USE AT-YOUR-OWN-RISK.
+
+==============================================================================
+1. Contents						*zmaps* *zmaps-contents*
+
+   1. Contents..........................................|zmaps-contents|
+   2. Usage.............................................|zmaps-usage|
+
+==============================================================================
+2. Usage						*zmaps-usage*
+
+MAPS:							*zmaps-map* *zmaps-maps*
+
+ SHIFT TEXT MAPS:
+    z<  shift text left	one shiftwidth				*z<*
+    z>  shift text right one shiftwidth				*z>*
+    |zs|  shift text so cursor is at left-hand  side of screen
+    z;  shift text under cursor to middle of screen		*z;*
+    |ze|  shift text so cursor is at right-hand side of screen
+
+ CURSOR MOVEMENT MAPS:
+    z,  move cursor to middle             of screen		*z,*
+    z0  move cursor to left-hand-side     of screen		*z0*
+    z$  move cursor to right-hand-side    of screen		*z$*
+
+ PUT MAPS:
+    zp  put text (like "p") but keep cursor in same column	*zp*
+    zP  Put text (like "P") but keep cursor in same column	*zP*
