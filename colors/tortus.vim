@@ -2,7 +2,7 @@
 " A copy+paste color scheme
 " Designed to be used with the syntax files for KRL and Rapid
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 1.0.6
+" Version: 1.0.7
 " Last Change: 27 July 2017
 "
 " Credits: Thorsten Maerz (torte.vim vimscript #111), 
