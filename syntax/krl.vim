@@ -1,7 +1,7 @@
 " Kuka Robot Language syntax file for Vim
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 1.5.2
+" Version: 1.5.3
 " Last Change: 12. Aug 2017
 " Credits: Thanks for contributions to this to Michael Jagusch
 "
@@ -60,7 +60,7 @@ highlight default link krlGeomOperator Operator
 
 " Type
 " any type (preceded by 'decl')
-syn match krlAnyType /\v((decl\s+|struc\s+|enum\s+)|(global\s+)|(const\s+)|(deffct\s+))+\w+>/ contains=krlStorageClass,krlType
+syn match krlAnyType /\v((decl\s+|struc\s+|enum\s+)|(global\s+)|(const\s+)|(deffct\s+))+\w+>/ contains=krlStorageClass,krlType,krlTypedef
 highlight default link krlAnyType Type
 " Simple data types
 syn match krlType /\v<(BOOL|CHAR|REAL|INT)>/ containedin=krlAnyType
@@ -281,6 +281,9 @@ highlight default link krlFunction Function
 " Error
 if exists("g:krlShowError") && g:krlShowError==1
   " some more or less common typos
+  "
+  " should be interrupt (on|off) \w+
+  syn match krlError /\vinterrupt +\w+ +o(n|ff)>/
   "
   syn match krlError /\v^\s*\zs(elseif>|esle>|endfi>|ednif>|ednwhile>|ednfor>|endfro>|ednloop>)/
   "
