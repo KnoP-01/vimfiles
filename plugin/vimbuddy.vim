@@ -1,7 +1,7 @@
 " Description: VimBuddy statusline character
 " Author:      Flemming Madsen <vim@themadsens.dk>
 " Modified:    August 2007
-" Version:     0.9.2
+" Version:     0.9.2 mymod
 "
 " Usage:       Insert %{VimBuddy()} into your 'statusline'
 "
@@ -22,15 +22,15 @@ function! VimBuddy()
 
     if g:actual_curbuf != bufnr("%")
         " Not my buffer, sleeping
-        return "|-o"
+        return '|-o'
     elseif s:vimbuddy_err != v:errmsg
         let v:errmsg = v:errmsg . " "
         let s:vimbuddy_err = v:errmsg
-        return ":-("
+        return ':-('
     elseif s:vimbuddy_warn != v:warningmsg
         let v:warningmsg = v:warningmsg . " "
         let s:vimbuddy_warn = v:warningmsg
-        return "(-:"
+        return '(-:'
     elseif s:vimbuddy_msg != v:statusmsg
         let v:statusmsg = v:statusmsg . " "
         let s:vimbuddy_msg = v:statusmsg
@@ -44,38 +44,55 @@ function! VimBuddy()
         else
             let str = ":-/"
         endif
-		  let s:vimbuddy_onemore = str
-		  return str
-	 elseif s:vimbuddy_onemore != ""
-		let str = s:vimbuddy_onemore
-		let s:vimbuddy_onemore = ""
-		return str
+        let s:vimbuddy_onemore = str
+        return str
+    elseif s:vimbuddy_onemore != ""
+        let str = s:vimbuddy_onemore
+        let s:vimbuddy_onemore = ""
+        return str
     endif
 
+    if ! exists("b:lastline")
+        let b:lastline = line(".") % 4
+    endif
     if ! exists("b:lastcol")
-        let b:lastcol = col(".")
+        let b:lastcol = col(".") % 4
     endif
-    if ! exists("b:lastlineno")
-        let b:lastlineno = line(".")
+    if ! exists("b:lastnose")
+        let b:lastnose = '-'
     endif
-    let num = b:lastcol - col(".")
-    let b:lastcol = col(".")
-    if (num == 1 || num == -1) && b:lastlineno == line(".")
+    let lnum = line(".") % 4
+    let num = col(".") % 4
+    if (num != b:lastcol || lnum != b:lastline)
         " Let VimBuddy rotate his nose
-        let num = b:lastcol % 4
-        if num == 0
-            let ch = '/'
-         elseif num == 1
-            let ch = '-'
-        elseif num == 2
-            let ch = '\'
-        else
-            let ch = '|'
+        if (lnum == b:lastline && (num==0 && b:lastcol==1 || num==1 && b:lastcol==2 || num==2 && b:lastcol==3 || num==3 && b:lastcol==0)) || (lnum==0 && b:lastline==1 || lnum==1 && b:lastline==2 || lnum==2 && b:lastline==3 || lnum==3 && b:lastline==0)
+            if b:lastnose == '-' 
+                let b:lastnose = '/'
+            elseif b:lastnose == '/'
+                let b:lastnose = '|'
+            elseif b:lastnose == '|'
+                let b:lastnose = '\'
+            elseif b:lastnose == '\'
+                let b:lastnose = '-'
+            endif
+        elseif (lnum == b:lastline && (num==0 && b:lastcol==3 || num==3 && b:lastcol==2 || num==2 && b:lastcol==1 || num==1 && b:lastcol==0)) || (lnum==0 && b:lastline==3 || lnum==3 && b:lastline==2 || lnum==2 && b:lastline==1 || lnum==1 && b:lastline==0)
+            if b:lastnose == '-' 
+                let b:lastnose = '\'
+            elseif b:lastnose == '\'
+                let b:lastnose = '|'
+            elseif b:lastnose == '|'
+                let b:lastnose = '/'
+            elseif b:lastnose == '/'
+                let b:lastnose = '-'
+            endif
         endif
-        return ":" . ch . ")"
+        let b:lastline = line(".") % 4
+        let b:lastcol = col(".") % 4
     endif
-    let b:lastlineno = line(".")
+    return ":" . b:lastnose . ")"
 
     " Happiness is my favourite mood
-    return ":-)"
+    return ':-)'
 endfunction
+
+" vim:sw=4 sts=4 et
