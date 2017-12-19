@@ -9,24 +9,31 @@
 Installation:
 -------------
 
-Extract the provided archive into your `~/.vim/` or `%USERPROFILE%/vimfiles/`
-directory (depending on your System) keeping the folder structure. Overwrite
-rapid.* files from older installation. I don't know how plugin manager work.
+Extract the most recent release and copy the folders 
+`/doc`, `/ftdetect`, `/ftplugin`, `/indent` and `/syntax` 
+into your `~/.vim/` or `%USERPROFILE%\vimfiles\` directory. 
+Overwrite rapid.* files from older installation. 
 
-To fully use these scripts put >
+To fully use these plugins put >
+
     filetype plugin indent on
     syntax on
+
 in your .vimrc
 
 You may have to run >
-    :helptags ~/.vim/doc/
-or >
-    :helptags ~/vimfiles/doc/
-to use this help within Vim afterwards.
 
-For further information see >
+    :helptags ~/.vim/doc/
+
+or >
+
+    :helptags ~/vimfiles/doc/
+
+to use the help within Vim after installation. >
+
     :help rapid
-after installation and after creation of the helptags.
+
+Or just open the file .../doc/rapid.txt
 
 
 
@@ -36,40 +43,40 @@ Introducion:
 ------------
 Index: |rapid-index|
 
-To fully use these scripts put >
-    filetype plugin indent on
-    syntax on
-in your .vimrc.
+Have a look at |tl:dr| to get a very quick overview over the most important
+options provided by Rapid for Vim.
 
-~/.vim/ftdetect/rapid.vim will automatically setlocal |filetype| to rapid for 
-*.prg, *.mod, *.cfg and *.sys (the latter only if there is "MODULE" or any
-"%%%" present in the first none blank line). *.cfg is detected by a pattern in
-the first line. This file can also auto correct mixed line endings in *.cfg
-files if |g:rapidAutoCorrCfgLineEnd| is set to 1.
+Rapid for Vim (7.4 or later) is a collection of Vim scripts to help programing
+ABB industrial robots. 
 
-Have a look into the |rapid-jump-quickly| chapter to get help with finding the
-file you want to edit quickly within a backup folder structure. See also
-|rapid-matchit-support|.
+It provides
 
-Indention is set to two spaces and should work in |insert-mode| as well as 
-with |=|. Note that indention partly depends on |rapid-highlighting|.
-See |rapid-indent| for more information.
+* syntax highlighting, (see |rapid-highlighting|)
+* auto indention, (see |rapid-indent|)
+* concealing of structure values (e.g. MoveJ \* v2500...), (see |g:rapidConcealStructs|)
+* mappings and settings to navigate through code in a backup folder structure
+  (see |rapid-jump-quickly|) and
+* mappings to insert a body of a new PROC, FUNC, TRAP et al based on user
+  defined templates or hopefully sane defaults. (see |rapid-auto-form|)
 
-Another feature is the auto form, which can help you enter a body of a
-new FUNC, PROC or TRAP with a few key stokes. See |rapid-auto-form|.
+Most of this is optional, though some things are default on. Have a look in
+the |rapid-options| section for more details.
 
-There are several mappings available, either as <PLUG> mappings or
-as |rapid-options|.
+**Note:** Keep your files to be edited in one folder or in a regular robot
+backup folder structure. Rapid for Vim modifies 'path' by default accordingly.
 
 
                         *rapid-tl:dr*
-Q: Why so many options?
+Quick options description:
+--------------------------
+Q: Why so many options?  
 A: I try not to interfere with user settings to much. So I made most of the
-    settings that get changed optional.
+   settings that get changed optional.
 
 Q: I'm here to feed my kids, not to read. Do you have a quick suggestion on
-    rapid settings for my |.vimrc|?
+   rapid settings for my |.vimrc|?  
 A: Yes: >
+
     let g:rapidMoveAroundKeyMap=1 " [[, ]], [] and ][ jumps around PROC/FUNC..
     let g:rapidGoDefinitionKeyMap=1 " gd shows the declaration of curr. word
     let g:rapidListDefKeyMap=1 " <leader>f shows all PROC/FUNC.. in curr. file
@@ -81,12 +88,14 @@ A: Yes: >
     let g:qf_window_bottom=0 " if qf.vim exists and you use g:rapidRhsQuickfix
     let g:rapidAutoCorrCfgLineEnd=1 " auto correct *.cfg line terminator
     " if you use colorscheme tortus use:
-    " let g:rapidNoHighLink=1 " even more colors 
+    " let g:rapidNoHighLink=1 " even more colors
     " don't forget
     " filetype plugin indent on
 
 
-You do get: >
+Content description:
+--------------------
+>
     ~/.vim/doc/rapid.txt
     ~/.vim/ftdetect/rapid.vim
     ~/.vim/ftplugin/rapid.vim
@@ -94,40 +103,50 @@ You do get: >
     ~/.vim/syntax/rapid.vim
 
 You may use all these independently from one another. Just don't mix versions
-of different packages. Some features may work better when all files are loaded.
+of different releases. Some features may work better when all files are loaded.
 
 ~/.vim/doc/rapid.txt
-Help file. This should help you to use these plugins to your best
-advantage. Requires >
+Help file. This should help you to use these plugins to your best advantage.
+Requires >
+
     :helptags ~/.vim/doc
-
+  
+  
 ~/.vim/ftdetect/rapid.vim
-Detects Rapid files. For *.prg and *.mod this depends on the file ending.
-*.sys get filetype rapid if there is "MODULE" or any "%%%" present in the
-first none blank line. Since v1.4.0 *.cfg get filetype rapid too.
+Detects Rapid files based on their file name and content. Rapid files are
+checked for the presence of a MODULE line or any %%% HEADER. In case of an
+empty file you need to `:set filetype=rapid` manually.  
 .../ftdetect/rapid.vim also corrects mixed line endings (unix/dos-mix to unix)
-in *.cfg files if |g:rapidAutoCorrCfgLineEnd| is set to 1.
+in *.cfg files if |g:rapidAutoCorrCfgLineEnd| is set to 1.  
 Requires >
+
     :filetype on
-
+  
+  
 ~/.vim/ftplugin/rapid.vim
-Sets various vim options and provide key mappings. It supports commentary
-(vimscript #3695) and matchit (vimscript #39). All key mappings are optional.
+Sets various vim options and provides key mappings and concealing. It supports
+commentary (vimscript #3695) and matchit (vimscript #39). All key mappings are 
+optional.  
 Requires >
-    :filetype plugin on
 
+    :filetype plugin on
+  
+  
 ~/.vim/indent/rapid.vim
 Sets indent related vim options. Sets indention to 2 spaces by default,
-optional.
+optional.  
 Requires >
-    :filetype indent on
 
+    :filetype indent on
+  
+  
 ~/.vim/syntax/rapid.vim
 Does make life more colorful. Unfortunately some features of the other files
 may work better with syntax on. This should not stop you from trying syntax
-off if you like.
+off if you like.  
 Requires >
-    :syntax on 
+
+    :syntax on
 
 
 
@@ -137,30 +156,6 @@ rapid help index:
 -----------------
 |rapid| Introduction
 |rapid-options|
-  Options to enable key mappings:
-  (Also see those options for alternative <PLUG> mappings)
-  |g:rapidMoveAroundKeyMap|    [[, ]] ... jumps around PROC/TRAP/...
-  |g:rapidListDefKeyMap|       <leader>f lists PROC/TRAP/... of current file
-  |g:rapidGoDefinitionKeyMap|  gd to see declaration of current word
-  |g:rapidListUsageKeyMap|     <leader>u lists all appearance of curr. word
-  |g:rapidConcealStructsKeyMap|  <F2>/<F3> to conceal/show structure values
-  |g:rapidAutoFormKeyMap|      <leader>n inserts body for PROC/TRAP/...
-  Options to enable things:
-  |g:rapidConcealStructs|      Conceal struct values by default (MoveL * ..)
-  |g:rapidPathToBodyFiles|     Enables custom body files for auto form
-  |g:rapidAutoCorrCfgLineEnd|  Auto correct mixed unix/dos line endings in *.cfg
-  |g:rapidNoHighLink|          Adds rapid secific |group-name|s
-  |g:rapidShowError|           Enables the highlight of some syntax errors
-  |g:rapidFormatComments|      Change format settings 'tw' and 'fo'
-  |g:rapidAutoComment|         Auto insert ! when hitting <CR> , |o| or |O|
-  Options to change things:
-  |g:rapidRhsQuickfix|         Change where the |quickfix-window| will open
-  |g:rapidLhsQuickfix|         Change where the |quickfix-window| will open
-  Options to disable things:
-  |g:rapidNoIndent|            Leave 'inde', 'indk', 'si', 'ai' untouched
-  |g:rapidNoSpaceIndent|       Leave 'sts', 'sw', 'et' and 'sr' untouched
-  |g:rapidNoPath|              Leave 'pa' untouched
-  |g:rapidNoVerbose|           Switch off verbose messages
 |rapid-highlighting|
 |rapid-indent|
 |rapid-auto-form|
@@ -185,6 +180,34 @@ default.
 Copy text which looks like below into your |.vimrc| if you want to use the
 option: >
     " Copy this into ~/.vimrc
+
+Have a look at the |rapid-tl:dr| section to get a very quick overview over the
+most important options provided by Rapid for Vim.
+
+Options to enable key mappings:
+Also see those options for alternative <PLUG> mappings
+|g:rapidMoveAroundKeyMap|    [[, ]] ... jumps around PROC/TRAP/...
+|g:rapidListDefKeyMap|       <leader>f lists PROC/TRAP/... of current file
+|g:rapidGoDefinitionKeyMap|  gd to see declaration of current word
+|g:rapidListUsageKeyMap|     <leader>u lists all appearance of curr. word
+|g:rapidConcealStructsKeyMap|  <F2>/<F3> to conceal/show structure values
+|g:rapidAutoFormKeyMap|      <leader>n inserts body for PROC/TRAP/...
+Options to enable things:
+|g:rapidConcealStructs|      Conceal struct values by default (MoveL * ..)
+|g:rapidPathToBodyFiles|     Enables custom body files for auto form
+|g:rapidAutoCorrCfgLineEnd|  Auto correct mixed unix/dos line endings in *.cfg
+|g:rapidNoHighLink|          Adds rapid secific |group-name|s
+|g:rapidShowError|           Enables the highlight of some syntax errors
+|g:rapidFormatComments|      Change format settings 'tw' and 'fo'
+|g:rapidAutoComment|         Auto insert ! when hitting <CR> , |o| or |O|
+Options to change things:
+|g:rapidRhsQuickfix|         Change where the |quickfix-window| will open
+|g:rapidLhsQuickfix|         Change where the |quickfix-window| will open
+Options to disable things:
+|g:rapidNoIndent|            Leave 'inde', 'indk', 'si', 'ai' untouched
+|g:rapidNoSpaceIndent|       Leave 'sts', 'sw', 'et' and 'sr' untouched
+|g:rapidNoPath|              Leave 'pa' untouched
+|g:rapidNoVerbose|           Switch off verbose messages
 
 
 Index: |rapid-index|
@@ -349,24 +372,24 @@ and can be used to skip the first few promps. After <leader>n just continue
 like you would answer the promps for "[g]lobal or [l]ocal?", "[p]roc, [f]unc,
 [t]rap or defd[a]t?" and "Datatype? [b]ool, [n]um, [d]num..."
 
-  <leader>nl    New local prompted body *
-  <leader>nll   New local prompted body
+  <leader>nl    New Local prompted body *
+  <leader>nll   New Local prompted body
   
-  <leader>nlp   New local PROC body
-  <leader>nlt   New local TRAP body
-  <leader>nlr   New local RECORD body
-  <leader>nlf   New local FUNC of prompted type *
-  <leader>nlfu  New local FUNC of prompted type
+  <leader>nlp   New Local PROC body
+  <leader>nlt   New Local TRAP body
+  <leader>nlr   New Local RECORD body
+  <leader>nlf   New Local FUNC of prompted type *
+  <leader>nlfu  New Local FUNC of prompted type
   
-  <leader>nlfb  New local FUNC of type Bool
-  <leader>nlfn  New local FUNC of type Num
-  <leader>nlfd  New local FUNC of type DNum
-  <leader>nlfs  New local FUNC of type String
-  <leader>nlfp  New local FUNC of type Pose
-  <leader>nlfr  New local FUNC of type Robtarget
-  <leader>nlfj  New local FUNC of type Jointtarget
-  <leader>nlft  New local FUNC of type Tooldata
-  <leader>nlfw  New local FUNC of type Wobjdata
+  <leader>nlfb  New Local FUNC of type Bool
+  <leader>nlfn  New Local FUNC of type Num
+  <leader>nlfd  New Local FUNC of type DNum
+  <leader>nlfs  New Local FUNC of type String
+  <leader>nlfp  New Local FUNC of type Pose
+  <leader>nlfr  New Local FUNC of type Robtarget
+  <leader>nlfj  New Local FUNC of type Jointtarget
+  <leader>nlft  New Local FUNC of type Tooldata
+  <leader>nlfw  New Local FUNC of type Wobjdata
   
   <leader>np    New local PROC body
   <leader>nt    New local TRAP body
@@ -384,24 +407,24 @@ like you would answer the promps for "[g]lobal or [l]ocal?", "[p]roc, [f]unc,
   <leader>nft   New local FUNC of type Tooldata
   <leader>nfw   New local FUNC of type Wobjdata
   
-  <leader>ng    New global prompted body *
-  <leader>ngg   New global prompted body
+  <leader>ng    New Global prompted body *
+  <leader>ngg   New Global prompted body
   
-  <leader>ngp   New global PROC body
-  <leader>ngt   New global TRAP body
-  <leader>ngr   New global RECORD body
-  <leader>ngf   New global FUNC of prompted type *
-  <leader>ngfu  New global FUNC of prompted type
+  <leader>ngp   New Global PROC body
+  <leader>ngt   New Global TRAP body
+  <leader>ngr   New Global RECORD body
+  <leader>ngf   New Global FUNC of prompted type *
+  <leader>ngfu  New Global FUNC of prompted type
   
-  <leader>ngfb   New global FUNC of type Bool
-  <leader>ngfn   New global FUNC of type Num
-  <leader>ngfd   New global FUNC of type DNum
-  <leader>ngfs   New global FUNC of type String
-  <leader>ngfp   New global FUNC of type Pose
-  <leader>ngfr   New global FUNC of type Robtarget
-  <leader>ngfj   New global FUNC of type Jointtarget
-  <leader>ngft   New global FUNC of type Tooldata
-  <leader>ngfw   New global FUNC of type Wobjdata
+  <leader>ngfb   New Global FUNC of type Bool
+  <leader>ngfn   New Global FUNC of type Num
+  <leader>ngfd   New Global FUNC of type DNum
+  <leader>ngfs   New Global FUNC of type String
+  <leader>ngfp   New Global FUNC of type Pose
+  <leader>ngfr   New Global FUNC of type Robtarget
+  <leader>ngfj   New Global FUNC of type Jointtarget
+  <leader>ngft   New Global FUNC of type Tooldata
+  <leader>ngfw   New Global FUNC of type Wobjdata
 
 Alternativ <plug> mappings: >
     augroup RapidAutoFormMapping
@@ -488,7 +511,7 @@ Default is vim default position of quickfix-window. See also
 Index: |rapid-index|
                         *g:rapidNoHighlight*    *g:rapidNoHighLink*
 g:rapidNoHighLink:
------------------
+------------------
 Used in ~/.vim/syntax/rapid.vim
 
 With this option set rapid.vim does not |hi-link| rapidBuildInFunction to
@@ -732,8 +755,7 @@ You may enable highlighting of some misuses of =, :=, <=, >= and some
 more or less common typos by setting |g:rapidShowError|.
 
 
-If you wish to switch off highlighting completely (maybe you want just the
-indention) put >
+If you wish to switch off highlighting completely put >
     syntax off
 into your |.vimrc| 
 
@@ -947,7 +969,7 @@ SYSPAR/ folder.
 See |g:rapidNoPath| for details on how rapid.vim does generate 'path'.
 
 Set |g:rapidGoDefinitionKeyMap| to use a modified |gd| with the cursor on a
-variable or PROC/FUNC-call in command mode. A succesful search for a file
+variable or proc/func-call in command mode. A succesful search for a file
 local declaration jumps there right away. Get back where you were with |''|. A
 succesful search for a more global declaration opens the |quickfix| window.
 
