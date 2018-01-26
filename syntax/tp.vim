@@ -41,7 +41,7 @@ hi def link     tpConstant          Constant
 " Units
 " question Knosowski, aren't inch and some other none metric units missing
 " here?
-" mod by Knosowski, why use match here? And if you do add at least the word boundry \< and \>
+" mod by Knosowski, why use match here?
 syn keyword       tpUnits             sec
 syn keyword       tpUnits             msec
 syn match       tpUnits             /%/
@@ -54,7 +54,7 @@ syn match       tpUnits             /in\/min/
 hi def link     tpUnits             Special
 
 " Modifiers
-" mod by Knosowski, why use match here? And if you do add at least the word boundry \< and \>
+" mod by Knosowski, why use match here?
 " syn match       tpMod               /ACC/
 " syn match       tpMod               /Skip/
 " syn match       tpMod               /PSPD/
@@ -115,7 +115,7 @@ hi def link     tpLabel             Label
 syn region      tpData              start=/\(\_s\|\W\)\@1<=\w\+\[/ end=/\]/      keepend extend oneline contains=tpData,tpInteger,tpItemComment,tpDelimiter,tpLabel
 hi def link     tpData              Type
 
-" mod by Knosowski: added Delimiter because in case of indirect addressing to
+" mod by Knosowski: added Delimiter [ and ] because in case of indirect addressing to
 " much stuff has the same color. eg: LBL[PR[4,5:pregname]]
 syn match tpDelimiter /[\[\]]/
 hi def link tpDelimiter Delimiter
@@ -123,6 +123,7 @@ hi def link tpDelimiter Delimiter
 " Item comment
 " mod by Knosowski, anything but [ and ] is a valid comment char
 " syn match       tpItemComment       /:[a-zA-Z0-9 ]\+/ contained
+" question Knosowski: why not contains=@spell here?
 syn match       tpItemComment       /:[^\[\]]\+/ contained
 " mod by Knosowski, it's a comment, isn't it?
 " hi def link     tpItemComment       Function
@@ -179,7 +180,8 @@ syn match       tpKeyword           +/APPL+
 syn match       tpKeyword           +/MN+
 syn match       tpKeyword           +/POS+
 syn match       tpKeyword           +/END+
-" question Knosowski, why not use syntax keyword here?
+" question Knosowski, why not use keyword instead of match?
+" syn keyword       tpKeyword           COL GUARD ADJUST DETECT STICK ON OFF LOCK UNLOCK PREG VREG SKIP CONDITION ERR_NUM LINEAR_MAX_SPEED MODELID ENC
 syn match       tpKeyword           /COL GUARD ADJUST/
 syn match       tpKeyword           /COL DETECT ON/
 syn match       tpKeyword           /COL DETECT OFF/
@@ -194,7 +196,7 @@ syn match       tpKeyword           /ENC/
 " mod by Knosowski: added WHEN instruction, since you have MONITOR et al
 " highlighted
 " syn keyword     tpKeyword           ABORT CALL END FINE JMP JPOS LPOS MONITOR OVERRIDE PAUSE POINT_LOGIC PULSE RESET RUN START STOP STOP_TRACKING TIMEOUT UFRAME_NUM UTOOL_NUM WAIT RUN_FIND GET_OFFSET GET_PASSFAIL GET_NFOUND SET REFERENCE CAMER_CALIB GET_READING CONDITION TOOL_OFFSET OFFSET
-syn keyword     tpKeyword           ABORT CALL END FINE JMP JPOS LPOS MONITOR OVERRIDE PAUSE POINT_LOGIC PULSE RESET RUN START STOP STOP_TRACKING TIMEOUT UFRAME_NUM UTOOL_NUM WHEN WAIT RUN_FIND GET_OFFSET GET_PASSFAIL GET_NFOUND SET REFERENCE CAMER_CALIB GET_READING CONDITION TOOL_OFFSET OFFSET
+syn keyword     tpKeyword             ABORT CALL END FINE JMP JPOS LPOS MONITOR OVERRIDE PAUSE POINT_LOGIC PULSE RESET RUN START STOP STOP_TRACKING TIMEOUT UFRAME_NUM UTOOL_NUM WAIT WHEN RUN_FIND GET_OFFSET GET_PASSFAIL GET_NFOUND SET REFERENCE CAMER_CALIB GET_READING CONDITION TOOL_OFFSET OFFSET
 syn keyword     tpKeyword           AP_LD
 " mod by Knosowski, included the number. Actually those are constants
 " syn match       tpKeyword           /CNT/
@@ -215,6 +217,7 @@ hi def link     tpKeyword           Keyword
 " syn match       tpRemark            /\(\s*\d*:\s*\)\@<=\/\/.*/
 syn match       tpComment           /\(\s*\d*:\s*\)\@<=!.*\ze;/	contains=@spell
 syn region      tpComment           start="--eg:" end="\ze;" contains=@spell
+" question Knosowski: why not contains=@spell here?
 syn match       tpRemark            /\(\s*\d*:\s*\)\@<=\/\/.*\ze;/
 hi def link     tpComment           Comment
 hi def link     tpRemark            Comment
