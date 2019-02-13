@@ -799,6 +799,7 @@ if !exists("*s:KnopVerboseEcho()")
         augroup rapidDelTmpFile
           au!
           au VimLeavePre * call delete(g:rapidTmpFile)
+          au VimLeavePre * call delete(g:rapidTmpFile . "~")
         augroup END
       endif
       execute 'silent save! ' . g:rapidTmpFile
@@ -849,7 +850,8 @@ if !exists("*s:KnopVerboseEcho()")
         let l:qfresult = []
         for l:i in getqflist()
           if get(l:i,'text') =~ '\v\c^([^"]*"[^"]*"[^"]*)*[^"]*<'.l:currentWord.'>'
-                \|| bufname(get(l:i,'bufnr')) =~ '\v\c\w+\.cfg$'
+                \|| (bufname(get(l:i,'bufnr')) !~ '\v\c\w+\.mod$'
+                \&&  bufname(get(l:i,'bufnr')) !~ '\v\c\w+\.prg$')
             call add(l:qfresult,l:i)
           endif
         endfor
@@ -966,17 +968,19 @@ endif
 if !exists("g:rapidNoPath") || g:rapidNoPath!=1
   let s:rapidpath=&path.'./**,'
   let s:rapidpath=substitute(s:rapidpath,'\/usr\/include,','','g')
-  " if finddir('../PROGMOD')         !='' | let s:rapidpath.='../PROGMOD/**,'           | endif
-  " if finddir('../SYSMOD')          !='' | let s:rapidpath.='../SYSMOD/**,'            | endif
-  if finddir('../../../RAPID')     !='' | let s:rapidpath.='../../../RAPID/TASK*/**,'       | endif
-  if finddir('../../../SYSPAR')    !='' | let s:rapidpath.='../../../SYSPAR/**,'      | endif
-  if finddir('../../../HOME')      !='' | let s:rapidpath.='../../../HOME/**,'        | endif
-  if finddir('../../../BACKINFO')  !='' | let s:rapidpath.='../../../BACKINFO/**,'    | endif
-  if finddir('../RAPID')           !='' | let s:rapidpath.='../RAPID/TASK*/**,'             | endif
-  if finddir('../SYSPAR')          !='' | let s:rapidpath.='../SYSPAR/**,'            | endif
-  if finddir('../HOME')            !='' | let s:rapidpath.='../HOME/**,'              | endif
-  if finddir('../BACKINFO')        !='' | let s:rapidpath.='../BACKINFO/**,'          | endif
-  if finddir('./SYSPAR')           !='' | let s:rapidpath.='./SYSPAR/**,'             | endif
+  " if finddir('../PROGMOD')          !='' | let s:rapidpath.='../PROGMOD/**,'            | endif
+  " if finddir('../SYSMOD')           !='' | let s:rapidpath.='../SYSMOD/**,'             | endif
+  if finddir('../../../RAPID')      !='' | let s:rapidpath.='../../../RAPID/TASK*/**,'  | endif
+  if finddir('../../../SYSPAR')     !='' | let s:rapidpath.='../../../SYSPAR/**,'       | endif
+  if finddir('../../../HOME')       !='' | let s:rapidpath.='../../../HOME/**,'         | endif
+  if finddir('../../../BACKINFO')   !='' | let s:rapidpath.='../../../BACKINFO/**,'     | endif
+  if finddir('../../../CS')         !='' | let s:rapidpath.='../../../CS/**,'           | endif
+  if finddir('../RAPID')            !='' | let s:rapidpath.='../RAPID/TASK*/**,'        | endif
+  if finddir('../SYSPAR')           !='' | let s:rapidpath.='../SYSPAR/**,'             | endif
+  if finddir('../HOME')             !='' | let s:rapidpath.='../HOME/**,'               | endif
+  if finddir('../BACKINFO')         !='' | let s:rapidpath.='../BACKINFO/**,'           | endif
+  if finddir('../CS')               !='' | let s:rapidpath.='../CS/**,'                 | endif
+  if finddir('./SYSPAR')            !='' | let s:rapidpath.='./SYSPAR/**,'              | endif
   execute "setlocal path=".s:rapidpath
   let b:undo_ftplugin = b:undo_ftplugin." pa<"
 endif

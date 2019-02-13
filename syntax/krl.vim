@@ -9,6 +9,7 @@
 "
 "
 
+" Init {{{
 " Remove any old syntax stuff that was loaded (5.x) or quit when a syntax file
 " was already loaded (6.x).
 if version < 600
@@ -23,30 +24,74 @@ set cpo&vim
 " krl does ignore case
 syn case ignore
 
-" Comment
+" if !exists("*<SID>KrlIsVkrc()")
+"   function <SID>KrlIsVkrc()
+"     if bufname("%") =~ '\c\v(folge|up|makro(saw|sps|step|trigger)?)\d*.src'
+"       for l:s in range(1,8)
+"         if getline(l:s) =~ '\c\v^\s*\&param\s+tpvw_version\s*.*$'
+"           return 1
+"         endif
+"       endfor
+"     endif
+"     return 0
+"   endfunction " <SID>KrlIsVkrc()
+" endif
+
+" }}} init
+
+" Comment and Folding {{{ 
+"
+" Special Comment
 " TODO Comment
 syn keyword krlTodo contained TODO FIXME XXX
 highlight default link krlTodo Todo
+"
 " Debug Comment
 syn keyword krlDebug contained DEBUG
 highlight default link krlDebug Debug
-" Line Comment
-syn match krlComment /;.*$/ contains=krlTodo,krlDebug
+"
+"
+" Comment and Folding
+" force syncing from start
+syn sync fromstart
+"
+" Fold region from fold line to endfold line
+syn region krlFold start=/\c\v^\s*;\s*fold>.*$/ end=/\c\v^\s*;\s*endfold>.*$/ transparent fold keepend extend
+"
+" the ; itself. needed for none movement fold lines: doesn't work for some reason
+" syn match krlComment /;/ contained containedin=krlFold
+" syn match krlComment /\v\c;%(\s*fold>)@=/ contained containedin=krlFold
+"
+" Fold part for move folds from FOLD to (PTP|LIN|CIRC) (containes highlighting for krlMovement)
+" syn match krlFoldComment /\c\v;\s*fold>[^;]*<%(PTP|LIN|CIRC)>/ contained containedin=krlFold contains=krlMovement
+"
+" Fold part for move folds from (PTP|LIN|CIRC) to second ; (containes some highlighting)
+" TODO optimize performance
+syn match krlFoldComment /\c\v%(;\s*fold>[^;]*<%(PTP|LIN|CIRC)>)@<=[^;]*/ contained containedin=krlFold contains=krlInteger,krlMovement,krlDelimiter,krlGeomOperator,krlCompOperator
+"
+" Fold part for none move folds from FOLD to second ; (avoid highlighting because fold region is transparent)
+" syn match krlComment /\c\v%(;\s*)@<=<fold>%(%(<PTP>|<LIN>|<CIRC>|;)@!.)*/ contained containedin=krlFold contains=krlSingleQuoteString,krlInteger
+syn match krlComment /\c\v%(;\s*)@<=<fold>%(%(<PTP>|<LIN>|<CIRC>|;)@!.)*/ contained containedin=krlFold
+"
+" Comment without Fold, also includes endfold lines and fold line part after second ;
+syn match krlComment /\c\v;%(%(<fold>)@!.)*$/ containedin=krlFold contains=krlTodo,krlDebug
+" 
+highlight default link krlFoldComment Comment
 highlight default link krlComment Comment
-" ---
+" }}} Comment and Folding 
 
-" Header
+" Header {{{
 syn match krlHeader /&\a\w*/
 highlight default link krlHeader PreProc
-" ---
+" }}} Header
 
-" Operator
+" Operator {{{
 " Boolean operator
 syn keyword krlBoolOperator AND OR EXOR NOT DIV MOD B_AND B_OR B_EXOR
 highlight default link krlBoolOperator Operator
 " Arithmetic operator
 syn match krlArithOperator /[+-]/ containedin=krlFloat
-syn match krlArithOperator /\*\|\//
+syn match krlArithOperator /[*/]/
 highlight default link krlArithOperator Operator
 " Compare operator
 syn match krlCompOperator /[<>=]/
@@ -56,25 +101,22 @@ highlight default link krlCompOperator Operator
 " Must be present befor krlParamdef
 syn match krlGeomOperator /[:]/ " containedin=krlLabel,krlParamdef
 highlight default link krlGeomOperator Operator
-" ---
+" }}} Operator
 
-" Type
+" Type, StorageClass and Typedef {{{
 " any type (preceded by 'decl')
-syn match krlAnyType /\v((decl\s+|struc\s+|enum\s+)|(global\s+)|(const\s+)|(deffct\s+))+\w+>/ contains=krlStorageClass,krlType,krlTypedef
+" TODO optimize performance
+syn match krlAnyType /\v%(%(decl\s+|struc\s+|enum\s+)|%(global\s+)|%(const\s+)|%(deffct\s+))+\w+>/ contains=krlStorageClass,krlType,krlTypedef
 highlight default link krlAnyType Type
 " Simple data types
-syn match krlType /\v<(BOOL|CHAR|REAL|INT)>/ containedin=krlAnyType
+syn keyword krlType BOOL CHAR REAL INT containedin=krlAnyType
 " External program and function
-syn match krlType /\v<(EXT|EXTFCT)>/ containedin=krlAnyType
+syn keyword krlType EXT EXTFCT containedin=krlAnyType
 " Communication
-syn match krlType /\v<(SIGNAL|CHANNEL)>/ containedin=krlAnyType
-" Struc and Enum
-" syn keyword krlType STRUC ENUM
+syn keyword krlType SIGNAL CHANNEL containedin=krlAnyType
 highlight default link krlType Type
 " StorageClass
-syn match krlStorageClass /\v<(decl|struc|enum)>/ contained
-syn match krlStorageClass /\v<global>/ contained
-syn match krlStorageClass /\v<const>/ contained
+syn keyword krlStorageClass decl global const struc enum contained
 highlight default link krlStorageClass StorageClass
 " .dat file public
 syn keyword krlDatStorageClass public
@@ -82,23 +124,21 @@ highlight default link krlDatStorageClass StorageClass
 " Parameter StorageClass
 " Do not move the :in/:out
 " Must be present after krlGeomOperator
-" This will generate false highlight if a frame is called "in" or "out"
-" I tried, but don't know what to do about this
-syn match krlParamdef /[:]\s*in\>/
-syn match krlParamdef /[:]\s*out\>/
+syn match krlParamdef /[:]\s*in\>/ contains=krlGeomOperator
+syn match krlParamdef /[:]\s*out\>/ contains=krlGeomOperator
 highlight default link krlParamdef StorageClass
 " Not a typedef but I like to have those highlighted
 " different then types, structures or strorage classes
 syn keyword krlTypedef DEF END DEFFCT ENDFCT DEFDAT ENDDAT
 highlight default link krlTypedef Typedef
-" ---
+" }}} Type, StorageClass and Typedef
 
-" Delimiter
-syn match krlDelimiter /\\\||\|\[\|\]\|[()]\|[,]/
+" Delimiter {{{
+syn match krlDelimiter /[\\|\[\](),]/
 highlight default link krlDelimiter Delimiter
-" ---
+" }}} Delimiter
 
-" Constant values
+" Constant values {{{
 " Boolean
 syn keyword krlBoolean TRUE FALSE containedin=krlStructVal
 highlight default link krlBoolean Boolean
@@ -112,23 +152,26 @@ highlight default link krlBinaryInt Number
 syn match krlHexInt /'h[0-9a-fA-F]\+'/ containedin=krlStructVal
 highlight default link krlHexInt Number
 " Float
-syn match krlFloat /\W[+-]\?\d\+\.\?\d*\([eE][+-]\?\d\+\)\?/lc=1 containedin=krlStructVal
+syn match krlFloat /\W[+-]\?\d\+\.\?\d*\%([eE][+-]\?\d\+\)\?/lc=1 containedin=krlStructVal
 highlight default link krlFloat Float
 " String
-syn region krlString start=/"/ end=/"/ containedin=krlStructVal
+syn region krlString start=/"/ end=/"/ oneline containedin=krlStructVal
 highlight default link krlString String
+" String within a fold line " NOT USED may be used in krlComment for none move folds
+" syn region krlSingleQuoteString start=/'/ end=/'/ oneline contained
+" highlight default link krlSingleQuoteString String
 " Enum
 syn match krlEnumVal /#\s*\a\w*/ containedin=krlStructVal
 highlight default link krlEnumVal Constant
-" ---
+" }}} Constant values
 
-" Structure
+" Predefined Structure and Enum {{{
 " Predefined structures and enums found in
 " /r1/mada/$*.dat, /r1/steu/$*.dat and
 " /r1/system/$config.dat as well as
 " basisTech, gripperTech and spotTech
 "
-" Predefined data types foud in kss functions
+" Predefined data types found in kss functions
 syn keyword krlEnum EDIAGSTATE RDC_FS_STATE RET_C_PSYNC_E VAR_TYPE CANCEL_PSYNC_E SYS_VARS 
 syn keyword krlStructure SIGINF RW_RDC_FILE RW_MAM_FILE DIAGPAR_T ERROR_T STOPMESS CASE_SENSE_T MSGBUF_T E3POS E3AXIS DIAGOPT_T 
 "
@@ -191,13 +234,14 @@ syn keyword krlEnum EKrlMsgType
 "
 highlight default link krlStructure Structure
 highlight default link krlEnum Structure
-" ---
+" }}} Predefined Structure and Enum
 
-" System variable
-syn match krlSysvars /\$\a[a-zA-Z0-9_.]*/
+" System variable {{{
+syn match krlSysvars /\<\$\a[a-zA-Z0-9_.]*/
 highlight default link krlSysvars Sysvars
-" ---
+" }}} System variable
 
+" Statements, keywords et al {{{
 " continue
 syn keyword krlContinue CONTINUE
 if exists("g:krlNoHighlight") && g:krlNoHighlight==1
@@ -206,9 +250,9 @@ if exists("g:krlNoHighlight") && g:krlNoHighlight==1
 else
   highlight default link krlContinue Statement
 endif
-" Statement
-" syn match krlStatement /\v^\s*(<global>\s+)?<INTERRUPT>(\s+<decl>)?/ contains=krlStorageClass
-syn match krlStatement /\v(<global>\s+)?<INTERRUPT>(\s+<decl>)?/ contains=krlStorageClass
+" interrupt 
+syn match krlStatement /\v\c%(<global>\s+)?<INTERRUPT>%(\s+<decl>)?/ contains=krlStorageClass
+" keywords
 syn keyword krlStatement WAIT SEC ON OFF ENABLE DISABLE STOP TRIGGER WITH WHEN DISTANCE PATH ONSTART DELAY DO PRIO IMPORT IS MINIMUM MAXIMUM CONFIRM ON_ERROR_PROCEED
 highlight default link krlStatement Statement
 " Conditional
@@ -219,8 +263,7 @@ syn keyword krlRepeat FOR TO STEP ENDFOR WHILE ENDWHILE REPEAT UNTIL LOOP ENDLOO
 highlight default link krlRepeat Repeat
 " Label
 syn keyword krlLabel GOTO
-" syn match krlLabel /^\s*\w\+:/
-syn match krlLabel /^\s*\w\+:\ze\s*\(;.*\)\?$/
+syn match krlLabel /^\s*\w\+:\ze\s*\%(;.*\)\?$/
 highlight default link krlLabel Label
 " Keyword
 syn keyword krlKeyword ANIN ANOUT DIGIN
@@ -228,9 +271,9 @@ highlight default link krlKeyword Keyword
 " Exception
 syn keyword krlException RETURN RESUME HALT
 highlight default link krlException Exception
-" ---
+" }}} Statements, keywords et al
 
-" special keywords for movement commands
+" special keywords for movement commands {{{
 syn keyword krlMovement PTP LIN CIRC SPL SPTP SLIN SCIRC PTP_REL LIN_REL CIRC_REL
 syn keyword krlMovement ASYPTP ASYCONT ASYSTOP ASYCANCEL BRAKE BRAKE_F
 if exists("g:krlNoHighlight") && g:krlNoHighlight==1
@@ -240,28 +283,27 @@ else
   highlight default link krlMovement Special
 endif
 " movement modifiers
-syn keyword krlMoveMod CA C_PTP C_DIS C_VEL C_ORI SPLINE ENDSPLINE
+syn keyword krlMoveMod CA C_PTP C_DIS C_VEL C_ORI C_SPL SPLINE ENDSPLINE
 if exists("g:krlNoHighlight") && g:krlNoHighlight==1
       \|| exists("g:krlNoHighLink") && g:krlNoHighLink==1
   highlight default link krlMoveMod Movement
 else
   highlight default link krlMoveMod Special
 endif
-" ---
+" }}} special keywords for movement commands
 
+" Structure value {{{
 " avoid coloring structure component names
-" if they have the same name as a type
-" syn match krlNames /[a-zA-Z_][.a-zA-Z0-9_]*/ containedin=krlStructVal
-syn match krlNames contained /[a-zA-Z_][.a-zA-Z0-9_]*/
+syn match krlNames /\.[a-zA-Z_][.a-zA-Z0-9_$]*/
+syn match krlNames contained /[a-zA-Z_][.a-zA-Z0-9_$]*/
 highlight default link krlNames None
 " Structure value
-syn region krlStructVal start=/{/ end=/}/ containedin=krlStructVal contains=krlNames
+syn region krlStructVal start=/{/ end=/}/ oneline containedin=krlStructVal contains=krlNames
 highlight default link krlStructVal krlDelimiter
-" ---
+" }}} Structure value
 
-" BuildInFunction
+" BuildInFunction {{{
 syn keyword krlBuildInFunction contained abs sin cos acos tan atan atan2 sqrt
-" maybe this one should move to Operator?! It's used like a function: b_not(bool)
 syn keyword krlBuildInFunction contained b_not 
 syn keyword krlBuildInFunction contained cClose cOpen cRead cWrite sRead sWrite cast_from cast_to
 syn keyword krlBuildInFunction contained DELETE_BACKWARD_BUFFER DIAG_START DIAG_STOP GET_DIAGSTATE IS_KEY_PRESSED GETCYCDEF GET_DECL_PLACE CHECKPIDONRDC PIDTORDC DELETE_PID_ON_RDC CAL_TO_RDC SET_MAM_ON_HD COPY_MAM_HD_TO_RDC CREATE_RDC_ARCHIVE RESTORE_RDC_ARCHIVE DELETE_RDC_CONTENT RDC_FILE_TO_HD CHECK_MAM_ON_RDC GET_RDC_FS_STATE TOOL_ADJ IOCTL CIOCTL WSPACEGIVE WSPACETAKE SYNCCMD CANCELPROGSYNC REMOTECMD REMOTEREAD ISMESSAGESET TIMER_LIMIT SET_KRLDLGANSWER GET_MSGBUFFER STRTOFRAME STRTOPOS STRTOE3POS STRTOE6POS STRTOAXIS STRTOE3AXIS STRTOE6AXIS VARTYPE FRAND GETVARSIZE MAXIMIZE_USEDXROBVERS SET_USEDXROBVERS SET_OPT_FILTER MD_GETSTATE MD_ASGN EB_TEST EO EMI_ENDPOS EMI_STARTPOS EMI_ACTPOS EMI_RECSTATE M_COMMENT
@@ -278,61 +320,76 @@ if exists("g:krlNoHighlight") && g:krlNoHighlight==1
 else
   highlight default link krlBuildInFunction Function
 endif
-" ---
+" }}} BuildInFunction
 
-" Function
+" Function {{{
 syn match krlFunction /[a-zA-Z_]\w* *(/me=e-1 contains=krlBuildInFunction
 highlight default link krlFunction Function
-" ---
+" }}} Function
 
-" Error
+" Error {{{
 if exists("g:krlShowError") && g:krlShowError==1
   " some more or less common typos
   "
   " vars or funcs >24 chars are not possible in krl. a234567890123456789012345
-  syn match krlError /\w\{25,}/ containedin=krlFunction,krlNames,krlLabel,krlAnyType
+  syn match krlError0 /\w\{25,}/ containedin=krlFunction,krlNames,krlLabel,krlAnyType,krlEnumVal,krlSysvars
   "
   " should be interrupt (on|off) \w+
-  syn match krlError /\vinterrupt +\w+ +o(n|ff)>/
+  syn match krlError1 /\vinterrupt[ \t(]+[_$a-zA-Z0-9]+[_$a-zA-Z0-9.\[\]()+\-*/]*[ \t)]+o%(n|ff)>/
   "
-  syn match krlError /\v^\s*\zs(elseif>|esle>|endfi>|ednif>|ednwhile>|ednfor>|endfro>|ednloop>)/
+  " more or less common misspellings. unnecessary. if misspelled they will not get their regular highlighting
+  " syn match krlError2 /\v^\s*\zs%(fasle|ture|elseif|esle|endfi|ednif|ednswitch|swithc|swtich|endswithc|endswtich|ednwhile|ednfor|endfro|ednloop|utnil|unitl)>/
   "
   " for bla==5 to 7...
   "        ||
-  syn match krlError /\v(^\s*for(\(|\s)+\$?\w+(\[|\]|\.|\+|\-|\*|\/|\w)*\s*)@<=[:=]\=/
+  syn match krlError3 /\v%(^\s*for%(\(|\s)+[_$a-zA-Z]+[_$a-zA-Z0-9.\[\]()+\-*/ ]*\s*)@<=[:=]\=/
   "
   " wait for a=b
   "           |
-  syn match krlError /\v(^\s*(return|wait\s+for|if|while|until|(global\s+)?interrupt\s+decl)[^;]+[^;<>=])@<=\=[^=]/
+  syn match krlError4 /\v%(^\s*%(return|wait\s+for|if|while|until|%(global\s+)?interrupt\s+decl)>[^;]+[^;<>=])@<=\=[^=]/
   "
   " wait for a><b
   "           ||
-  syn match krlError /\v(^\s*(return|wait\s+for|if|while|until|(global\s+)?interrupt\s+decl)[^;]+)@<=\>\s*\</
+  syn match krlError5 /\v%(^\s*%(return|wait\s+for|if|while|until|%(global\s+)?interrupt\s+decl)>[^;]+)@<=\>\s*\</
   "
   " if (a==5) (b==6) ...
   "         |||
-  syn match krlError /\v(^\s*(return|wait\s+for|if|while|until|(global\s+)?interrupt\s+decl)[^;]+[^;])@<=\)\s*\(/
+  syn match krlError6 /\v%(^\s*%(return|wait\s+for|if|while|until|%(global\s+)?interrupt\s+decl)>[^;]+[^;])@<=\)\s*\(/
   "
+  " TODO optimize performance
   " a == b + 1
   " a := b + 1
   "   ||
-  " syn match krlError /\v^\s*\$?\w+(\w|\[|\]|\+|\-|\*|\/)*\s*\zs[:=]\=/
-  syn match krlError /\v(^\s*\$?\w+(\w|\[|\]|\+|\-|\*|\/|\.)*\s*)@<=[:=]\=/
+  syn match krlError7 /\v%(^\s*%(return|wait\s+for|if|while|until|%(global\s+)?interrupt\s+decl)>[^;]+[^;])@1<!%(^\s*[_$a-zA-Z]+[_$a-zA-Z0-9.\[\]+\-*/]*\s*)@<=[:=]\=/
   "
-  " this one is tricky. Make sure this does not match trigger instructions
+  " this one is tricky. Make sure this does not match trigger instructions; OK, next try, now search for false positives
+  " TODO optimize performance
   " a = b and c or (int1=int2)
   "                     |
-  " syn match krlError /\v(^\s*\$?[^=;]+\s*\=[^=;][^;]+[^;<>=])@<=\=[^=]/
-  " syn match krlError /\v^\s*(trigger\swhen\s)@<!(\$?[^=;]+\s*\=[^=;][^;]+[^;<>=])@<=\=[^=]/
+  syn match krlError8 /\v(^\s*[_$a-zA-Z]+[_$a-zA-Z0-9.\[\]()+\-*/]*\s*\=[^;]*[^;<>=])@<=\=\ze[^=]/
   "
-  highlight default link krlError Error
+  " <(distance|delay|prio)> :=
+  " <(distance|delay|prio)> ==
+  "                         ||
+  syn match krlError9 /\v(^[^;]*<(distance|delay|prio|minimum|maximum)\s*)@<=[:=]\=/
+  "
+  highlight default link krlError0 Error
+  highlight default link krlError1 Error
+  highlight default link krlError2 Error
+  highlight default link krlError3 Error
+  highlight default link krlError4 Error
+  highlight default link krlError5 Error
+  highlight default link krlError6 Error
+  highlight default link krlError7 Error
+  highlight default link krlError8 Error
 endif
-" ---
+" }}} Error
 
+" Finish {{{
 let &cpo = s:keepcpo
 unlet s:keepcpo
 
 let b:current_syntax = "krl"
+" }}} Finish
 
-" vim:sw=2 sts=2 et
-
+" vim:sw=2 sts=2 et fdm=marker
