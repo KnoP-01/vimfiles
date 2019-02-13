@@ -1182,6 +1182,7 @@ if !exists("*s:KnopVerboseEcho()")
 
   if exists("loaded_matchit") " depends on matchit
     function s:KrlFoldTextObject(inner)
+      " TODO fixme!
       let l:col = col('.')
       let l:line = line('.')
       let l:foundFold = 0

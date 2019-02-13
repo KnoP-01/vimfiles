@@ -45,39 +45,27 @@ syn case ignore
 " TODO Comment
 syn keyword krlTodo contained TODO FIXME XXX
 highlight default link krlTodo Todo
-"
 " Debug Comment
 syn keyword krlDebug contained DEBUG
 highlight default link krlDebug Debug
 "
 "
 " Comment and Folding
-" force syncing from start
-syn sync fromstart
-"
-" Fold region from fold line to endfold line
-syn region krlFold start=/\c\v^\s*;\s*fold>.*$/ end=/\c\v^\s*;\s*endfold>.*$/ transparent fold keepend extend
-"
-" the ; itself. needed for none movement fold lines: doesn't work for some reason
-" syn match krlComment /;/ contained containedin=krlFold
-" syn match krlComment /\v\c;%(\s*fold>)@=/ contained containedin=krlFold
-"
-" Fold part for move folds from FOLD to (PTP|LIN|CIRC) (containes highlighting for krlMovement)
-" syn match krlFoldComment /\c\v;\s*fold>[^;]*<%(PTP|LIN|CIRC)>/ contained containedin=krlFold contains=krlMovement
-"
-" Fold part for move folds from (PTP|LIN|CIRC) to second ; (containes some highlighting)
-" TODO optimize performance
-syn match krlFoldComment /\c\v%(;\s*fold>[^;]*<%(PTP|LIN|CIRC)>)@<=[^;]*/ contained containedin=krlFold contains=krlInteger,krlMovement,krlDelimiter,krlGeomOperator,krlCompOperator
-"
-" Fold part for none move folds from FOLD to second ; (avoid highlighting because fold region is transparent)
-" syn match krlComment /\c\v%(;\s*)@<=<fold>%(%(<PTP>|<LIN>|<CIRC>|;)@!.)*/ contained containedin=krlFold contains=krlSingleQuoteString,krlInteger
-syn match krlComment /\c\v%(;\s*)@<=<fold>%(%(<PTP>|<LIN>|<CIRC>|;)@!.)*/ contained containedin=krlFold
-"
+" none move fold comment until second ;
+syn match krlFoldComment /\c\v^\s*;\s*fold>[^;]*/ contained containedin=krlFold contains=krlSingleQuoteString
+" move fold comment until second ;
+syn match krlFoldComment /\c\v^\s*;\s*fold>[^;]*<%(ptp|lin|circ)>[^;]*/ contained containedin=krlFold contains=krlInteger,krlMovement,krlDelimiter,krlGeomOperator,krlCompOperator
 " Comment without Fold, also includes endfold lines and fold line part after second ;
 syn match krlComment /\c\v;%(%(<fold>)@!.)*$/ containedin=krlFold contains=krlTodo,krlDebug
-" 
 highlight default link krlFoldComment Comment
 highlight default link krlComment Comment
+"
+if exists("g:krlFoldSyntax") && g:krlFoldSyntax==1
+  " force syncing from start
+  syn sync fromstart
+  " Fold region from fold line to endfold line
+  syn region krlFold start=/\c\v^\s*;\s*fold>.*$/ end=/\c\v^\s*;\s*endfold>.*$/ transparent fold keepend extend
+endif
 " }}} Comment and Folding 
 
 " Header {{{
@@ -158,8 +146,8 @@ highlight default link krlFloat Float
 syn region krlString start=/"/ end=/"/ oneline containedin=krlStructVal
 highlight default link krlString String
 " String within a fold line " NOT USED may be used in krlComment for none move folds
-" syn region krlSingleQuoteString start=/'/ end=/'/ oneline contained
-" highlight default link krlSingleQuoteString String
+syn region krlSingleQuoteString start=/'/ end=/'/ oneline contained
+highlight default link krlSingleQuoteString String
 " Enum
 syn match krlEnumVal /#\s*\a\w*/ containedin=krlStructVal
 highlight default link krlEnumVal Constant
@@ -344,6 +332,7 @@ if exists("g:krlShowError") && g:krlShowError==1
   "        ||
   syn match krlError3 /\v%(^\s*for%(\(|\s)+[_$a-zA-Z]+[_$a-zA-Z0-9.\[\]()+\-*/ ]*\s*)@<=[:=]\=/
   "
+  " TODO optimize performance
   " wait for a=b
   "           |
   syn match krlError4 /\v%(^\s*%(return|wait\s+for|if|while|until|%(global\s+)?interrupt\s+decl)>[^;]+[^;<>=])@<=\=[^=]/
@@ -382,6 +371,7 @@ if exists("g:krlShowError") && g:krlShowError==1
   highlight default link krlError6 Error
   highlight default link krlError7 Error
   highlight default link krlError8 Error
+  highlight default link krlError9 Error
 endif
 " }}} Error
 
