@@ -39,13 +39,14 @@ These "global" features are available from any window:
 
 These "local" features are only available in location/quickfix windows:
 
-    - disable soft-wrapping
     - disable relative numbers
     - filter and restore the current list
     - perform commands on each line in the current list
     - perform commands on each file in the current list
+    - mappings to navigate between older and newer lists
     - jump to next group of entries belonging to same file ("file grouping")
     - save and load named lists
+    - (optional) disable soft-wrapping
     - (optional) Ack.vim-inspired mappings
 
 ==============================================================================
@@ -86,18 +87,22 @@ on Windows... >
 
 Global mappings:
 
-    <Plug>qf_qf_previous ....................... |<Plug>qf_qf_previous|
-    <Plug>qf_qf_next ........................... |<Plug>qf_qf_next|
-    <Plug>qf_loc_previous ...................... |<Plug>qf_loc_previous|
-    <Plug>qf_loc_next .......................... |<Plug>qf_loc_next|
-    <Plug>qf_qf_switch ......................... |<Plug>qf_qf_switch|
-    <Plug>qf_qf_toggle ......................... |<Plug>qf_qf_toggle|
-    <Plug>qf_qf_stay_toggle .................... |<Plug>qf_qf_stay_toggle|
-    <Plug>qf_loc_toggle ........................ |<Plug>qf_loc_toggle|
-    <Plug>qf_loc_stay_toggle ................... |<Plug>qf_loc_stay_toggle|
+    <Plug>(qf_qf_previous) ..................... |<Plug>(qf_qf_previous)|
+    <Plug>(qf_qf_next) ......................... |<Plug>(qf_qf_next)|
+    <Plug>(qf_loc_previous) .................... |<Plug>(qf_loc_previous)|
+    <Plug>(qf_loc_next) ........................ |<Plug>(qf_loc_next)|
+    <Plug>(qf_qf_switch) ....................... |<Plug>(qf_qf_switch)|
+    <Plug>(qf_qf_toggle) ....................... |<Plug>(qf_qf_toggle)|
+    <Plug>(qf_qf_toggle_stay) .................. |<Plug>(qf_qf_toggle_stay)|
+    <Plug>(qf_loc_toggle) ...................... |<Plug>(qf_loc_toggle)|
+    <Plug>(qf_loc_toggle_stay) ................. |<Plug>(qf_loc_toggle_stay)|
+    <Plug>(qf_older) ........................... |<Plug>(qf_older)|
+    <Plug>(qf_newer) ........................... |<Plug>(qf_newer)|
 
 Local mappings:
 
+    <Left> ..................................... |QfHistoryOlder|
+    <Right> .................................... |QfHistoryNewer|
     { .......................................... |QfPreviousFile|
     } .......................................... |QfNextFile|
 
@@ -114,10 +119,11 @@ Options:
     g:qf_auto_quit ............................. |'g:qf_auto_quit'|
     g:qf_bufname_or_text ....................... |'g:qf_bufname_or_text'|
     g:qf_save_win_view ......................... |'g:qf_save_win_view'|
+    g:qf_nowrap ................................ |'g:qf_nowrap'|
 
 ------------------------------------------------------------------------------
-                                                         *<Plug>qf_qf_previous*
-                                                             *<Plug>qf_qf_next*
+                                                       *<Plug>(qf_qf_previous)*
+                                                           *<Plug>(qf_qf_next)*
 Scope: global                                                                ~
 Default: none                                                                ~
 
@@ -125,12 +131,12 @@ Go up and down the quickfix list and wrap around.
 
 Example: >
 
-    nmap <Home> <Plug>qf_qf_previous
-    nmap <End>  <Plug>qf_qf_next
+    nmap <Home> <Plug>(qf_qf_previous)
+    nmap <End>  <Plug>(qf_qf_next)
 <
 ------------------------------------------------------------------------------
-                                                        *<Plug>qf_loc_previous*
-                                                            *<Plug>qf_loc_next*
+                                                      *<Plug>(qf_loc_previous)*
+                                                          *<Plug>(qf_loc_next)*
 Scope: global                                                                ~
 Default: none                                                                ~
 
@@ -138,11 +144,11 @@ Go up and down the current location list and wrap around.
 
 Example: >
 
-    nmap <C-Home> <Plug>qf_loc_previous
-    nmap <C-End>  <Plug>qf_loc_next
+    nmap <C-Home> <Plug>(qf_loc_previous)
+    nmap <C-End>  <Plug>(qf_loc_next)
 <
 ------------------------------------------------------------------------------
-                                                           *<Plug>qf_qf_switch*
+                                                         *<Plug>(qf_qf_switch)*
 Scope: global                                                                ~
 Default: none                                                                ~
 
@@ -150,10 +156,10 @@ Jump to and from location/quickfix windows.
 
 Example: >
 
-    nmap ç <Plug>qf_qf_switch
+    nmap ç <Plug>(qf_qf_switch)
 <
 ------------------------------------------------------------------------------
-                                                           *<Plug>qf_qf_toggle*
+                                                         *<Plug>(qf_qf_toggle)*
 Scope: global                                                                ~
 Default: none                                                                ~
 
@@ -162,10 +168,10 @@ Uses |:cwindow| and |:cclose| under the hood.
 
 Example: >
 
-    nmap <F5> <Plug>qf_qf_toggle
+    nmap <F5> <Plug>(qf_qf_toggle)
 <
 ------------------------------------------------------------------------------
-                                                      *<Plug>qf_qf_stay_toggle*
+                                                    *<Plug>(qf_qf_toggle_stay)*
 Scope: global                                                                ~
 Default: none                                                                ~
 
@@ -174,10 +180,10 @@ Uses |:cwindow| and |:cclose| under the hood.
 
 Example: >
 
-    nmap <F5> <Plug>qf_qf_stay_toggle
+    nmap <F5> <Plug>(qf_qf_toggle_stay)
 <
 ------------------------------------------------------------------------------
-                                                          *<Plug>qf_loc_toggle*
+                                                        *<Plug>(qf_loc_toggle)*
 Scope: global                                                                ~
 Default: none                                                                ~
 
@@ -186,10 +192,10 @@ Uses |:lwindow| and |:lclose| under the hood.
 
 Example: >
 
-    nmap <F6> <Plug>qf_loc_toggle
+    nmap <F6> <Plug>(qf_loc_toggle)
 <
 ------------------------------------------------------------------------------
-                                                     *<Plug>qf_loc_stay_toggle*
+                                                   *<Plug>(qf_loc_toggle_stay)*
 Scope: global                                                                ~
 Default: none                                                                ~
 
@@ -199,8 +205,29 @@ Uses |:lwindow| and |:lclose| under the hood.
 
 Example: >
 
-    nmap <F6> <Plug>qf_loc_stay_toggle
+    nmap <F6> <Plug>(qf_loc_toggle_stay)
 <
+------------------------------------------------------------------------------
+                                                             *<Plug>(qf_older)*
+                                                             *<Plug>(qf_newer)*
+Scope: local                                                                 ~
+Default: none                                                                ~
+
+In a location/quickfix window, navigate to an older or newer list.
+
+Example (in after/ftplugin/qf.vim): >
+
+    nmap <buffer> <Left>  <Plug>(qf_older)
+    nmap <buffer> <Right> <Plug>(qf_newer)
+<
+------------------------------------------------------------------------------
+                                                               *QfHistoryOlder*
+                                                               *QfHistoryNewer*
+Scope: local                                                                 ~
+Default: <Left> and <Right>                                                  ~
+
+In a location/quickfix window, navigate to an older or newer list.
+
 ------------------------------------------------------------------------------
                                                                *QfPreviousFile*
                                                                    *QfNextFile*
@@ -337,7 +364,7 @@ Add the line below to your vimrc to change the default value:
     let g:qf_bufname_or_text = 1
 <
 ------------------------------------------------------------------------------
-                                                       *'g:qf_save_win_view'*
+                                                         *'g:qf_save_win_view'*
 Value: numeric                                                               ~
 Default: 1                                                                   ~
 
@@ -346,6 +373,18 @@ Save the view of the current window when toggling location/quickfix window.
 Add the line below to your vimrc to change the default value:
 >
     let g:qf_save_win_view = 0
+<
+------------------------------------------------------------------------------
+                                                                *'g:qf_nowrap'*
+Value: numeric                                                               ~
+Default: 1                                                                   ~
+
+Enables or disables soft-wrapping in the location/quickfix window.
+The default value disables soft-wrapping.
+
+Add the line below to your vimrc to change the default value:
+>
+    let g:qf_nowrap = 0
 <
 ==============================================================================
  4. USAGE                                                            *qf-usage*
@@ -546,6 +585,8 @@ a proper plugin come from Barry Arthur's Area 41 plugin:
 The named lists feature is the brainchild of Nelo-T. Wallus:
 
     - https://ntnn.de/
+
+The list history commands were implemented by Jon Parise.
 
 ==============================================================================
  7. TODO                                                              *qf-todo*

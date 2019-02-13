@@ -19,10 +19,9 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-let b:undo_ftplugin = "setl fo< com< ofu<"
-
 " text wrapping is pretty much useless in the quickfix window
-setlocal nowrap
+" but some users may still want it
+execute get(g:, "qf_nowrap", 1) ? "setlocal nowrap" : "setlocal wrap"
 
 " relative line numbers don't make much sense either
 " but absolute numbers definitely do
@@ -31,6 +30,8 @@ setlocal number
 
 " we don't want quickfix buffers to pop up when doing :bn or :bp
 set nobuflisted
+
+let b:undo_ftplugin .= "| setl wrap< rnu< nu< bl<"
 
 " are we in a location list or a quickfix list?
 let b:qf_isLoc = !empty(getloclist(0))
@@ -69,6 +70,13 @@ if exists("g:qf_mapping_ack_style")
 
     " preview entry under the cursor
     nnoremap <silent> <buffer> p :call qf#preview#PreviewFileUnderCursor()<CR>
+
+    let b:undo_ftplugin .= "| execute 'nunmap <buffer> s'"
+                \ . "| execute 'nunmap <buffer> v'"
+                \ . "| execute 'nunmap <buffer> t'"
+                \ . "| execute 'nunmap <buffer> o'"
+                \ . "| execute 'nunmap <buffer> O'"
+                \ . "| execute 'nunmap <buffer> p'"
 endif
 
 " filter the location/quickfix list
@@ -76,17 +84,17 @@ endif
 " usage:
 "   :Filter foo     <-- same as :Keep foo
 "   :Filter! foo    <-- same as :Reject foo
-command! -buffer -nargs=1 -bang Filter call qf#filter#FilterList(<q-args>, expand("<bang>") == "!" ? 1 : 0)
+command! -buffer -range -nargs=1 -bang Filter call qf#filter#FilterList(<q-args>, expand("<bang>") == "!" ? 1 : 0)
 
 " keep entries matching the argument
 " usage:
 "   :Keep foo
-command! -buffer -nargs=? Keep call qf#filter#FilterList(<q-args>, 0)
+command! -buffer -range -nargs=? Keep call qf#filter#FilterList(<q-args>, 0)
 
 " reject entries matching the argument
 " usage:
 "   :Reject foo
-command! -buffer -nargs=? Reject call qf#filter#FilterList(<q-args>, 1)
+command! -buffer -range -nargs=? Reject call qf#filter#FilterList(<q-args>, 1)
 
 " restore the location/quickfix list
 " usage:
@@ -119,15 +127,36 @@ command! -buffer ListLists call qf#namedlist#ListLists()
 " remove given lists or all
 command! -buffer -nargs=* -bang -complete=customlist,qf#namedlist#CompleteList RemoveList call qf#namedlist#RemoveList(expand("<bang>") == "!" ? 1 : 0, <q-args>)
 
+" navigate between older and newer lists
+nnoremap <silent> <buffer> <Left> :call qf#history#Older()<CR>
+nnoremap <silent> <buffer> <Right> :call qf#history#Newer()<CR>
+
 " TODO: allow customization
 " jump to previous/next file grouping
 nnoremap <silent> <buffer> } :call qf#filegroup#NextFile()<CR>
 nnoremap <silent> <buffer> { :call qf#filegroup#PreviousFile()<CR>
 
 " quit Vim if the last window is a quickfix window
+autocmd qf BufEnter    <buffer> nested if get(g:, 'qf_auto_quit', 1) | if winnr('$') < 2 | q | endif | endif
+autocmd qf BufWinEnter <buffer> nested if get(g:, 'qf_auto_quit', 1) | call qf#filter#ReuseTitle() | endif
 
-autocmd qf BufEnter    <buffer> if get(g:, 'qf_auto_quit', 1) | if winnr('$') < 2 | q | endif | endif
-autocmd qf BufWinEnter <buffer> if get(g:, 'qf_auto_quit', 1) | call qf#filter#ReuseTitle() | endif
+let b:undo_ftplugin .= "| delcommand Filter"
+            \ . "| delcommand Keep"
+            \ . "| delcommand Reject"
+            \ . "| delcommand Restore"
+            \ . "| delcommand Doline"
+            \ . "| delcommand Dofile"
+            \ . "| delcommand SaveList"
+            \ . "| delcommand SaveListAdd"
+            \ . "| delcommand LoadList"
+            \ . "| delcommand LoadListAdd"
+            \ . "| delcommand ListLists"
+            \ . "| delcommand RemoveList"
+            \ . "| execute 'nunmap <buffer> }'"
+            \ . "| execute 'nunmap <buffer> {'"
+            \ . "| execute 'nunmap <buffer> <Left>'"
+            \ . "| execute 'nunmap <buffer> <Right>'"
+            \ . "| unlet! b:qf_isLoc"
 
 " decide where to open the location/quickfix window
 if (b:qf_isLoc == 1 && get(g:, 'qf_loclist_window_bottom', 1))
