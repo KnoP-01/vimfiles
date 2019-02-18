@@ -1,7 +1,7 @@
 " Kuka Robot Language file type plugin for Vim
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 1.1.0
+" Version: 1.1.1
 " Last Change: 22. Feb 2018
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "
@@ -120,8 +120,8 @@ if !exists("*s:KnopVerboseEcho()")
   function s:KnopQfCompatible()
     " check for qf.vim compatiblity
     if exists('g:loaded_qf') && (!exists('g:qf_window_bottom') || g:qf_window_bottom!=0)
-          \&& (exists("g:knopRhsQuickfix") && g:knopRhsQuickfix==1 
-          \|| exists("g:knopLhsQuickfix") && g:knopLhsQuickfix==1)
+          \&& (get(g:,'knopRhsQuickfix',0)
+          \||  get(g:,'knopLhsQuickfix',0))
       call s:KnopVerboseEcho("NOTE: \nIf you use qf.vim then g:krlRhsQuickfix, g:krlLhsQuickfix, g:rapidRhsQuickfix and g:rapidLhsQuickfix will not work unless g:qf_window_bottom is 0 (Zero). \nTo use g:<foo>[RL]hsQuickfix put this in your .vimrc: \n  let g:qf_window_bottom = 0\n\n")
       return 0
     endif
@@ -129,12 +129,11 @@ if !exists("*s:KnopVerboseEcho()")
   endfunction " s:KnopQfCompatible()
 
   let g:knopPositionQf=1
-  function s:KnopOpenQf(ft)
+  function s:KnopOpenQf(useSyntax)
     if getqflist()==[] | return -1 | endif
     cwindow 4
     if getbufvar('%', "&buftype")!="quickfix"
       let l:getback=1
-      " noautocmd copen
       copen
     endif
     augroup KnopOpenQf
@@ -143,12 +142,15 @@ if !exists("*s:KnopVerboseEcho()")
       let l:cmd = 'au BufWinLeave <buffer='.bufnr('%').'> let g:knopPositionQf=1'
       execute l:cmd
     augroup END
-    if a:ft!='' | let &filetype=a:ft | endif
+    if a:useSyntax!='' 
+      let l:cmd = 'set syntax='.a:useSyntax 
+      execute l:cmd
+    endif
     if exists('g:knopPositionQf') && s:KnopQfCompatible() 
       unlet g:knopPositionQf
-      if exists("g:knopRhsQuickfix") && g:knopRhsQuickfix==1
+      if get(g:,'knopRhsQuickfix',0)
         wincmd L
-      elseif exists("g:knopLhsQuickfix") && g:knopLhsQuickfix==1 
+      elseif get(g:,'knopLhsQuickfix',0)
         wincmd H
       endif
     endif
@@ -159,7 +161,7 @@ if !exists("*s:KnopVerboseEcho()")
     return 0
   endfunction " s:KnopOpenQf()
 
-  function s:KnopSearchPathForPatternNTimes(Pattern,path,n,ft)
+  function s:KnopSearchPathForPatternNTimes(Pattern,path,n,useSyntax)
     let l:cmd = ':noautocmd ' . a:n . 'vimgrep /' . a:Pattern . '/j ' . a:path
     try
       execute l:cmd
@@ -176,7 +178,7 @@ if !exists("*s:KnopVerboseEcho()")
     if a:n == 1
       call setqflist(s:KnopUniqueListItems(getqflist()))
     endif
-    if s:KnopOpenQf(a:ft)==-1
+    if s:KnopOpenQf(a:useSyntax)==-1
       call s:KnopVerboseEcho("No match found")
       return -1
     endif
@@ -450,8 +452,6 @@ if !exists("*s:KnopVerboseEcho()")
 
   function <SID>KrlGoDefinition()
     "
-    " dont start from within qf or loc window
-    if getbufvar("%", "&buftype") == "quickfix" | return | endif
     let l:declPrefix = '\c\v^\s*((global\s+)?(const\s+)?(bool|int|real|char|frame|pos|axis|e6pos|e6axis|signal|channel)\s+[a-zA-Z0-9_,\[\] \t]*|(decl\s+)?(global\s+)?(struc|enum)\s+|decl\s+(global\s+)?(const\s+)?\w+\s+[a-zA-Z0-9_,\[\] \t]*)'
     "
     " suche das naechste wort
@@ -822,7 +822,7 @@ if !exists("*s:KnopVerboseEcho()")
     call s:KnopSubStartToEnd('<returnvar>',l:sReturnVar,l:defstart+1,l:end)
     call s:KnopSubStartToEnd('\v(^\s*return\s+\w+\[)\d+(,)?\d*(,)?\d*(\])','\1\2\3\4',l:defstart+1,l:end)
     " upper case?
-    if exists("g:krlAutoFormUpperCase") && g:krlAutoFormUpperCase==1
+    if get(g:,'krlAutoFormUpperCase',0)
       call s:KnopUpperCase(l:defstart,l:end)
     endif
     " indent
@@ -850,7 +850,7 @@ if !exists("*s:KnopVerboseEcho()")
     if exists("b:did_indent")
       silent normal! 3==
     endif
-    if exists("g:krlAutoFormUpperCase") && g:krlAutoFormUpperCase==1
+    if get(g:,'krlAutoFormUpperCase',0)
       call s:KnopUpperCase(line('.'),search('\v\c^\s*enddat>','cnW'))
     endif
     call search(';','W')
@@ -868,7 +868,7 @@ if !exists("*s:KnopVerboseEcho()")
     if exists("b:did_indent")
       silent normal! 3==
     endif
-    if exists("g:krlAutoFormUpperCase") && g:krlAutoFormUpperCase==1
+    if get(g:,'krlAutoFormUpperCase',0)
       call s:KnopUpperCase(line('.'),search('\v\c^\s*end>','cnW'))
     endif
     call search(';','W')
@@ -896,7 +896,7 @@ if !exists("*s:KnopVerboseEcho()")
     if exists("b:did_indent")
       silent normal! 5==
     endif
-    if exists("g:krlAutoFormUpperCase") && g:krlAutoFormUpperCase==1
+    if get(g:,'krlAutoFormUpperCase',0)
       call s:KnopUpperCase(line('.'),search('\v\c^\s*endfct>','cnW'))
     endif
     call search(')','cW')
@@ -906,7 +906,6 @@ if !exists("*s:KnopVerboseEcho()")
   function <SID>KrlAutoForm(sAction)
     " check input
     if a:sAction !~ '^[ lg][ adf][ abcfiprx6]$' | return | endif
-    if getbufvar('%', "&buftype") == "quickfix" | return | endif
     "
     let l:sGlobal = s:KrlGetGlobal(a:sAction)
     if l:sGlobal == ''
@@ -987,8 +986,6 @@ if !exists("*s:KnopVerboseEcho()")
   " List Def/Usage {{{
 
   function <SID>KrlListDef()
-    " dont start from within qf or loc window
-    if getbufvar('%', "&buftype")=="quickfix" | return | endif
     " list defs in qf
     if s:KnopSearchPathForPatternNTimes('\v\c^\s*(global\s+)?def(fct)?>','%','','krl')==0
       if getqflist()==[] | return | endif
@@ -1093,10 +1090,11 @@ if !exists("*s:KnopVerboseEcho()")
             call add(l:qftmp2,l:i)
           endif
         endfor
-        " rule out if l:currentWord is part of a strings
+        " rule out if l:currentWord is part of a strings and inside a backup file
         let l:qfresult = []
         for l:i in l:qftmp2
-          if get(l:i,'text') =~ '\v\c^([^"]*"[^"]*"[^"]*)*[^"]*'.l:currentWord
+          if bufname(get(l:i,'bufnr')) !~ '\~$'
+                \&& get(l:i,'text') =~ '\v\c^([^"]*"[^"]*"[^"]*)*[^"]*'.l:currentWord
             call add(l:qfresult,l:i)
           endif
         endfor
@@ -1111,45 +1109,9 @@ if !exists("*s:KnopVerboseEcho()")
 
   " }}} List Def/Usage
 
-  " Format Comments {{{
-
-  " TODO decide: abandon this one?
-  if exists("g:krlFormatComments") && g:krlFormatComments==1
-    function KrlFormatComments()
-      "
-      normal! m'
-      0
-      let l:numCurrLine = 1
-      let l:numLastLine = (line("$") - 1)
-      "
-      while l:numCurrLine >= 0 && l:numCurrLine <= l:numLastLine
-        if getline(l:numCurrLine) =~ '\c\v^\s*;\s*((end)?fold)@!'
-          let l:numNextNoneCommentLine = search('\v\c^\s*([^ \t;]|;\s*(end)?fold)',"nW")
-          if l:numNextNoneCommentLine == 0
-            normal! gqG
-          elseif l:numNextNoneCommentLine-l:numCurrLine <= 1
-            normal! gqq
-          else
-            execute "normal!" (l:numNextNoneCommentLine-l:numCurrLine-1)."gqj"
-          endif
-        endif
-        " check next line
-        let l:searchnextcomment = search('\c\v^\s*;\s*((end)?fold)@!',"W")
-        if l:searchnextcomment == 0
-          normal! G
-        endif
-        let l:numCurrLine = line(".")
-        let l:numLastLine = (line("$") - 1)
-      endwhile
-      "
-    endfunction " KrlFormatComments()
-  endif
-
-  " }}} Format Comments
-
   " Function Text Object {{{
 
-  if exists("g:krlMoveAroundKeyMap") && g:krlMoveAroundKeyMap>=1 " depends on move around key mappings
+  if get(g:,'krlMoveAroundKeyMap',0) " depends on move around key mappings
     function s:KrlFunctionTextObject(inner,withcomment)
       if a:inner==1
         let l:n = 1
@@ -1247,14 +1209,14 @@ if !exists("g:krlNoKeyWord") || g:krlNoKeyWord!=1
 endif
 
 " auto insert comment char when i_<CR>, o or O on a comment line
-if exists("g:krlAutoComment") && g:krlAutoComment==1
+if get(g:,'krlAutoComment',0)
   setlocal formatoptions+=r
   setlocal formatoptions+=o
   let b:undo_ftplugin = b:undo_ftplugin." fo<"
 endif
 
 " format comments
-if exists("g:krlFormatComments") && g:krlFormatComments==1
+if get(g:,'krlFormatComments',0)
   if &textwidth ==# 0
     " 52 Chars do match on the teach pendant
     setlocal textwidth=52
@@ -1270,7 +1232,6 @@ endif " format comments
 
 " path for gf, :find etc
 if (!exists("g:krlNoPath") || g:krlNoPath!=1) 
-      \&& getbufvar('%', "&buftype")!="quickfix" " dont set path for qf
 
   let s:pathcurrfile = s:KnopFnameescape4Path(substitute(expand("%:p:h"), '\\', '/', 'g'))
   if s:pathcurrfile =~ '\v\c\/krc(\/[^/]+){,4}$'
@@ -1367,29 +1328,88 @@ endif
 
 " folding
 if has("folding") && (!exists("g:krlCloseFolds") || g:krlCloseFolds!=2)
-  "
+
   if !exists("*KrlFoldText")
-    function! KrlFoldText()
+
+    function KrlFoldText()
       return substitute(getline(v:foldstart), '\v\c(;\s*<FOLD>\s+|;[^;]*$)', '', 'g')
     endfunction
-  endif
-  setlocal foldtext=KrlFoldText()
-  "
-  if exists("g:krlFoldSyntax") && g:krlFoldSyntax==1
-    setlocal foldmethod=syntax
-  else
-    setlocal foldmethod=marker
-    if exists("g:krlCloseFolds") && g:krlCloseFolds==1 || <SID>KrlIsVkrc()
-      " close all folds. Default for VKRC
-      setlocal foldmarker=FOLD,ENDFOLD
-    else
-      " close only PTP|LIN|CIRC movement folds
-      setlocal foldmarker=%CMOVE,ENDFOLD
-    endif
-  endif
-  "
-  let b:undo_ftplugin = b:undo_ftplugin." fdm< fdt< fmr<"
-  "
+
+    function <SID>KrlFoldLevel(lvl)
+      " g:krlCloseFolds may be used as input for a:lvl
+
+      setlocal foldtext=KrlFoldText()
+
+      if get(g:,'krlFoldMethodSyntax',0)
+        syn sync fromstart
+        setlocal foldmethod=syntax
+      else
+        setlocal foldmethod=marker
+      endif
+
+      if a:lvl == 1
+        " close all folds
+
+        if &foldmethod=~'marker'
+          setlocal foldmarker=FOLD,ENDFOLD foldlevel=0
+        elseif &foldmethod=~'syntax'
+          " NOTE1: must harmonize with syntax/krl.vim Comment (see krlFold) 
+          silent! syn clear krlFold
+          syn region krlFold start=/\c\v^\s*;\s*fold>.*$/ end=/\c\v^\s*;\s*endfold>.*$/ transparent fold keepend extend
+          setlocal foldlevel=0
+        endif " &foldmethod
+        return
+
+      elseif a:lvl == 0
+        " close move folds
+
+        if &foldmethod=~'marker'
+
+          if <SID>KrlIsVkrc()
+            if bufname("%")=~'\c\v(folge|up)\d*.src'
+              setlocal foldmarker=FOLD,ENDFOLD foldlevel=1
+            else
+              setlocal foldmarker=FOLD,ENDFOLD foldlevel=0
+            endif
+          else " <SID>KrlIsVkrc()
+            setlocal foldmarker=%CMOVE,ENDFOLD foldlevel=0
+          endif " <SID>KrlIsVkrc()
+
+        elseif &foldmethod=~'syntax'
+
+          if <SID>KrlIsVkrc()
+            call <SID>KrlFoldLevel(1)
+            if bufname("%")=~'\c\v(folge|up)\d*.src'
+              setlocal foldlevel=1
+            endif
+          else " <SID>KrlIsVkrc()
+            " NOTE1: must harmonize with syntax/krl.vim Comment (see krlFold) 
+            silent! syn clear krlFold
+            syn region krlFold start=/\c\v^\s*;\s*fold>[^;]*<s?%(ptp|lin|circ|spl)(_rel)?>.*$/ end=/\c\v^\s*;\s*endfold>.*$/ transparent fold keepend extend
+            syn region krlFold start=/\c\v^\s*;\s*fold>.*$/ end=/\c\v^\s*;\s*endfold>.*$/ transparent keepend extend
+            setlocal foldlevel=0
+          endif " <SID>KrlIsVkrc()
+
+        endif " &foldmethod
+        return
+
+      endif " a:lvl
+
+      " close no folds
+      if &foldmethod=~'marker'
+        setlocal foldmarker<
+      elseif &foldmethod=~'syntax'
+        silent! syn clear krlFold
+      endif
+
+    endfunction " <SID>KrlFoldLevel
+
+  endif " !exists("*KrlFoldText")
+
+  call <SID>KrlFoldLevel(get(g:,'krlCloseFolds',0))
+
+  let b:undo_ftplugin = b:undo_ftplugin." fdm< fdt< fmr< fdl<"
+
 endif " has("folding") || g:krlCloseFolds!=2
 
 " }}} Vim Settings
@@ -1447,20 +1467,20 @@ endif
 
 " Other configurable key mappings {{{
 
-if exists("g:krlGoDefinitionKeyMap") && g:krlGoDefinitionKeyMap==1
+if get(g:,'krlGoDefinitionKeyMap',0)
   " gd mimic
   nnoremap <silent><buffer> gd :call <SID>KrlGoDefinition()<CR>
 endif
-if exists("g:krlListDefKeyMap") && g:krlListDefKeyMap==1
+if get(g:,'krlListDefKeyMap',0)
   " list all DEFs of current file
   nnoremap <silent><buffer> <leader>f :call <SID>KrlListDef()<CR>
 endif
-if exists("g:krlListUsageKeyMap") && g:krlListUsageKeyMap==1
+if get(g:,'krlListUsageKeyMap',0)
   " list all uses of word under cursor
   nnoremap <silent><buffer> <leader>u :call <SID>KrlListUsage()<CR>
 endif
 
-if exists("g:krlAutoFormKeyMap") && g:krlAutoFormKeyMap==1
+if get(g:,'krlAutoFormKeyMap',0)
   nnoremap <silent><buffer> <leader>n     :call <SID>KrlAutoForm("   ")<cr>
   nnoremap <silent><buffer> <leader>nn    :call <SID>KrlAutoForm("   ")<cr>
   "
@@ -1517,18 +1537,18 @@ if exists("g:krlAutoFormKeyMap") && g:krlAutoFormKeyMap==1
 endif " g:krlAutoFormKeyMap
 
 if has("folding") && (!exists("g:krlCloseFolds") || g:krlCloseFolds!=2)
-  " compatiblity
-  if exists("g:krlFoldKeyMap") && g:krlFoldKeyMap==1
-    if <SID>KrlIsVkrc() " closing move folds fails in VKRC files
-      nnoremap <silent><buffer> <F3> :setlocal foldlevel=0<CR>
-    else " closing all folds (well, case sensitiv)
-      nnoremap <silent><buffer> <F3> :setlocal foldmarker=FOLD,ENDFOLD<CR>
-    endif
-    if <SID>KrlIsVkrc() " closing move folds fails in VKRC files
-      nnoremap <silent><buffer> <F2> :setlocal foldlevel=1<CR>
-    else " closing only move folds
-      nnoremap <silent><buffer> <F2> :setlocal foldmarker=%CMOVE,ENDFOLD<CR>
-    endif
+  if get(g:,'krlFoldKeyMaps',0) 
+    " close all folds
+    nnoremap <silent><buffer> <F4> :call <SID>KrlFoldLevel(1)<CR>
+    " close move folds
+    nnoremap <silent><buffer> <F3> :call <SID>KrlFoldLevel(0)<CR>
+    " open all folds
+    nnoremap <silent><buffer> <F2> :call <SID>KrlFoldLevel(2)<CR>
+  elseif get(g:,'krlFoldKeyMap',0) 
+    " deprecated
+    " compatiblity
+    nnoremap <silent><buffer> <F3> :call <SID>KrlFoldLevel(1)<CR>
+    nnoremap <silent><buffer> <F2> :call <SID>KrlFoldLevel(0)<CR>
   endif
 endif
 
@@ -1578,9 +1598,9 @@ nnoremap <silent><buffer> <plug>KrlAutoFormGlobalFctE6Axis  :call <SID>KrlAutoFo
 
 " folding
 if has("folding") && (!exists("g:krlCloseFolds") || g:krlCloseFolds!=2)
-  nnoremap <silent><buffer> <plug>KrlCloseAllFolds :setlocal foldmarker=FOLD,ENDFOLD foldlevel=0<CR>
-  nnoremap <silent><buffer> <plug>KrlCloseLessFolds :if <SID>KrlIsVkrc()<CR>setlocal foldmarker=FOLD,ENDFOLD foldlevel=1<CR>else<CR>setlocal foldmarker=%CMOVE,ENDFOLD foldlevel=0<CR>endif<CR>
-  nnoremap <silent><buffer> <plug>KrlCloseNoFolds :if &foldmethod=~'marker'<CR>setlocal foldmarker<<CR>else<CR>setlocal foldlevel=99<CR>endif<CR>
+  nnoremap <silent><buffer> <plug>KrlCloseAllFolds  :call <SID>KrlFoldLevel(1)<CR>
+  nnoremap <silent><buffer> <plug>KrlCloseLessFolds :call <SID>KrlFoldLevel(0)<CR>
+  nnoremap <silent><buffer> <plug>KrlCloseNoFolds   :call <SID>KrlFoldLevel(2)<CR>
 endif
 
 " }}} <plug> mappings

@@ -1,7 +1,7 @@
 " Kuka Robot Language syntax file for Vim
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 1.5.7
+" Version: 1.5.8
 " Last Change: 22. Feb 2018
 " Credits: Thanks for contributions to this to Michael Jagusch
 "
@@ -21,22 +21,22 @@ endif
 let s:keepcpo= &cpo
 set cpo&vim
 
+if exists("g:krlNoHighLink")
+  silent! unlet g:krlNoHighlight
+  echo "1"
+endif
+if exists("g:krlNoHighlight")
+  echo "2"
+  let g:krlNoHighLink = g:krlNoHighlight
+  unlet g:krlNoHighlight
+endif
+if get(g:,'colors_name'," ")=="tortus" && !exists("g:krlNoHighLink")
+  echo "3"
+  let g:krlNoHighLink=1 
+endif
+
 " krl does ignore case
 syn case ignore
-
-" if !exists("*<SID>KrlIsVkrc()")
-"   function <SID>KrlIsVkrc()
-"     if bufname("%") =~ '\c\v(folge|up|makro(saw|sps|step|trigger)?)\d*.src'
-"       for l:s in range(1,8)
-"         if getline(l:s) =~ '\c\v^\s*\&param\s+tpvw_version\s*.*$'
-"           return 1
-"         endif
-"       endfor
-"     endif
-"     return 0
-"   endfunction " <SID>KrlIsVkrc()
-" endif
-
 " }}} init
 
 " Comment and Folding {{{ 
@@ -50,22 +50,16 @@ syn keyword krlDebug contained DEBUG
 highlight default link krlDebug Debug
 "
 "
-" Comment and Folding
+" Comment
+" NOTE1: Comment highlighting must harmonize with ftplugin/krl.vim folding (see krlFold)
 " none move fold comment until second ;
-syn match krlFoldComment /\c\v^\s*;\s*fold>[^;]*/ contained containedin=krlFold contains=krlSingleQuoteString
+syn match krlFoldComment /\c\v^\s*;\s*fold>[^;]*/ containedin=krlFold " contains=krlSingleQuoteString
 " move fold comment until second ;
-syn match krlFoldComment /\c\v^\s*;\s*fold>[^;]*<%(ptp|lin|circ)>[^;]*/ contained containedin=krlFold contains=krlInteger,krlMovement,krlDelimiter,krlGeomOperator,krlCompOperator
+syn match krlFoldComment /\c\v^\s*;\s*fold>[^;]*<%(ptp|lin|circ)>[^;]*/ containedin=krlFold contains=krlInteger,krlMovement,krlDelimiter
 " Comment without Fold, also includes endfold lines and fold line part after second ;
 syn match krlComment /\c\v;%(%(<fold>)@!.)*$/ containedin=krlFold contains=krlTodo,krlDebug
 highlight default link krlFoldComment Comment
 highlight default link krlComment Comment
-"
-if exists("g:krlFoldSyntax") && g:krlFoldSyntax==1
-  " force syncing from start
-  syn sync fromstart
-  " Fold region from fold line to endfold line
-  syn region krlFold start=/\c\v^\s*;\s*fold>.*$/ end=/\c\v^\s*;\s*endfold>.*$/ transparent fold keepend extend
-endif
 " }}} Comment and Folding 
 
 " Header {{{
@@ -75,7 +69,7 @@ highlight default link krlHeader PreProc
 
 " Operator {{{
 " Boolean operator
-syn keyword krlBoolOperator AND OR EXOR NOT DIV MOD B_AND B_OR B_EXOR
+syn keyword krlBoolOperator AND OR EXOR NOT DIV MOD B_AND B_OR B_EXOR B_NOT
 highlight default link krlBoolOperator Operator
 " Arithmetic operator
 syn match krlArithOperator /[+-]/ containedin=krlFloat
@@ -112,8 +106,8 @@ highlight default link krlDatStorageClass StorageClass
 " Parameter StorageClass
 " Do not move the :in/:out
 " Must be present after krlGeomOperator
-syn match krlParamdef /[:]\s*in\>/ contains=krlGeomOperator
-syn match krlParamdef /[:]\s*out\>/ contains=krlGeomOperator
+syn match krlParamdef /[:]\s*in\>/
+syn match krlParamdef /[:]\s*out\>/
 highlight default link krlParamdef StorageClass
 " Not a typedef but I like to have those highlighted
 " different then types, structures or strorage classes
@@ -146,8 +140,8 @@ highlight default link krlFloat Float
 syn region krlString start=/"/ end=/"/ oneline containedin=krlStructVal
 highlight default link krlString String
 " String within a fold line " NOT USED may be used in krlComment for none move folds
-syn region krlSingleQuoteString start=/'/ end=/'/ oneline contained
-highlight default link krlSingleQuoteString String
+" syn region krlSingleQuoteString start=/'/ end=/'/ oneline contained
+" highlight default link krlSingleQuoteString String
 " Enum
 syn match krlEnumVal /#\s*\a\w*/ containedin=krlStructVal
 highlight default link krlEnumVal Constant
@@ -232,8 +226,7 @@ highlight default link krlSysvars Sysvars
 " Statements, keywords et al {{{
 " continue
 syn keyword krlContinue CONTINUE
-if exists("g:krlNoHighlight") && g:krlNoHighlight==1
-      \|| exists("g:krlNoHighLink") && g:krlNoHighLink==1
+if get(g:,"krlNoHighLink",0)
   highlight default link krlContinue Continue
 else
   highlight default link krlContinue Statement
@@ -241,7 +234,9 @@ endif
 " interrupt 
 syn match krlStatement /\v\c%(<global>\s+)?<INTERRUPT>%(\s+<decl>)?/ contains=krlStorageClass
 " keywords
-syn keyword krlStatement WAIT SEC ON OFF ENABLE DISABLE STOP TRIGGER WITH WHEN DISTANCE PATH ONSTART DELAY DO PRIO IMPORT IS MINIMUM MAXIMUM CONFIRM ON_ERROR_PROCEED
+syn keyword krlStatement WAIT ON OFF ENABLE DISABLE STOP TRIGGER WITH WHEN DISTANCE ONSTART DELAY DO PRIO IMPORT IS MINIMUM MAXIMUM CONFIRM ON_ERROR_PROCEED
+syn match krlStatement /\v\c%(<wait\s+)@7<=<sec>/
+syn match krlStatement /\v\c%(<when\s+)@7<=<path>/
 highlight default link krlStatement Statement
 " Conditional
 syn keyword krlConditional IF THEN ELSE ENDIF SWITCH CASE DEFAULT ENDSWITCH
@@ -262,18 +257,16 @@ highlight default link krlException Exception
 " }}} Statements, keywords et al
 
 " special keywords for movement commands {{{
-syn keyword krlMovement PTP LIN CIRC SPL SPTP SLIN SCIRC PTP_REL LIN_REL CIRC_REL
+syn keyword krlMovement PTP LIN CIRC SPL SPTP SLIN SCIRC PTP_REL LIN_REL CIRC_REL SPTP_REL SLIN_REL SCIRC_REL
 syn keyword krlMovement ASYPTP ASYCONT ASYSTOP ASYCANCEL BRAKE BRAKE_F
-if exists("g:krlNoHighlight") && g:krlNoHighlight==1
-      \|| exists("g:krlNoHighLink") && g:krlNoHighLink==1
+if get(g:,"krlNoHighLink",0)
   highlight default link krlMovement Movement
 else
   highlight default link krlMovement Special
 endif
 " movement modifiers
 syn keyword krlMoveMod CA C_PTP C_DIS C_VEL C_ORI C_SPL SPLINE ENDSPLINE
-if exists("g:krlNoHighlight") && g:krlNoHighlight==1
-      \|| exists("g:krlNoHighLink") && g:krlNoHighLink==1
+if get(g:,"krlNoHighLink",0)
   highlight default link krlMoveMod Movement
 else
   highlight default link krlMoveMod Special
@@ -284,26 +277,24 @@ endif
 " avoid coloring structure component names
 syn match krlNames /\.[a-zA-Z_][.a-zA-Z0-9_$]*/
 syn match krlNames contained /[a-zA-Z_][.a-zA-Z0-9_$]*/
-highlight default link krlNames None
+" highlight default link krlNames None
 " Structure value
 syn region krlStructVal start=/{/ end=/}/ oneline containedin=krlStructVal contains=krlNames
-highlight default link krlStructVal krlDelimiter
+highlight default link krlStructVal Delimiter
 " }}} Structure value
 
 " BuildInFunction {{{
 syn keyword krlBuildInFunction contained abs sin cos acos tan atan atan2 sqrt
-syn keyword krlBuildInFunction contained b_not 
 syn keyword krlBuildInFunction contained cClose cOpen cRead cWrite sRead sWrite cast_from cast_to
 syn keyword krlBuildInFunction contained DELETE_BACKWARD_BUFFER DIAG_START DIAG_STOP GET_DIAGSTATE IS_KEY_PRESSED GETCYCDEF GET_DECL_PLACE CHECKPIDONRDC PIDTORDC DELETE_PID_ON_RDC CAL_TO_RDC SET_MAM_ON_HD COPY_MAM_HD_TO_RDC CREATE_RDC_ARCHIVE RESTORE_RDC_ARCHIVE DELETE_RDC_CONTENT RDC_FILE_TO_HD CHECK_MAM_ON_RDC GET_RDC_FS_STATE TOOL_ADJ IOCTL CIOCTL WSPACEGIVE WSPACETAKE SYNCCMD CANCELPROGSYNC REMOTECMD REMOTEREAD ISMESSAGESET TIMER_LIMIT SET_KRLDLGANSWER GET_MSGBUFFER STRTOFRAME STRTOPOS STRTOE3POS STRTOE6POS STRTOAXIS STRTOE3AXIS STRTOE6AXIS VARTYPE FRAND GETVARSIZE MAXIMIZE_USEDXROBVERS SET_USEDXROBVERS SET_OPT_FILTER MD_GETSTATE MD_ASGN EB_TEST EO EMI_ENDPOS EMI_STARTPOS EMI_ACTPOS EMI_RECSTATE M_COMMENT
 syn keyword krlBuildInFunction contained forward inverse inv_pos
-syn keyword krlBuildInFunction contained get_sig_inf GetSysState pulse GET_SYSTEM_DATA
+syn keyword krlBuildInFunction contained get_sig_inf GetSysState GET_SYSTEM_DATA
 syn keyword krlBuildInFunction contained StrAdd StrClear StrCopy StrComp StrFind StrLen StrDeclLen StrToBool StrToInt StrToReal StrToString
 syn keyword krlBuildInFunction contained Clear_KrlMsg SET_SYSTEM_DATA SET_SYSTEM_DATA_DELAYED Set_KrlDlg Exists_KrlDlg Set_KrlMsg Exists_KrlMsg
 syn keyword krlBuildInFunction contained Err_Clear Err_Raise
-syn keyword krlBuildInFunction contained varstate EK EB LK sync MD_CMD MD_SETSTATE MBX_REC
-syn keyword krlBuildInFunction contained SVEL_JOINT STOOL2 SBASE SIPO_MODE SLOAD SACC_JOINT SGEAR_JERK SAPO_PTP SVEL_CP SACC_CP SAPO SORI_TYP SJERK 
-if exists("g:krlNoHighlight") && g:krlNoHighlight==1
-      \|| exists("g:krlNoHighLink") && g:krlNoHighLink==1
+syn keyword krlBuildInFunction contained varstate EK EB LK sync MD_CMD MD_SETSTATE MBX_REC pulse 
+syn keyword krlBuildInFunction contained ROB_STOP ROB_STOP_RELEASE SET_BRAKE_DELAY
+if get(g:,"krlNoHighLink",0)
   highlight default link krlBuildInFunction BuildInFunction
 else
   highlight default link krlBuildInFunction Function
@@ -316,7 +307,7 @@ highlight default link krlFunction Function
 " }}} Function
 
 " Error {{{
-if exists("g:krlShowError") && g:krlShowError==1
+if get(g:,'krlShowError',0)
   " some more or less common typos
   "
   " vars or funcs >24 chars are not possible in krl. a234567890123456789012345

@@ -32,10 +32,10 @@ if bufname("%") =~ '\c\.cfg$'
   syn match rapidFloat /\(\W\|_\)\@1<=[+-]\?\d\+\.\?\d*\([eE][+-]\?\d\+\)\?/
   highlight default link rapidFloat Float
   " character code in string
-  syn match rapidCharCode '\\\d\d' contained
-  highlight default link rapidCharCode Special
+  syn match rapidCharCode /[^\\]\zs\\\d\d/ contained
+  highlight default link rapidCharCode SpecialChar
   " String. Note: Don't rename group rapidString. Indent depend on this
-  syn region rapidString start=/"/ end=/"/ contains=rapidCharCode
+  syn region rapidString start=/"/ end=/"/ contains=rapidCharCode containedin=rapidStructVal
   highlight default link rapidString String
   " ---
 
@@ -78,8 +78,8 @@ else
   syn match rapidFloat /\W\@1<=[+-]\?\d\+\.\?\d*\([eE][+-]\?\d\+\)\?/
   highlight default link rapidFloat Float
   " character code in string
-  syn match rapidCharCode '\\\d\d' contained
-  highlight default link rapidCharCode Special
+  syn match rapidCharCode /[^\\]\zs\\\d\d/ contained
+  highlight default link rapidCharCode SpecialChar
   " String. Note: Don't rename group rapidString. Indent depend on this
   syn region rapidString start=/"/ end=/"/ contains=rapidCharCode
   highlight default link rapidString String
@@ -213,13 +213,11 @@ else
 
   " Operator
   syn keyword rapidOperator and or xor not Div Mod
-  " syn match rapidOperator /[+-]\|\*\|\/\|\([<>:][>=]\)\|[<>=]/
   syn match rapidOperator /[-+*/<>:=]/
   highlight default link rapidOperator Operator
   " ---
 
   " Delimiter
-  " syn match rapidDelimiter /\\\||\|\[\|\]\|[(){}]\|[,;]/
   syn match rapidDelimiter /[\\(){},;|\[\]]/
   highlight default link rapidDelimiter Delimiter
   " ---
@@ -276,39 +274,44 @@ else
   " ---
 
   " rapid structrure values. added to be able to conceal them
-  syn region rapidStructVal matchgroup=rapidDelimiter start=/\[/ end=/\]/ contains=ALL keepend extend conceal cchar=* 
-  highlight default link rapidStructVal None
+  syn region rapidConcealableString start=/"/ end=/"/ contained contains=rapidCharCode conceal 
+  highlight default link rapidConcealableString String
+  syn region rapidStructVal matchgroup=rapidDelimiter start=/\[/ end=/\]/ contains=ALLBUT,rapidString keepend extend conceal cchar=* 
 
   " Error
   if exists("g:rapidShowError") && g:rapidShowError==1
     " some more or less common typos
     "
     " vars or funcs >32 chars are not possible in rapid. a234567890123456789012345
-    syn match rapidError /\w\{33,}/ containedin=rapidFunction,rapidNames,rapidLabel
+    syn match rapidError0 /\w\{33,}/ containedin=rapidFunction,rapidNames,rapidLabel
     "
-    syn match rapidError /\c\v^\s*\zs(esle>|endfi>|ednif>|ednwhile>|ednfor>)/
+    " a string containing a single \ which is not a char code
+    syn match rapidError1 contained containedin=rapidString /\c\v[^\\]\zs\\\ze([^\\0-9]|[0-9][^0-9])/
+    "
+  " more or less common misspellings. unnecessary. if misspelled they will not get their regular highlighting
+    " syn match rapidError3 /\c\v^\s*\zs(esle>|endfi>|ednif>|ednwhile>|ednfor>)/
     "
     " WaitUntil a==b ok
     "            ||
-    syn match rapidError /\c\v(^\s*(return|waituntil)>[^!\\]+[^!<>])@<=(\=|:)\=/
-    syn match rapidError /\c\v(^\s*if>[^!\\]+[^!<>])@<=(\=|:)\=\ze[^!]*then/
-    syn match rapidError /\c\v(^\s*while>[^!\\]+[^!<>])@<=(\=|:)\=\ze[^!]*do/
+    syn match rapidError4 /\c\v(^\s*(return|waituntil)>[^!\\]+[^!<>])@<=(\=|:)\=/
+    syn match rapidError5 /\c\v(^\s*if>[^!\\]+[^!<>])@<=(\=|:)\=\ze[^!]*then/
+    syn match rapidError6 /\c\v(^\s*while>[^!\\]+[^!<>])@<=(\=|:)\=\ze[^!]*do/
     "
     " WaitUntil a=>b ok
     "            ||
-    syn match rapidError /\c\v(^\s*(return|waituntil|if|while)>[^!]+[^!<>])@<=\=[><]/
+    syn match rapidError7 /\c\v(^\s*(return|waituntil|if|while)>[^!]+[^!<>])@<=\=[><]/
     "
     " wait for a><b ok
     "           ||
-    syn match rapidError /\c\v(^\s*(return|waituntil|if|while)[^!]+)@<=\>\s*\</
+    syn match rapidError8 /\c\v(^\s*(return|waituntil|if|while)[^!]+)@<=\>\s*\</
     "
     " if (a==5) (b==6) ok
     "         |||
-    syn match rapidError /\c\v(^\s*(return|wait\s+for|if|while)[^!]+[^!])@<=\)\s*\(/
+    syn match rapidError9 /\c\v(^\s*(return|wait\s+for|if|while)[^!]+[^!])@<=\)\s*\(/
     "
     " a == b + 1 ok
     "   ||
-    syn match rapidError /\c\v(^\s*((global\s+|task\s+|local\s+)?(var|pers|const)\s+\w+\s+)?\w+(\w|\{|,|\}|\+|\-|\*|\/|\.)*\s*)@<=\=/
+    syn match rapidError0 /\c\v(^\s*((global\s+|task\s+|local\s+)?(var|pers|const)\s+\w+\s+)?\w+(\w|\{|,|\}|\+|\-|\*|\/|\.)*\s*)@<=\=/
     "
     " this one is tricky. Make sure this does not match trigger instructions
     " a = b and c or (int1=int2)
@@ -316,7 +319,16 @@ else
     " syn match rapidError /\c\v(^\s*\$?[^=;]+\s*\=[^=;][^;]+[^;<>=])@<=\=[^=]/
     " syn match rapidError /\c\v^\s*(trigger\swhen\s)@<!(\$?[^=;]+\s*\=[^=;][^;]+[^;<>=])@<=\=[^=]/
     "
-    highlight default link rapidError Error
+    highlight default link rapidError0 Error
+    highlight default link rapidError1 Error
+    highlight default link rapidError2 Error
+    highlight default link rapidError3 Error
+    highlight default link rapidError4 Error
+    highlight default link rapidError5 Error
+    highlight default link rapidError6 Error
+    highlight default link rapidError7 Error
+    highlight default link rapidError8 Error
+    highlight default link rapidError9 Error
   endif
   " ---
 endif
