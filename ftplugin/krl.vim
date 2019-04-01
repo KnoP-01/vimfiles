@@ -1,8 +1,8 @@
 " Kuka Robot Language file type plugin for Vim
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 1.1.1
-" Last Change: 22. Feb 2018
+" Version: 2.0.0
+" Last Change: 18. Feb 2019
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -12,6 +12,8 @@
 "       - make search for enum value declaration possible. Problem: there may be
 "         more then one enum that uses this value
 "       - find bug foldmethod=Manual. 2. mal die selbe datei oeffnen o.ae.
+"       - remove or hide *.tmp files from buffer list
+"       - 
 " }}} ToDo's
 
 " Init {{{
@@ -25,18 +27,51 @@ let b:did_ftplugin = 1
 let s:keepcpo = &cpo
 set cpo&vim
 
-" compatiblity
+" if krlNoVerbose exists it's pushed to knopNoVerbose
 if exists("g:krlNoVerbose")
-  let g:knopNoVerbose=g:krlNoVerbose
+  if !exists("g:knopNoVerbose")
+    let g:knopNoVerbose=g:krlNoVerbose
+  endif
   unlet g:krlNoVerbose
 endif
+" if knopVerbose exists it overrides knopNoVerbose
+if exists("g:knopVerbose")
+  silent! unlet g:knopNoVerbose
+endif
+" if knopNoVerbose still exists it's pushed to knopVerbose
+if exists("g:knopNoVerbose")
+  let g:knopVerbose=!get(g:,'knopNoVerbose')
+  unlet g:knopNoVerbose
+endif
 if exists("g:krlRhsQuickfix")
-  let g:knopRhsQuickfix = g:krlRhsQuickfix
+  if !exists("g:knopRhsQuickfix")
+    let g:knopRhsQuickfix = g:krlRhsQuickfix
+  endif
   unlet g:krlRhsQuickfix
 endif
 if exists("g:krlLhsQuickfix")
-  let g:knopLhsQuickfix = g:krlLhsQuickfix
+  if !exists("g:knopLhsQuickfix")
+    let g:knopLhsQuickfix = g:krlLhsQuickfix
+  endif
   unlet g:krlLhsQuickfix
+endif
+if exists("g:krlNoKeyWord") 
+  if !exists("g:krlKeyWord")
+    let g:krlKeyWord = !g:krlNoKeyWord
+  endif
+  unlet g:krlNoKeyWord
+endif
+if exists("g:krlNoPath") 
+  if !exists("g:krlPath")
+    let g:krlPath = !g:krlNoPath
+  endif
+  unlet g:krlNoPath
+endif
+if exists("g:krlCloseFolds")
+  if !exists("g:krlFoldLevel")
+    g:krlFoldLevel=(g:krlCloseFolds + 1) % 3
+  endif
+  unlet g:krlCloseFolds
 endif
 
 " }}} init
@@ -46,19 +81,24 @@ if !exists("*s:KnopVerboseEcho()")
 
   " Little Helper {{{
 
-  if !exists("g:knopNoVerbose") || g:knopNoVerbose!=1
+  if get(g:,'knopVerbose',0)
     let g:knopVerboseMsgSet = 1
   endif
-  function s:KnopVerboseEcho(msg)
-    if !exists("g:knopNoVerbose") || g:knopNoVerbose!=1
+  function s:KnopVerboseEcho(msg, ...)
+    if get(g:,'knopVerbose',0)
       if exists('g:knopVerboseMsgSet')
         unlet g:knopVerboseMsgSet
-        echo "\nSwitch verbose messages off with \":let g:knopNoVerbose=1\" any time. You may put this in your .vimrc"
+        echo "\nSwitch verbose messages off with \":let g:knopVerbose=0\" any time. You may put this in your .vimrc"
         echo " "
       endif
       echo a:msg
+      " if get(a:,'1',0)
+      echo a:000
+      if exists('a:1')
+        call input("Hit enter> ")
+      endif
     endif
-  endfunction " s:knopNoVerbose()
+  endfunction " s:KnopVerboseEcho()
 
   function s:KnopDirExists(in)
     if finddir( substitute(a:in,'\\','','g') )!=''
@@ -119,10 +159,10 @@ if !exists("*s:KnopVerboseEcho()")
 
   function s:KnopQfCompatible()
     " check for qf.vim compatiblity
-    if exists('g:loaded_qf') && (!exists('g:qf_window_bottom') || g:qf_window_bottom!=0)
+    if exists('g:loaded_qf') && get(g:,'qf_window_bottom',1)
           \&& (get(g:,'knopRhsQuickfix',0)
           \||  get(g:,'knopLhsQuickfix',0))
-      call s:KnopVerboseEcho("NOTE: \nIf you use qf.vim then g:krlRhsQuickfix, g:krlLhsQuickfix, g:rapidRhsQuickfix and g:rapidLhsQuickfix will not work unless g:qf_window_bottom is 0 (Zero). \nTo use g:<foo>[RL]hsQuickfix put this in your .vimrc: \n  let g:qf_window_bottom = 0\n\n")
+      call s:KnopVerboseEcho("NOTE: \nIf you use qf.vim then g:knopRhsQuickfix and g:knopLhsQuickfix will not work unless g:qf_window_bottom is 0 (Zero). \nTo use g:knop[RL]hsQuickfix put this in your .vimrc: \n  let g:qf_window_bottom = 0\n\n",1)
       return 0
     endif
     return 1
@@ -135,6 +175,21 @@ if !exists("*s:KnopVerboseEcho()")
     if getbufvar('%', "&buftype")!="quickfix"
       let l:getback=1
       copen
+    endif
+    if get(g:,'knopShortenQFPath',1)
+      setlocal modifiable
+      silent! %substitute/\v\c^([^|]{40,})/\=pathshorten(submatch(1))/
+      0
+      if !exists("g:knopTmpFile")
+        let g:knopTmpFile=tempname()
+        augroup knopDelTmpFile
+          au!
+          au VimLeavePre * call delete(g:knopTmpFile)
+          au VimLeavePre * call delete(g:knopTmpFile . "~")
+        augroup END
+      endif
+      execute 'silent save! ' . g:knopTmpFile
+      setlocal nomodifiable
     endif
     augroup KnopOpenQf
       au!
@@ -201,6 +256,15 @@ if !exists("*s:KnopVerboseEcho()")
 
   " Krl Helper {{{
 
+  function <SID>KrlCleanBufferList()
+    if exists("g:knopTmpFile")
+      execute 'silent! bd! ' . substitute(g:knopTmpFile,'.*[\\/]\(VI\w\+\.tmp\)','\1','')
+    endif
+    if exists("g:krlTmpFile")
+      execute 'silent! bd! ' . substitute(g:krlTmpFile,'.*[\\/]\(VI\w\+\.tmp\)','\1','')
+    endif
+  endfunction " <SID>KrlCleanBufferList()
+
   function <SID>KrlIsVkrc()
     if bufname("%") =~ '\c\v(folge|up|makro(saw|sps|step|trigger)?)\d*.src'
       for l:s in range(1,8)
@@ -229,6 +293,7 @@ if !exists("*s:KnopVerboseEcho()")
     for l:loc in l:locationList
       let l:path = l:path . fnameescape(bufname(l:loc.bufnr)) . " "
     endfor
+    call s:KnopVerboseEcho("Global Data Lists: ".l:path)
     return l:path
   endfunction " s:KrlPathWithGlobalDataLists()
 
@@ -352,8 +417,30 @@ if !exists("*s:KnopVerboseEcho()")
     if (s:KnopSearchPathForPatternNTimes('\v\c^\s*\$cycflag\[\s*'.l:markerNumber.'\s*\]\s*\=',s:KnopPreparePath(&path,'*.src').' '.s:KnopPreparePath(&path,'*.sub'),'','krl') == 0)
       call setqflist(s:KnopUniqueListItems(getqflist()))
       call s:KnopOpenQf('krl')
+      call s:KnopVerboseEcho("Marker definition found.",1)
       return 0
     endif
+    call s:KnopVerboseEcho("Nothing found.",1)
+    return -1
+  endfunction
+
+  function s:KrlSearchVkrcBin(currentWord)
+    call s:KnopVerboseEcho("Search binary signal definitions...")
+    let l:binNumber = substitute(a:currentWord,'\cbin\(in\)\?','','')
+    if a:currentWord=~'binin'
+      if (s:KnopSearchPathForPatternNTimes('\v\c^\s*\$bin_in\[\s*'.l:binNumber.'\s*\]\s*\=',s:KrlPathWithGlobalDataLists(),'1','krl') == 0)
+        call s:KnopOpenQf('krl')
+        call s:KnopVerboseEcho("BIN_IN found.",1)
+        return 0
+      endif
+    else
+      if (s:KnopSearchPathForPatternNTimes('\v\c^\s*\$bin_out\[\s*'.l:binNumber.'\s*\]\s*\=',s:KrlPathWithGlobalDataLists(),'1','krl') == 0)
+        call s:KnopOpenQf('krl')
+        call s:KnopVerboseEcho("BIN_OUT found.",1)
+        return 0
+      endif
+    endif
+    call s:KnopVerboseEcho("Nothing found.",1)
     return -1
   endfunction
 
@@ -361,9 +448,10 @@ if !exists("*s:KnopVerboseEcho()")
     " a:currentWord starts with '$' so we need '\' at the end of declPrefix pattern
     call s:KnopVerboseEcho("Search global data lists...")
     if (s:KnopSearchPathForPatternNTimes(a:declPrefix.'\'.a:currentWord.">",s:KrlPathWithGlobalDataLists(),'1','krl') == 0)
-      call s:KnopVerboseEcho("Found global data list declaration. The quickfix window will open. See :he quickfix-window")
+      call s:KnopVerboseEcho("Found global data list declaration. The quickfix window will open. See :he quickfix-window",1)
       return 0
     endif
+    call s:KnopVerboseEcho("Nothing found.",1)
     return -1
   endfunction " s:KrlSearchSysvar()
 
@@ -376,7 +464,7 @@ if !exists("*s:KnopVerboseEcho()")
     let l:numDefLine = search('\v\c^\s*(global\s+)?<def(fct|dat)?>','bW')
     let l:numEndLine = search('\v\c^\s*<end(fct|dat)?>','nW')
     if search(a:declPrefix.'\zs<'.a:currentWord.">","W",l:numEndLine)
-      call s:KnopVerboseEcho("Found def(fct|dat)? local declaration. Get back where you came from with ''")
+      call s:KnopVerboseEcho("Found def(fct|dat)? local declaration. Get back where you came from with ''",1)
       return 0
       "
     else
@@ -389,7 +477,7 @@ if !exists("*s:KnopVerboseEcho()")
     let l:filename = substitute(fnameescape(bufname("%")),'\c\.src$','.dat','')
     if filereadable(glob(l:filename))
       if (s:KnopSearchPathForPatternNTimes(a:declPrefix.'<'.a:currentWord.">",l:filename,'1','krl') == 0)
-        call s:KnopVerboseEcho("Found local data list declaration. The quickfix window will open. See :he quickfix-window")
+        call s:KnopVerboseEcho("Found local data list declaration. The quickfix window will open. See :he quickfix-window",1)
         return 0
         "
       endif
@@ -400,11 +488,12 @@ if !exists("*s:KnopVerboseEcho()")
     " third search global data lists
     call s:KnopVerboseEcho("Search global data lists...")
     if (s:KnopSearchPathForPatternNTimes(a:declPrefix.'<'.a:currentWord.">",s:KrlPathWithGlobalDataLists(),'1','krl') == 0)
-      call s:KnopVerboseEcho("Found global data list declaration. The quickfix window will open. See :he quickfix-window")
+      call s:KnopVerboseEcho("Found global data list declaration. The quickfix window will open. See :he quickfix-window",1)
       return 0
       "
     endif
     "
+    call s:KnopVerboseEcho("Nothing found.",1)
     return -1
   endfunction " s:KrlSearchVar()
 
@@ -416,7 +505,7 @@ if !exists("*s:KnopVerboseEcho()")
     let l:numCol = col(".")
     0
     if search('\c\v^\s*(global\s+)?def(fct\s+\w+(\[[0-9,]*\])?)?\s+\zs'.a:currentWord.'>','cw',"$")
-      call s:KnopVerboseEcho("Found def(fct)? local declaration. Get back where you came from with ''")
+      call s:KnopVerboseEcho("Found def(fct)? local declaration. Get back where you came from with ''",1)
       return 0
       "
     else
@@ -434,7 +523,7 @@ if !exists("*s:KnopVerboseEcho()")
       let l:path = substitute(l:path, '\.[\\/]'.a:currentWord.'.sub ', ' ','g')
     endif
     if (s:KnopSearchPathForPatternNTimes('\c\v^\s*(global\s+)?def(fct\s+\w+(\[[0-9,]*\])?)?\s+'.a:currentWord.">",l:path,'1','krl') == 0)
-      call s:KnopVerboseEcho("Found src file. The quickfix window will open. See :he quickfix-window")
+      call s:KnopVerboseEcho("Found src file. The quickfix window will open. See :he quickfix-window",1)
       return 0
       "
     endif
@@ -442,11 +531,12 @@ if !exists("*s:KnopVerboseEcho()")
     " third search global def(fct)?
     call s:KnopVerboseEcho("Search global def(fct)? definitions in &path...")
     if (s:KnopSearchPathForPatternNTimes('\c\v^\s*global\s+def(fct\s+\w+(\[[0-9,]*\])?)?\s+'.a:currentWord.">",s:KnopPreparePath(&path,'*.src').s:KnopPreparePath(&path,'*.sub'),'1','krl') == 0)
-      call s:KnopVerboseEcho("Found global def(fct)? declaration. The quickfix window will open. See :he quickfix-window")
+      call s:KnopVerboseEcho("Found global def(fct)? declaration. The quickfix window will open. See :he quickfix-window",1)
       return 0
       "
     endif
     "
+    call s:KnopVerboseEcho("Nothing found.",1)
     return -1
   endfunction " s:KrlSearchProc()
 
@@ -478,7 +568,7 @@ if !exists("*s:KnopVerboseEcho()")
         if l:currentWord =~ '^\v(sys)?func'
           let l:type = l:type . "FCT"
         endif
-        let l:currentWord = substitute(l:currentWord,'\v^(sys)?(proc|func)','','')
+        let l:currentWord = substitute(l:currentWord,'\v^%(sys)?%(proc|func)','','')
         call s:KnopVerboseEcho([l:currentWord,"appear to be a ".l:type])
         return s:KrlSearchProc(l:currentWord)
         "
@@ -490,41 +580,44 @@ if !exists("*s:KnopVerboseEcho()")
       elseif l:currentWord =~ '^enumval.*'
         " TODO mach das moeglich
         let l:currentWord = substitute(l:currentWord,'^enumval','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be an ENUM VALUE. The search for declarations of enums by their values is not supported (yet?)."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be an ENUM VALUE. The search for declarations of enums by their values is not supported (yet?)."],1)
       elseif l:currentWord =~ '^header.*'
         let l:currentWord = substitute(l:currentWord,'^header','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a HEADER. No search performed."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a HEADER. No search performed."],1)
       elseif l:currentWord =~ '^num.*'
         let l:currentWord = substitute(l:currentWord,'^num','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a NUMBER. No search performed."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a NUMBER. No search performed."],1)
       elseif l:currentWord =~ '^bool.*'
         let l:currentWord = substitute(l:currentWord,'^bool','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a BOOLEAN VALUE. No search performed."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a BOOLEAN VALUE. No search performed."],1)
       elseif l:currentWord =~ '^string.*'
         let l:currentWord = substitute(l:currentWord,'^string','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a STRING. No search performed."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a STRING. No search performed."],1)
       elseif l:currentWord =~ '^comment.*'
         let l:currentWord = substitute(l:currentWord,'^comment','','')
         if <SID>KrlIsVkrc() 
           if (l:currentWord=~'\cup\d\+' || l:currentWord=~'\cspsmakro\d\+' || l:currentWord=~'\cfolge\d\+')
-            let l:currentWord = substitute(l:currentWord,'\c^spsmakro','makro','')
             call s:KnopVerboseEcho([l:currentWord,"appear to be a VKRC CALL."])
+            let l:currentWord = substitute(l:currentWord,'\c^spsmakro','makro','')
             return s:KrlSearchProc(l:currentWord)
           elseif l:currentWord =~ '\c\<m\d\+\>'
             call s:KnopVerboseEcho([l:currentWord,"appear to be a VKRC MARKER."])
             return s:KrlSearchVkrcMarker(l:currentWord)
+          elseif l:currentWord =~ '\c\<bin\(in\)\?\d\+\>'
+            call s:KnopVerboseEcho([l:currentWord,"appear to be a VKRC binary signal."])
+            return s:KrlSearchVkrcBin(l:currentWord)
           endif
         endif
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a COMMENT. No search performed."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a COMMENT. No search performed."],1)
       else
         let l:currentWord = substitute(l:currentWord,'^none','','')
-        call s:KnopVerboseEcho([l:currentWord,"Could not determine typ of current word. No search performed."])
+        call s:KnopVerboseEcho([l:currentWord,"Could not determine typ of current word. No search performed."],1)
       endif
       return -1
       "
     endif
     "
-    call s:KnopVerboseEcho("Nothing found at or after current cursor pos, which could have a declaration. No search performed.")
+    call s:KnopVerboseEcho("Unable to determine what to search for at current cursor position. No search performed.",1)
     return -1
     "
   endfunction " <SID>KrlGoDefinition()
@@ -581,11 +674,11 @@ if !exists("*s:KnopVerboseEcho()")
     endif
     if fnameescape(bufname("%"))!=l:sFilename
       if filereadable(glob(l:sFilename))
-        call s:KnopVerboseEcho("\nFile does already exists! Use\n :edit ".l:sFilename)
+        call s:KnopVerboseEcho("\nFile does already exists! Use\n :edit ".l:sFilename,1)
         return ''
         "
       elseif &mod && !&hid
-        call s:KnopVerboseEcho("\nWrite current buffer first!")
+        call s:KnopVerboseEcho("\nWrite current buffer first!",1)
         return ''
         "
       endif
@@ -782,7 +875,7 @@ if !exists("*s:KnopVerboseEcho()")
     endif
     call s:KrlPositionForEdit()
     unlet g:krlPositionSet
-    call s:KnopVerboseEcho("KrlPositionForEdit finished")
+    call s:KnopVerboseEcho("KrlPositionForEdit finished",1)
   endfunction " s:KrlPositionForEditWrapper()
 
   function s:KrlPositionForRead()
@@ -795,7 +888,8 @@ if !exists("*s:KnopVerboseEcho()")
 
   function s:KrlReadBody(sBodyFile,sType,sName,sGlobal,sDataType,sReturnVar)
     let l:sBodyFile = glob(fnameescape(g:krlPathToBodyFiles)).a:sBodyFile
-    if !filereadable(glob(l:sBodyFile))
+    " if !filereadable(glob(l:sBodyFile))
+    if !filereadable(l:sBodyFile)
       call s:KnopVerboseEcho([l:sBodyFile,": Body file not readable."])
       return
     endif
@@ -809,7 +903,7 @@ if !exists("*s:KnopVerboseEcho()")
     " substitute marks in body
     call s:KnopSubStartToEnd('<name>',a:sName,l:start,l:end)
     call s:KnopSubStartToEnd('<type>',a:sType,l:start,l:end)
-    call s:KnopSubStartToEnd('<\(global\|public\)>',a:sGlobal,l:start,l:end)
+    call s:KnopSubStartToEnd('<\%(global\|public\)>',a:sGlobal,l:start,l:end)
     " set another mark after the def(fct|dat)? line is present
     let l:defstart = search('\v\c^\s*(global\s+)?def(fct|dat)?>','cnW')
     call s:KnopSubStartToEnd('<datatype>',a:sDataType,l:start,l:defstart)
@@ -923,15 +1017,15 @@ if !exists("*s:KnopVerboseEcho()")
       if l:sName == '' | return | endif
       let l:sGlobal = substitute(l:sGlobal,'global ',' public','')
       if exists("g:krlPathToBodyFiles") && filereadable(glob(fnameescape(g:krlPathToBodyFiles)).'defdat.dat')
-        call s:KnopVerboseEcho("\nbody files will be used")
-        call s:KnopVerboseEcho( glob(fnameescape(g:krlPathToBodyFiles)).'defdat.dat' )
+        call s:KnopVerboseEcho("\nBody file will be used")
+        call s:KnopVerboseEcho(glob(fnameescape(g:krlPathToBodyFiles)).'defdat.dat',1)
         call s:KrlReadBody('defdat.dat',l:sType,l:sName,l:sGlobal,'','')
       else
         if exists("g:krlPathToBodyFiles")
           call s:KnopVerboseEcho(glob(fnameescape(g:krlPathToBodyFiles)).'defdat.dat')
           call s:KnopVerboseEcho(" is not readable!")
         endif
-        call s:KnopVerboseEcho("\ndefault body will be used")
+        call s:KnopVerboseEcho("\nDefault body will be used",1)
         call s:KrlDefaultDefdatBody(l:sName,l:sGlobal)
       endif
       "
@@ -940,15 +1034,15 @@ if !exists("*s:KnopVerboseEcho()")
       let l:sName = s:KrlGetNameAndOpenFile('\c\v(src|sub)')
       if l:sName == '' | return | endif
       if exists("g:krlPathToBodyFiles") && filereadable(glob(fnameescape(g:krlPathToBodyFiles)).'def.src')
-        call s:KnopVerboseEcho("\nbody files will be used")
-        call s:KnopVerboseEcho( glob(fnameescape(g:krlPathToBodyFiles)).'def.src' )
+        call s:KnopVerboseEcho("\nBody file will be used")
+        call s:KnopVerboseEcho(glob(fnameescape(g:krlPathToBodyFiles)).'def.src',1)
         call s:KrlReadBody('def.src',l:sType,l:sName,l:sGlobal,'','')
       else
         if exists("g:krlPathToBodyFiles")
           call s:KnopVerboseEcho(glob(fnameescape(g:krlPathToBodyFiles)).'def.src')
           call s:KnopVerboseEcho(" is not readable!")
         endif
-        call s:KnopVerboseEcho("\ndefault body will be used")
+        call s:KnopVerboseEcho("\nDefault body will be used",1)
         call s:KrlDefaultDefBody(l:sName,l:sGlobal)
       endif
       "
@@ -960,15 +1054,15 @@ if !exists("*s:KnopVerboseEcho()")
       let l:sName = s:KrlGetNameAndOpenFile('\c\v(src|sub)')
       if l:sName == '' | return | endif
       if exists("g:krlPathToBodyFiles") && filereadable(glob(fnameescape(g:krlPathToBodyFiles)).'deffct.src')
-        call s:KnopVerboseEcho("\nbody files will be used")
-        call s:KnopVerboseEcho( glob(fnameescape(g:krlPathToBodyFiles)).'deffct.src' )
+        call s:KnopVerboseEcho("\nBody file will be used")
+        call s:KnopVerboseEcho(glob(fnameescape(g:krlPathToBodyFiles)).'deffct.src',1)
         call s:KrlReadBody('deffct.src',l:sType,l:sName,l:sGlobal,l:sDataType,l:sReturnVar)
       else
         if exists("g:krlPathToBodyFiles")
           call s:KnopVerboseEcho(glob(fnameescape(g:krlPathToBodyFiles)).'deffct.src')
           call s:KnopVerboseEcho(" is not readable!")
         endif
-        call s:KnopVerboseEcho("\ndefault body will be used")
+        call s:KnopVerboseEcho("\nDefault body will be used",1)
         call s:KrlDefaultDeffctBody(l:sName,l:sGlobal,l:sDataType,l:sReturnVar)
       endif
       "
@@ -985,7 +1079,7 @@ if !exists("*s:KnopVerboseEcho()")
 
   " List Def/Usage {{{
 
-  function <SID>KrlListDef()
+  function <SID>KrlListDefinition()
     " list defs in qf
     if s:KnopSearchPathForPatternNTimes('\v\c^\s*(global\s+)?def(fct)?>','%','','krl')==0
       if getqflist()==[] | return | endif
@@ -996,7 +1090,7 @@ if !exists("*s:KnopVerboseEcho()")
       endif
       if getbufvar('%', "&buftype")!="quickfix" | return | endif
       setlocal modifiable
-      %substitute/\v\c^.*\|\s*((global\s+)?def(fct)?>)/\1/
+      silent %substitute/\v\c^.*\|\s*(%(global\s+)?def%(fct)?>)/\1/
       0
       if !exists("g:krlTmpFile")
         let g:krlTmpFile=tempname()
@@ -1013,7 +1107,7 @@ if !exists("*s:KnopVerboseEcho()")
         wincmd p
       endif
     endif
-  endfunction " <SID>KrlListDef()
+  endfunction " <SID>KrlListDefinition()
 
   function <SID>KrlListUsage()
     " dont start from within qf or loc window
@@ -1042,7 +1136,7 @@ if !exists("*s:KnopVerboseEcho()")
         if l:currentWord =~ '^\v(sys)?func'
           let l:type = l:type . "FCT"
         endif
-        let l:currentWord = substitute(l:currentWord,'\v^(sys)?(proc|func)','','')
+        let l:currentWord = substitute(l:currentWord,'\v^%(sys)?%(proc|func)','','')
         call s:KnopVerboseEcho([l:currentWord,"appear to be a ".l:type])
       elseif l:currentWord =~ '^enumval.*'
         let l:currentWord = substitute(l:currentWord,'^enumval','','')
@@ -1064,7 +1158,7 @@ if !exists("*s:KnopVerboseEcho()")
         call s:KnopVerboseEcho([l:currentWord,"appear to be a BOOL VALUE."])
       else
         let l:currentWord = substitute(l:currentWord,'^none','','')
-        call s:KnopVerboseEcho([l:currentWord,"Could not determine typ of current word. No search performed!"])
+        call s:KnopVerboseEcho([l:currentWord,"Could not determine typ of current word. No search performed!"],1)
         return
         "
       endif
@@ -1099,11 +1193,14 @@ if !exists("*s:KnopVerboseEcho()")
           endif
         endfor
         call setqflist(l:qfresult)
+        call s:KnopVerboseEcho("Opening quickfix with results.",1)
         call s:KnopOpenQf('krl')
+      else
+        call s:KnopVerboseEcho("Nothing found.",1)
       endif
       let &isk = l:keepisk
     else
-      call s:KnopVerboseEcho("Nothing found at or after current cursor pos, which could have a declaration. No search performed.")
+      call s:KnopVerboseEcho("Nothing found at or after current cursor pos, which could have a declaration. No search performed.",1)
     endif
   endfunction " <SID>KrlListUsage()
 
@@ -1111,7 +1208,7 @@ if !exists("*s:KnopVerboseEcho()")
 
   " Function Text Object {{{
 
-  if get(g:,'krlMoveAroundKeyMap',0) " depends on move around key mappings
+  if get(g:,'krlMoveAroundKeyMap',1) " depends on move around key mappings
     function s:KrlFunctionTextObject(inner,withcomment)
       if a:inner==1
         let l:n = 1
@@ -1144,7 +1241,6 @@ if !exists("*s:KnopVerboseEcho()")
 
   if exists("loaded_matchit") " depends on matchit
     function s:KrlFoldTextObject(inner)
-      " TODO fixme!
       let l:col = col('.')
       let l:line = line('.')
       let l:foundFold = 0
@@ -1199,24 +1295,29 @@ endif " !exists("*s:KnopVerboseEcho()")
 setlocal commentstring=;%s
 setlocal comments=:;
 setlocal suffixes+=.dat
-setlocal suffixesadd+=.src,.sub,.dat
+setlocal suffixes+=.tmp
+if has("win32")
+  setlocal suffixesadd+=.src,.sub,.dat
+else
+  setlocal suffixesadd+=.src,.Src,.SRC,.sub,.Sub,.SUB,.dat,.Dat,.DAT
+endif
 let b:undo_ftplugin = "setlocal com< cms< su< sua<"
 
 " make enums and sysvars a word including # and $
-if !exists("g:krlNoKeyWord") || g:krlNoKeyWord!=1
+if get(g:,'krlKeyWord',1)
   setlocal iskeyword+=#,$,&
   let b:undo_ftplugin = b:undo_ftplugin." isk<"
 endif
 
 " auto insert comment char when i_<CR>, o or O on a comment line
-if get(g:,'krlAutoComment',0)
+if get(g:,'krlAutoComment',1)
   setlocal formatoptions+=r
   setlocal formatoptions+=o
   let b:undo_ftplugin = b:undo_ftplugin." fo<"
 endif
 
 " format comments
-if get(g:,'krlFormatComments',0)
+if get(g:,'krlFormatComments',1)
   if &textwidth ==# 0
     " 52 Chars do match on the teach pendant
     setlocal textwidth=52
@@ -1231,31 +1332,72 @@ if get(g:,'krlFormatComments',0)
 endif " format comments
 
 " path for gf, :find etc
-if (!exists("g:krlNoPath") || g:krlNoPath!=1) 
+if get(g:,'krlPath',1)
 
   let s:pathcurrfile = s:KnopFnameescape4Path(substitute(expand("%:p:h"), '\\', '/', 'g'))
-  if s:pathcurrfile =~ '\v\c\/krc(\/[^/]+){,4}$'
-    let s:krlpath=substitute(s:pathcurrfile, '\c\v(\/krc)\/((<krc>)@!.)*$', '\1/**,' ,'g')
-  elseif s:pathcurrfile =~ '\v\c\/r1(\/[^/]+){,3}$'
-        \&& (     s:KnopDirExists(substitute(s:pathcurrfile,'\c\v(\/r1)\/((<r1>)@!.)*$','/R1/TP',''))
-        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v(\/r1)\/((<r1>)@!.)*$','/R1/System',''))
-        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v(\/r1)\/((<r1>)@!.)*$','/R1/Mada',''))
-        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v(\/r1)\/((<r1>)@!.)*$','/R1/Program','')))
-    let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/r1)\/((<r1>)@!.)*$', '\1' ,'g')
-    let s:krlpath=s:pathcurrfile. '/**,'
-    let s:pathcurrfile = substitute(s:pathcurrfile, '\cr1$', 'STEU' ,'')
-    if s:KnopDirExists(s:pathcurrfile)
-      let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
+  if s:pathcurrfile =~ '\v\c\/krc%(\/[^/]+){,4}$'
+    let s:krlpath=substitute(s:pathcurrfile, '\c\v(\/krc)\/%(%(<krc>)@!.)*$', '\1/**,' ,'g')
+  elseif s:pathcurrfile =~ '\v\c\/r1%(\/[^/]+){,3}$'
+        \&& (     s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/TP',''))
+        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/System',''))
+        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/Mada',''))
+        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/Program',''))
+        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,   '\c\v(\/MaDa)%(\/r1)\/%(%(<r1>)@!.)*$','\1',''))
+        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v(\/PowerOn)%(\/r1)\/%(%(<r1>)@!.)*$','\1',''))
+        \    )
+    if s:pathcurrfile =~ '\c\v\/MaDa\/R1$'
+      " krc1 MaDa/R1/
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/MaDa)\/R1$', '\1' ,'g')
+      let s:krlpath=s:pathcurrfile. '/**,'
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\cMaDa$', 'PowerOn' ,'')
+      if s:KnopDirExists(s:pathcurrfile)
+        let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
+      endif
+    elseif s:pathcurrfile =~ '\c\v\/PowerOn\/R1$'
+      " krc1 PowerOn/R1/
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/PowerOn)\/R1$', '\1' ,'g')
+      let s:krlpath=s:pathcurrfile. '/**,'
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\cPowerOn$', 'MaDa' ,'')
+      if s:KnopDirExists(s:pathcurrfile)
+        let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
+      endif
+    else
+      " > krc1
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/r1)\/%(%(<r1>)@!.)*$', '\1' ,'g')
+      let s:krlpath=s:pathcurrfile. '/**,'
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\cr1$', 'STEU' ,'')
+      if s:KnopDirExists(s:pathcurrfile)
+        let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
+      endif
     endif
-  elseif s:pathcurrfile =~ '\v\c\/steu(\/[^/]+){,2}$'
-    let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/steu)\/((<steu>)@!.)*$', '\1' ,'g')
-    let s:krlpath=s:pathcurrfile. '/**,'
-    let s:pathcurrfile = substitute(s:pathcurrfile, '\csteu$', 'R1' ,'')
-    if s:KnopDirExists(s:pathcurrfile)
-      let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
+  elseif s:pathcurrfile =~ '\v\c\/steu%(\/[^/]+){,1}$'
+    if s:pathcurrfile =~ '\c\v\/MaDa\/Steu$'
+      " krc1 MaDa/Steu/
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/MaDa)\/Steu$', '\1' ,'g')
+      let s:krlpath=s:pathcurrfile. '/**,'
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\cMaDa$', 'PowerOn' ,'')
+      if s:KnopDirExists(s:pathcurrfile)
+        let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
+      endif
+    elseif s:pathcurrfile =~ '\c\v\/PowerOn\/Steu$'
+      " krc1 PowerOn/Steu/
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/PowerOn)\/Steu$', '\1' ,'g')
+      let s:krlpath=s:pathcurrfile. '/**,'
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\cPowerOn$', 'MaDa' ,'')
+      if s:KnopDirExists(s:pathcurrfile)
+        let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
+      endif
+    else
+      " > krc1
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/steu)\/%(%(<steu>)@!.)*$', '\1' ,'g')
+      let s:krlpath=s:pathcurrfile. '/**,'
+      let s:pathcurrfile = substitute(s:pathcurrfile, '\csteu$', 'R1' ,'')
+      if s:KnopDirExists(s:pathcurrfile)
+        let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
+      endif
     endif
-  elseif s:pathcurrfile =~ '\v\c\/program(\/[^/]+){,2}$'
-    let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/program)\/((<program>)@!.)*$', '\1' ,'g')
+  elseif s:pathcurrfile =~ '\v\c\/program%(\/[^/]+){,2}$'
+    let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/program)\/%(%(<program>)@!.)*$', '\1' ,'g')
     let s:krlpath=s:pathcurrfile. '/**,'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\cprogram$', 'System' ,'')
     if s:KnopDirExists(s:pathcurrfile)
@@ -1269,8 +1411,8 @@ if (!exists("g:krlNoPath") || g:krlNoPath!=1)
     if s:KnopDirExists(s:pathcurrfile)
       let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
     endif
-  elseif s:pathcurrfile =~ '\v\c\/system(\/[^/]+){,2}$'
-    let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/system)\/((<system>)@!.)*$', '\1' ,'g')
+  elseif s:pathcurrfile =~ '\v\c\/system%(\/[^/]+){,2}$'
+    let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/system)\/%(%(<system>)@!.)*$', '\1' ,'g')
     let s:krlpath=s:pathcurrfile. '/**,'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\csystem$', 'Program' ,'')
     if s:KnopDirExists(s:pathcurrfile)
@@ -1284,8 +1426,8 @@ if (!exists("g:krlNoPath") || g:krlNoPath!=1)
     if s:KnopDirExists(s:pathcurrfile)
       let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
     endif
-  elseif s:pathcurrfile =~ '\v\c\/mada(\/[^/]+){,2}$'
-    let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/mada)\/((<mada>)@!.)*$', '\1' ,'g')
+  elseif s:pathcurrfile =~ '\v\c\/mada%(\/[^/]+){,2}$'
+    let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/mada)\/%(%(<mada>)@!.)*$', '\1' ,'g')
     let s:krlpath=s:pathcurrfile. '/**,'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\cmada$', 'Program' ,'')
     if s:KnopDirExists(s:pathcurrfile)
@@ -1299,8 +1441,8 @@ if (!exists("g:krlNoPath") || g:krlNoPath!=1)
     if s:KnopDirExists(s:pathcurrfile)
       let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
     endif
-  elseif s:pathcurrfile =~ '\v\c\/tp(\/[^/]+){,2}$'
-    let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/tp)\/((<tp>)@!.)*$', '\1' ,'g')
+  elseif s:pathcurrfile =~ '\v\c\/tp%(\/[^/]+){,2}$'
+    let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/tp)\/%(%(<tp>)@!.)*$', '\1' ,'g')
     let s:krlpath=s:pathcurrfile. '/**,'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\ctp$', 'Program' ,'')
     if s:KnopDirExists(s:pathcurrfile)
@@ -1327,27 +1469,27 @@ if (!exists("g:krlNoPath") || g:krlNoPath!=1)
 endif
 
 " folding
-if has("folding") && (!exists("g:krlCloseFolds") || g:krlCloseFolds!=2)
+if has("folding") && get(g:,'krlFoldLevel',1)
 
   if !exists("*KrlFoldText")
 
     function KrlFoldText()
-      return substitute(getline(v:foldstart), '\v\c(;\s*<FOLD>\s+|;[^;]*$)', '', 'g')
+      return substitute(getline(v:foldstart), '\v\c%(;\s*<FOLD>\s+|;[^;]*$)', '', 'g')
     endfunction
 
     function <SID>KrlFoldLevel(lvl)
-      " g:krlCloseFolds may be used as input for a:lvl
+      " g:krlFoldLevel may be used as input for a:lvl
 
       setlocal foldtext=KrlFoldText()
 
-      if get(g:,'krlFoldMethodSyntax',0)
+      if get(g:,'krlFoldMethodSyntax',1)
         syn sync fromstart
         setlocal foldmethod=syntax
       else
         setlocal foldmethod=marker
       endif
 
-      if a:lvl == 1
+      if a:lvl == 2
         " close all folds
 
         if &foldmethod=~'marker'
@@ -1360,7 +1502,7 @@ if has("folding") && (!exists("g:krlCloseFolds") || g:krlCloseFolds!=2)
         endif " &foldmethod
         return
 
-      elseif a:lvl == 0
+      elseif a:lvl == 1
         " close move folds
 
         if &foldmethod=~'marker'
@@ -1406,11 +1548,11 @@ if has("folding") && (!exists("g:krlCloseFolds") || g:krlCloseFolds!=2)
 
   endif " !exists("*KrlFoldText")
 
-  call <SID>KrlFoldLevel(get(g:,'krlCloseFolds',0))
+  call <SID>KrlFoldLevel(get(g:,'krlFoldLevel',1))
 
   let b:undo_ftplugin = b:undo_ftplugin." fdm< fdt< fmr< fdl<"
 
-endif " has("folding") || g:krlCloseFolds!=2
+endif " has("folding") && get(g:,'krlFoldLevel',1)
 
 " }}} Vim Settings
 
@@ -1427,39 +1569,73 @@ if exists("loaded_matchit")
         \.'^\s*;\s*\<fold\>:^\s*;\s*\<endfold\>'
   let b:match_ignorecase = 1 " KRL does ignore case
   " matchit makes fold text objects easy
-  vnoremap <silent><buffer> ao :<C-U>call <SID>KrlFoldTextObject(0)<CR>
-  vnoremap <silent><buffer> io :<C-U>call <SID>KrlFoldTextObject(1)<CR>
-  onoremap <silent><buffer> ao :<C-U>call <SID>KrlFoldTextObject(0)<CR>
-  onoremap <silent><buffer> io :<C-U>call <SID>KrlFoldTextObject(1)<CR>
+  if get(g:,'krlFoldTextObject',0)
+        \|| mapcheck("ao","x")=="" && !hasmapto('<plug>KrlTxtObjAroundFold','x')
+    xmap <silent><buffer> ao <plug>KrlTxtObjAroundFold
+  endif
+  if get(g:,'krlFoldTextObject',0)
+        \|| mapcheck("io","x")=="" && !hasmapto('<plug>KrlTxtObjInnerFold','x')
+    xmap <silent><buffer> io <plug>KrlTxtObjInnerFold
+  endif
+  if get(g:,'krlFoldTextObject',0)
+        \|| mapcheck("ao","o")=="" && !hasmapto('<plug>KrlTxtObjAroundFold','o')
+    omap <silent><buffer> ao <plug>KrlTxtObjAroundFold
+  endif
+  if get(g:,'krlFoldTextObject',0)
+        \|| mapcheck("io","o")=="" && !hasmapto('<plug>KrlTxtObjInnerFold','o')
+    omap <silent><buffer> io <plug>KrlTxtObjInnerFold
+  endif
 endif
 
 " }}} Match It and Fold Text Object mapping
 
 " Move Around and Function Text Object key mappings {{{
 
-if exists("g:krlMoveAroundKeyMap") && g:krlMoveAroundKeyMap>=1
+if get(g:,'krlMoveAroundKeyMap',1)
   " Move around functions
   nnoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 'bs')<Bar>:unlet b:knopCount<CR>
-  vnoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 'bsW')<Bar>:unlet b:knopCount<CR>
+  onoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>.*\n\zs', 'bsW')<Bar>:unlet b:knopCount<CR>
+  xnoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 'bsW')<Bar>:unlet b:knopCount<CR>
   nnoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 's')<Bar>:unlet b:knopCount<CR>
-  vnoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 'sW')<Bar>:unlet b:knopCount<CR>
-  nnoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 'bse')<Bar>:unlet b:knopCount<CR>
-  vnoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 'bseW')<Bar>:unlet b:knopCount<CR>
-  nnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 'se')<Bar>:unlet b:knopCount<CR>
-  vnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 'seW')<Bar>:unlet b:knopCount<CR>
+  onoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 'sW')<Bar>:unlet b:knopCount<CR>
+  xnoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>.*\n', 'seWz')<Bar>:unlet b:knopCount<CR>
+  nnoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 'bs')<Bar>:unlet b:knopCount<CR>
+  onoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>\n^(.\|\n)', 'bseW')<Bar>:unlet b:knopCount<CR>
+  xnoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 'bsW')<Bar>:unlet b:knopCount<CR>
+  nnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 's')<Bar>:unlet b:knopCount<CR>
+  onoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v\ze^\s*end(fct\|dat)?>', 'sW')<Bar>:unlet b:knopCount<CR>
+  xnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>(\n)?', 'seWz')<Bar>:unlet b:knopCount<CR>
   " Move around comments
-  nnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '^\(\s*;.*\n\)\@<!\(\s*;\)', 'bs')<Bar>:unlet b:knopCount<cr>
-  vnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '^\(\s*;.*\n\)\@<!\(\s*;\)', 'bsW')<Bar>:unlet b:knopCount<cr>
-  nnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\ze\n\s*([^;\t ]\|$)', 'se')<Bar>:unlet b:knopCount<cr>
-  vnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\ze\n\s*([^;\t ]\|$)', 'seW')<Bar>:unlet b:knopCount<cr>
-  if g:krlMoveAroundKeyMap==2
-    " inner and around function text objects
-    vnoremap <silent><buffer> aF :<C-U>call <SID>KrlFunctionTextObject(0,1)<CR>
-    vnoremap <silent><buffer> af :<C-U>call <SID>KrlFunctionTextObject(0,0)<CR>
-    vnoremap <silent><buffer> if :<C-U>call <SID>KrlFunctionTextObject(1,0)<CR>
-    onoremap <silent><buffer> aF :<C-U>call <SID>KrlFunctionTextObject(0,1)<CR>
-    onoremap <silent><buffer> af :<C-U>call <SID>KrlFunctionTextObject(0,0)<CR>
-    onoremap <silent><buffer> if :<C-U>call <SID>KrlFunctionTextObject(1,0)<CR>
+  nnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^(\s*;.*\n)@<!(\s*;)', 'bs')<Bar>:unlet b:knopCount<cr>
+  onoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^(\s*;.*\n)@<!(\s*;)', 'bsW')<Bar>:unlet b:knopCount<cr>
+  xnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v^(\s*;.*\n)@<!(\s*;)', 'bsW')<Bar>:unlet b:knopCount<cr>
+  nnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n\s*([^;\t ]\|$)', 's')<Bar>:unlet b:knopCount<cr>
+  onoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n(\s*[^;\t ]\|$)', 'seW')<Bar>normal! ==<Bar>:unlet b:knopCount<cr>
+  xnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n\ze\s*([^;\t ]\|$)', 'seW')<Bar>:unlet b:knopCount<cr>
+  " inner and around function text objects
+  if get(g:,'krlFunctionTextObject',0)
+        \|| mapcheck("aF","x")=="" && !hasmapto('<plug>KrlTxtObjAroundFuncInclCo','x')
+    xmap <silent><buffer> aF <plug>KrlTxtObjAroundFuncInclCo
+  endif
+  if get(g:,'krlFunctionTextObject',0)
+        \|| mapcheck("af","x")=="" && !hasmapto('<plug>KrlTxtObjAroundFuncExclCo','x')
+    xmap <silent><buffer> af <plug>KrlTxtObjAroundFuncExclCo
+  endif
+  if get(g:,'krlFunctionTextObject',0)
+        \|| mapcheck("if","x")=="" && !hasmapto('<plug>KrlTxtObjInnerFunc','x')
+    xmap <silent><buffer> if <plug>KrlTxtObjInnerFunc
+  endif
+  if get(g:,'krlFunctionTextObject',0)
+        \|| mapcheck("aF","o")=="" && !hasmapto('<plug>KrlTxtObjAroundFuncInclCo','o')
+    omap <silent><buffer> aF <plug>KrlTxtObjAroundFuncInclCo
+  endif
+  if get(g:,'krlFunctionTextObject',0)
+        \|| mapcheck("af","o")=="" && !hasmapto('<plug>KrlTxtObjAroundFuncExclCo','o')
+    omap <silent><buffer> af <plug>KrlTxtObjAroundFuncExclCo
+  endif
+  if get(g:,'krlFunctionTextObject',0)
+        \|| mapcheck("if","o")=="" && !hasmapto('<plug>KrlTxtObjInnerFunc','o')
+    omap <silent><buffer> if <plug>KrlTxtObjInnerFunc
   endif
 endif
 
@@ -1467,20 +1643,27 @@ endif
 
 " Other configurable key mappings {{{
 
-if get(g:,'krlGoDefinitionKeyMap',0)
-  " gd mimic
-  nnoremap <silent><buffer> gd :call <SID>KrlGoDefinition()<CR>
+" if the mapping does not exist and there is no plug-mapping just map it,
+" otherwise look for the config variable
+
+if get(g:,'krlGoDefinitionKeyMap',0) 
+      \|| mapcheck("gd","n")=="" && !hasmapto('<plug>KrlGoDef','n')
+  " Go Definition
+  nmap <silent><buffer> gd <plug>KrlGoDef
 endif
 if get(g:,'krlListDefKeyMap',0)
+      \|| mapcheck("<leader>f","n")=="" && !hasmapto('<plug>KrlListDef','n')
   " list all DEFs of current file
-  nnoremap <silent><buffer> <leader>f :call <SID>KrlListDef()<CR>
+  nmap <silent><buffer> <leader>f <plug>KrlListDef
 endif
 if get(g:,'krlListUsageKeyMap',0)
+      \|| mapcheck("<leader>u","n")=="" && !hasmapto('<plug>KrlListUse','n')
   " list all uses of word under cursor
-  nnoremap <silent><buffer> <leader>u :call <SID>KrlListUsage()<CR>
+  nmap <silent><buffer> <leader>u <plug>KrlListUse
 endif
 
 if get(g:,'krlAutoFormKeyMap',0)
+      \|| mapcheck("<leader>n","n")=="" && !hasmapto('<plug>KrlAutoForm','n')
   nnoremap <silent><buffer> <leader>n     :call <SID>KrlAutoForm("   ")<cr>
   nnoremap <silent><buffer> <leader>nn    :call <SID>KrlAutoForm("   ")<cr>
   "
@@ -1536,19 +1719,22 @@ if get(g:,'krlAutoFormKeyMap',0)
   nnoremap <silent><buffer> <leader>ngf6  :call <SID>KrlAutoForm("gf6")<cr>
 endif " g:krlAutoFormKeyMap
 
-if has("folding") && (!exists("g:krlCloseFolds") || g:krlCloseFolds!=2)
-  if get(g:,'krlFoldKeyMaps',0) 
+if has("folding") && get(g:,'krlFoldLevel',1)
+  if get(g:,'krlFoldingKeyMap',0) 
+        \|| (mapcheck("<F2>","n")=="" && mapcheck("<F3>","n")=="" && mapcheck("<F4>","n")==""
+        \&& !hasmapto('<plug>KrlCloseAllFolds','n') && !hasmapto('<plug>KrlCloseLessFolds','n') && !hasmapto('<plug>KrlCloseNoFolds','n'))
+        \&& !exists("g:krlFoldKeyMap")
     " close all folds
-    nnoremap <silent><buffer> <F4> :call <SID>KrlFoldLevel(1)<CR>
+    nmap <silent><buffer> <F4> <plug>KrlCloseAllFolds
     " close move folds
-    nnoremap <silent><buffer> <F3> :call <SID>KrlFoldLevel(0)<CR>
+    nmap <silent><buffer> <F3> <plug>KrlCloseLessFolds
     " open all folds
-    nnoremap <silent><buffer> <F2> :call <SID>KrlFoldLevel(2)<CR>
+    nmap <silent><buffer> <F2> <plug>KrlCloseNoFolds
   elseif get(g:,'krlFoldKeyMap',0) 
     " deprecated
     " compatiblity
-    nnoremap <silent><buffer> <F3> :call <SID>KrlFoldLevel(1)<CR>
-    nnoremap <silent><buffer> <F2> :call <SID>KrlFoldLevel(0)<CR>
+    nmap <silent><buffer> <F3> <plug>KrlCloseAllFolds
+    nmap <silent><buffer> <F2> <plug>KrlCloseLessFolds
   endif
 endif
 
@@ -1556,17 +1742,14 @@ endif
 
 " <PLUG> mappings {{{
 
-" gd mimic
-nnoremap <silent><buffer> <plug>KrlGoDef :call <SID>KrlGoDefinition()<CR>
+" Go Definition
+nnoremap <silent><buffer> <plug>KrlGoDef :call <SID>KrlGoDefinition()<CR>:call <SID>KrlCleanBufferList()<CR>
 
 " list all DEFs of current file
-nnoremap <silent><buffer> <plug>KrlListDef :call <SID>KrlListDef()<CR>
+nnoremap <silent><buffer> <plug>KrlListDef :call <SID>KrlListDefinition()<CR>:call <SID>KrlCleanBufferList()<CR>
 
 " list usage
-nnoremap <silent><buffer> <plug>KrlListUse :call <SID>KrlListUsage()<cr>
-
-" format comments
-nnoremap <silent><buffer> <plug>KrlFormatComments :call KrlFormatComments()<CR>
+nnoremap <silent><buffer> <plug>KrlListUse :call <SID>KrlListUsage()<CR>:call <SID>KrlCleanBufferList()<CR>
 
 " auto form
 nnoremap <silent><buffer> <plug>KrlAutoForm                 :call <SID>KrlAutoForm("   ")<cr>
@@ -1596,11 +1779,29 @@ nnoremap <silent><buffer> <plug>KrlAutoFormGlobalFctAxis    :call <SID>KrlAutoFo
 nnoremap <silent><buffer> <plug>KrlAutoFormGlobalFctE6Axis  :call <SID>KrlAutoForm("gfx")<cr>
 " auto form end
 
+" Function Text Object
+if get(g:,'krlMoveAroundKeyMap',1) " depends on move around key mappings
+  xnoremap <silent><buffer> <plug>KrlTxtObjAroundFuncInclCo :<C-U>call <SID>KrlFunctionTextObject(0,1)<CR>
+  xnoremap <silent><buffer> <plug>KrlTxtObjAroundFuncExclCo :<C-U>call <SID>KrlFunctionTextObject(0,0)<CR>
+  xnoremap <silent><buffer> <plug>KrlTxtObjInnerFunc        :<C-U>call <SID>KrlFunctionTextObject(1,0)<CR>
+  onoremap <silent><buffer> <plug>KrlTxtObjAroundFuncInclCo :<C-U>call <SID>KrlFunctionTextObject(0,1)<CR>
+  onoremap <silent><buffer> <plug>KrlTxtObjAroundFuncExclCo :<C-U>call <SID>KrlFunctionTextObject(0,0)<CR>
+  onoremap <silent><buffer> <plug>KrlTxtObjInnerFunc        :<C-U>call <SID>KrlFunctionTextObject(1,0)<CR>
+endif
+
 " folding
-if has("folding") && (!exists("g:krlCloseFolds") || g:krlCloseFolds!=2)
-  nnoremap <silent><buffer> <plug>KrlCloseAllFolds  :call <SID>KrlFoldLevel(1)<CR>
-  nnoremap <silent><buffer> <plug>KrlCloseLessFolds :call <SID>KrlFoldLevel(0)<CR>
-  nnoremap <silent><buffer> <plug>KrlCloseNoFolds   :call <SID>KrlFoldLevel(2)<CR>
+if has("folding") && get(g:,'krlFoldLevel',1)
+  nnoremap <silent><buffer> <plug>KrlCloseAllFolds  :call <SID>KrlFoldLevel(2)<CR>
+  nnoremap <silent><buffer> <plug>KrlCloseLessFolds :call <SID>KrlFoldLevel(1)<CR>
+  nnoremap <silent><buffer> <plug>KrlCloseNoFolds   :call <SID>KrlFoldLevel(0)<CR>
+endif
+
+" fold text objects
+if exists("loaded_matchit") " depends on matchit
+  xnoremap <silent><buffer> <plug>KrlTxtObjAroundFold     :<C-U>call <SID>KrlFoldTextObject(0)<CR>
+  xnoremap <silent><buffer> <plug>KrlTxtObjInnerFold      :<C-U>call <SID>KrlFoldTextObject(1)<CR>
+  onoremap <silent><buffer> <plug>KrlTxtObjAroundFold     :<C-U>call <SID>KrlFoldTextObject(0)<CR>
+  onoremap <silent><buffer> <plug>KrlTxtObjInnerFold      :<C-U>call <SID>KrlFoldTextObject(1)<CR>
 endif
 
 " }}} <plug> mappings

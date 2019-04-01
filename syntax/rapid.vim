@@ -1,7 +1,7 @@
-" Vim syntax file
+" ABB Rapid Command syntax file for Vim
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 1.5.5
+" Version: 2.0.0
 " Last Change: 23. Mar 2018
 " Credits: 
 "
@@ -10,6 +10,7 @@
 " TODO:   - highlight rapid constants and maybe constants from common
 "           technology packages
 
+" Init {{{
 " Remove any old syntax stuff that was loaded (5.x) or quit when a syntax file
 " was already loaded (6.x).
 if version < 600
@@ -18,8 +19,31 @@ elseif exists("b:current_syntax")
   finish
 endif
 
+let s:keepcpo= &cpo
+set cpo&vim
+
+" if rapidNoHighLink exists it overrides rapidNoHighlight
+if exists("g:rapidNoHighLink")
+  silent! unlet g:rapidNoHighlight
+endif
+" if rapidNoHighlight still exists it's pushed to rapidNoHighLink
+if exists("g:rapidNoHighlight")
+  let g:rapidNoHighLink = g:rapidNoHighlight
+  unlet g:rapidNoHighlight
+endif
+" if colorscheme is tortus rapidNoHighLink defaults to 1
+if (get(g:,'colors_name'," ")=="tortus" || get(g:,'colors_name'," ")=="tortusless") 
+      \&& !exists("g:rapidNoHighLink")
+  let g:rapidNoHighLink=1 
+endif
+" rapidNoHighLink defaults to 0 if it's not initialized yet or 0
+if !get(g:,"rapidNoHighLink",0)
+  let g:rapidNoHighLink=0 
+endif
+
 "Rapid does ignore case
 syn case ignore
+" }}} init
 
 if bufname("%") =~ '\c\.cfg$'
   " highlighting for *.cfg
@@ -32,7 +56,7 @@ if bufname("%") =~ '\c\.cfg$'
   syn match rapidFloat /\(\W\|_\)\@1<=[+-]\?\d\+\.\?\d*\([eE][+-]\?\d\+\)\?/
   highlight default link rapidFloat Float
   " character code in string
-  syn match rapidCharCode /[^\\]\zs\\\d\d/ contained
+  syn match rapidCharCode /[^\\]\zs\\\d{1,3}/ contained
   highlight default link rapidCharCode SpecialChar
   " String. Note: Don't rename group rapidString. Indent depend on this
   syn region rapidString start=/"/ end=/"/ contains=rapidCharCode containedin=rapidStructVal
@@ -78,7 +102,7 @@ else
   syn match rapidFloat /\W\@1<=[+-]\?\d\+\.\?\d*\([eE][+-]\?\d\+\)\?/
   highlight default link rapidFloat Float
   " character code in string
-  syn match rapidCharCode /[^\\]\zs\\\d\d/ contained
+  syn match rapidCharCode /[^\\]\zs\\\d{1,3}/ contained
   highlight default link rapidCharCode SpecialChar
   " String. Note: Don't rename group rapidString. Indent depend on this
   syn region rapidString start=/"/ end=/"/ contains=rapidCharCode
@@ -225,7 +249,7 @@ else
   syn match rapidNames /[a-zA-Z_][.a-zA-Z0-9_]*/
   highlight default link rapidNames None
   " Function
-  syn match rapidFunction contains=rapidBuildInFunction /\c\(\s*\(proc\|module\)\s\+\)\@<![a-zA-Z_]\w\+ *(/me=e-1
+  syn match rapidFunction contains=rapidBuildInFunction /\v\c(<(proc|module)\s+)@10<![a-zA-Z_]\w+ *\(/me=e-1
   highlight default link rapidFunction Function
   " call by var: %"product"+NumToStr(nProductNumber)%;
   " call by var: if bBool %stString%;
@@ -278,15 +302,15 @@ else
   highlight default link rapidConcealableString String
   syn region rapidStructVal matchgroup=rapidDelimiter start=/\[/ end=/\]/ contains=ALLBUT,rapidString keepend extend conceal cchar=* 
 
-  " Error
-  if exists("g:rapidShowError") && g:rapidShowError==1
+" Error {{{
+  if get(g:,'rapidShowError',1)
     " some more or less common typos
     "
     " vars or funcs >32 chars are not possible in rapid. a234567890123456789012345
     syn match rapidError0 /\w\{33,}/ containedin=rapidFunction,rapidNames,rapidLabel
     "
     " a string containing a single \ which is not a char code
-    syn match rapidError1 contained containedin=rapidString /\c\v[^\\]\zs\\\ze([^\\0-9]|[0-9][^0-9])/
+    syn match rapidError1 contained containedin=rapidString /\c\v[^\\]\zs\\\ze[^\\0-9]/
     "
   " more or less common misspellings. unnecessary. if misspelled they will not get their regular highlighting
     " syn match rapidError3 /\c\v^\s*\zs(esle>|endfi>|ednif>|ednwhile>|ednfor>)/
@@ -330,9 +354,14 @@ else
     highlight default link rapidError8 Error
     highlight default link rapidError9 Error
   endif
-  " ---
+" }}} Error
 endif
 
-let b:current_syntax = "rapid"
+" Finish {{{
+let &cpo = s:keepcpo
+unlet s:keepcpo
 
-" vim:sw=2 sts=2 et
+let b:current_syntax = "rapid"
+" }}} Finish
+
+" vim:sw=2 sts=2 et fdm=marker
