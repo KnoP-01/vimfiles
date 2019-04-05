@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.0.0
-" Last Change: 28. March 2019
+" Last Change: 04. Apr 2019
 " Credits: Based on indent/vim.vim
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -60,7 +60,7 @@ endfunction
 
 function s:GetKrlIndentIntern()
   let l:currentLine = getline(v:lnum)
-  if  l:currentLine =~ '\c\v^;(\s*(end)?fold>)@!' && get(g:,'krlCommentIndent',1)
+  if  l:currentLine =~ '\c\v^;(\s*(end)?fold>)@!' && !get(g:,'krlCommentIndent',1)
     " if first char is ; line comment, do not change indent
     " this may be usefull if code did get commented out at the first column
     return 0

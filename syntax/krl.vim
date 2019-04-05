@@ -2,13 +2,12 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.0.0
-" Last Change: 18. Feb 2019
+" Last Change: 04. Apr 2019
 " Credits: Thanks for contributions to this to Michael Jagusch
 "
 " Suggestions of improvement are very welcome. Please email me!
 "
 "
-" TODO: rename krlNoHighLink option (again ;)
 
 " Init {{{
 " Remove any old syntax stuff that was loaded (5.x) or quit when a syntax file
@@ -22,28 +21,30 @@ endif
 let s:keepcpo= &cpo
 set cpo&vim
 
-" if krlNoHighLink exists it overrides krlNoHighlight
+" if krlGroupName exists it overrides krlNoHighlight and krlNoHighLink
 if exists("g:krlGroupName")
   silent! unlet g:krlNoHighLink
   silent! unlet g:krlNoHighlight
 endif
-" if krlNoHighLink exists it overrides krlNoHighlight
+" if krlNoHighLink exists it overrides krlNoHighlight and it's pushed to krlGroupName
 if exists("g:krlNoHighLink")
   silent! unlet g:krlNoHighlight
+  let g:krlGroupName = g:krlNoHighLink
+  unlet g:krlNoHighLink
 endif
-" if krlNoHighlight still exists it's pushed to krlNoHighLink
+" if krlNoHighlight still exists it's pushed to krlGroupName
 if exists("g:krlNoHighlight")
-  let g:krlNoHighLink = g:krlNoHighlight
+  let g:krlGroupName = g:krlNoHighlight
   unlet g:krlNoHighlight
 endif
 " if colorscheme is tortus krlNoHighLink defaults to 1
 if (get(g:,'colors_name'," ")=="tortus" || get(g:,'colors_name'," ")=="tortusless") 
-      \&& !exists("g:krlNoHighLink")
-  let g:krlNoHighLink=1 
+      \&& !exists("g:krlGroupName")
+  let g:krlGroupName=1 
 endif
-" krlNoHighLink defaults to 0 if it's not initialized yet or 0
-if !get(g:,"krlNoHighLink",0)
-  let g:krlNoHighLink=0 
+" krlGroupName defaults to 0 if it's not initialized yet or 0
+if !get(g:,"krlGroupName",0)
+  let g:krlGroupName=0 
 endif
 
 " krl does ignore case
@@ -68,7 +69,9 @@ syn match krlFoldComment /\c\v^\s*;\s*fold>[^;]*/ containedin=krlFold " contains
 " move fold comment until second ;
 syn match krlFoldComment /\c\v^\s*;\s*fold>[^;]*<s?%(ptp|lin|circ|spl)(_rel)?>[^;]*/ containedin=krlFold contains=krlInteger,krlFloat,krlMovement,krlDelimiter
 " Comment without Fold, also includes endfold lines and fold line part after second ;
-syn match krlComment /\c\v;%(%(<fold>)@!.)*$/ containedin=krlFold contains=krlTodo,krlDebug
+syn match krlComment /\c\v;\s*%(<fold>)@!.*$/ containedin=krlFold contains=krlTodo,krlDebug
+" Commented out Fold line: "; ;FOLD PTP..."
+syn match krlComment /\c\v^\s*;\s*;.*$/ contains=krlTodo,krlDebug
 highlight default link krlFoldComment Comment
 highlight default link krlComment Comment
 " }}} Comment and Folding 
@@ -237,13 +240,17 @@ highlight default link krlEnum Structure
 
 " System variable {{{
 syn match krlSysvars /\<\$\a[a-zA-Z0-9_.]*/
-highlight default link krlSysvars Sysvars
+if g:krlGroupName
+  highlight default link krlSysvars Sysvars
+else
+  " default color for Sysvars
+endif
 " }}} System variable
 
 " Statements, keywords et al {{{
 " continue
 syn keyword krlContinue CONTINUE
-if g:krlNoHighLink
+if g:krlGroupName
   highlight default link krlContinue Continue
 else
   highlight default link krlContinue Statement
@@ -276,14 +283,14 @@ highlight default link krlException Exception
 " special keywords for movement commands {{{
 syn keyword krlMovement PTP LIN CIRC SPL SPTP SLIN SCIRC PTP_REL LIN_REL CIRC_REL SPTP_REL SLIN_REL SCIRC_REL
 syn keyword krlMovement ASYPTP ASYCONT ASYSTOP ASYCANCEL BRAKE BRAKE_F
-if g:krlNoHighLink
+if g:krlGroupName
   highlight default link krlMovement Movement
 else
   highlight default link krlMovement Special
 endif
 " movement modifiers
 syn keyword krlMoveMod CA C_PTP C_DIS C_VEL C_ORI C_SPL SPLINE ENDSPLINE
-if g:krlNoHighLink
+if g:krlGroupName
   highlight default link krlMoveMod Movement
 else
   highlight default link krlMoveMod Special
@@ -313,7 +320,7 @@ syn keyword krlBuildInFunction contained varstate EK EB LK sync MD_CMD MD_SETSTA
 syn keyword krlBuildInFunction contained ROB_STOP ROB_STOP_RELEASE SET_BRAKE_DELAY
 " KRC1
 syn keyword krlBuildInFunction contained CLCOPY CCURPOS CNEW CCLEAR CRELEASE CKEY
-if g:krlNoHighLink
+if g:krlGroupName
   highlight default link krlBuildInFunction BuildInFunction
 else
   highlight default link krlBuildInFunction Function

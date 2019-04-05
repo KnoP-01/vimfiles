@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.0.0
-" Last Change: 18. Feb 2019
+" Last Change: 04. Apr 2019
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -92,9 +92,9 @@ if !exists("*s:KnopVerboseEcho()")
         echo " "
       endif
       echo a:msg
-      " if get(a:,'1',0)
-      echo a:000
       if exists('a:1')
+        " for some reason I don't understand this has to be present twice
+        call input("Hit enter> ") 
         call input("Hit enter> ")
       endif
     endif
@@ -154,6 +154,7 @@ if !exists("*s:KnopVerboseEcho()")
     let l:path = substitute(l:path, '\*\* ', '**/'.a:file.' ', "g") " append a / to **, . and ..
     let l:path = substitute(l:path, '\.\. ', '../'.a:file.' ', "g")
     let l:path = substitute(l:path, '\. ', './'.a:file.' ', "g")
+    call s:KnopVerboseEcho(l:path)
     return l:path
   endfunction " s:KnopPreparePath()
 
@@ -1158,7 +1159,7 @@ if !exists("*s:KnopVerboseEcho()")
         call s:KnopVerboseEcho([l:currentWord,"appear to be a BOOL VALUE."])
       else
         let l:currentWord = substitute(l:currentWord,'^none','','')
-        call s:KnopVerboseEcho([l:currentWord,"Could not determine typ of current word. No search performed!"],1)
+        call s:KnopVerboseEcho([l:currentWord,"Unable to determine what to search for at current cursor position. No search performed!"],1)
         return
         "
       endif
@@ -1200,7 +1201,7 @@ if !exists("*s:KnopVerboseEcho()")
       endif
       let &isk = l:keepisk
     else
-      call s:KnopVerboseEcho("Nothing found at or after current cursor pos, which could have a declaration. No search performed.",1)
+      call s:KnopVerboseEcho("Unable to determine what to search for at current cursor position. No search performed.",1)
     endif
   endfunction " <SID>KrlListUsage()
 
@@ -1319,8 +1320,8 @@ endif
 " format comments
 if get(g:,'krlFormatComments',1)
   if &textwidth ==# 0
-    " 52 Chars do match on the teach pendant
-    setlocal textwidth=52
+    " 54 Chars do match on the teach pendant
+    setlocal textwidth=54
     let b:undo_ftplugin = b:undo_ftplugin." tw<"
   endif
   setlocal formatoptions-=t
@@ -1520,7 +1521,7 @@ if has("folding") && get(g:,'krlFoldLevel',1)
         elseif &foldmethod=~'syntax'
 
           if <SID>KrlIsVkrc()
-            call <SID>KrlFoldLevel(1)
+            call <SID>KrlFoldLevel(2)
             if bufname("%")=~'\c\v(folge|up)\d*.src'
               setlocal foldlevel=1
             endif
@@ -1646,8 +1647,8 @@ endif
 " if the mapping does not exist and there is no plug-mapping just map it,
 " otherwise look for the config variable
 
-if get(g:,'krlGoDefinitionKeyMap',0) 
-      \|| mapcheck("gd","n")=="" && !hasmapto('<plug>KrlGoDef','n')
+if get(g:,'krlGoDefinitionKeyMap',1) 
+      \&& !hasmapto('<plug>KrlGoDef','n')
   " Go Definition
   nmap <silent><buffer> gd <plug>KrlGoDef
 endif

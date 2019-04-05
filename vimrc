@@ -287,6 +287,7 @@ let g:rapidFormatComments=1
 " Note: krl options
 " look also into ~/vimfiles/after/ftplugin/krl.vim
 " let g:krlNoCommentIndent=0 " undokumentiert!
+let g:krlCommentIndent=0
 " let g:krlFoldKeyMap=1 " deprecated
 " let g:krlFoldingKeyMap=1
 " let g:krlMoveAroundKeyMap=0
@@ -409,5 +410,11 @@ let g:qf_window_bottom = 0
 " let g:qf_auto_open_loclist = 1 " that is default
 let g:qf_loclist_window_bottom = 0
 let g:qf_mapping_ack_style = 1
+
+command! BindBoth set scrollbind cursorbind | wincmd p | set scrollbind cursorbind | wincmd p
+command! BindBothOff set noscrollbind nocursorbind | wincmd p | set noscrollbind nocursorbind | wincmd p
+nnoremap <leader>bon :BindBoth<CR>
+nnoremap <leader>bof :BindBothOff<CR>
+
 
 " vim:sw=2 sts=2 et
