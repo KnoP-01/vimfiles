@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.0.0
-" Last Change: 04. Apr 2019
+" Last Change: 07. Apr 2019
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -69,7 +69,7 @@ if exists("g:krlNoPath")
 endif
 if exists("g:krlCloseFolds")
   if !exists("g:krlFoldLevel")
-    g:krlFoldLevel=(g:krlCloseFolds + 1) % 3
+    let g:krlFoldLevel=(g:krlCloseFolds + 1) % 3
   endif
   unlet g:krlCloseFolds
 endif
@@ -177,6 +177,7 @@ if !exists("*s:KnopVerboseEcho()")
       let l:getback=1
       copen
     endif
+    set nobuflisted " to be able to remove from buffer list after writing the temp file
     if get(g:,'knopShortenQFPath',1)
       setlocal modifiable
       silent! %substitute/\v\c^([^|]{40,})/\=pathshorten(submatch(1))/
@@ -414,8 +415,8 @@ if !exists("*s:KnopVerboseEcho()")
 
   function s:KrlSearchVkrcMarker(currentWord)
     call s:KnopVerboseEcho("Search marker definitions...")
-    let l:markerNumber = substitute(a:currentWord,'m','','')
-    if (s:KnopSearchPathForPatternNTimes('\v\c^\s*\$cycflag\[\s*'.l:markerNumber.'\s*\]\s*\=',s:KnopPreparePath(&path,'*.src').' '.s:KnopPreparePath(&path,'*.sub'),'','krl') == 0)
+    let l:markerNumber = substitute(a:currentWord,'\cm','','')
+    if (s:KnopSearchPathForPatternNTimes('\c^\s*\$cycflag\s*\[\s*'.l:markerNumber.'\s*\]\s*=',s:KnopPreparePath(&path,'*.src').' '.s:KnopPreparePath(&path,'*.sub'),'','krl') == 0)
       call setqflist(s:KnopUniqueListItems(getqflist()))
       call s:KnopOpenQf('krl')
       call s:KnopVerboseEcho("Marker definition found.",1)
@@ -1210,7 +1211,7 @@ if !exists("*s:KnopVerboseEcho()")
   " Function Text Object {{{
 
   if get(g:,'krlMoveAroundKeyMap',1) " depends on move around key mappings
-    function s:KrlFunctionTextObject(inner,withcomment)
+    function <SID>KrlFunctionTextObject(inner,withcomment)
       if a:inner==1
         let l:n = 1
       else
@@ -1241,7 +1242,7 @@ if !exists("*s:KnopVerboseEcho()")
   " Fold Text Object {{{
 
   if exists("loaded_matchit") " depends on matchit
-    function s:KrlFoldTextObject(inner)
+    function <SID>KrlFoldTextObject(inner)
       let l:col = col('.')
       let l:line = line('.')
       let l:foundFold = 0
@@ -1288,6 +1289,30 @@ if !exists("*s:KnopVerboseEcho()")
 
   " }}} Fold Text Object
 
+  " Comment Text Object {{{
+
+  if get(g:,'krlMoveAroundKeyMap',1) " depends on move around key mappings
+    function <SID>KrlCommentTextObject(around)
+      if getline('.')!~'^\s*;' && !search('^\s*;',"sW")
+          return
+      endif
+      " starte innerhalb des oder nach dem kommentar
+      silent normal! j
+      silent normal [;
+      if getline(line('.')+1)!~'^\s*;'
+        silent normal! V
+      else
+        silent normal! V
+        silent normal ];
+      endif
+      if a:around && getline(line('.')+1)=~'^\s*$'
+        silent normal! j
+      endif
+    endfunction " KrlCommentTextObject()
+  endif
+
+  " }}} Comment Text Object
+
 endif " !exists("*s:KnopVerboseEcho()")
 
 " Vim Settings {{{
@@ -1296,7 +1321,6 @@ endif " !exists("*s:KnopVerboseEcho()")
 setlocal commentstring=;%s
 setlocal comments=:;
 setlocal suffixes+=.dat
-setlocal suffixes+=.tmp
 if has("win32")
   setlocal suffixesadd+=.src,.sub,.dat
 else
@@ -1470,6 +1494,16 @@ if get(g:,'krlPath',1)
 endif
 
 " folding
+if <SID>KrlIsVkrc() && get(g:,'krlConcealFoldTail',1)
+" if get(g:,'krlConcealFoldTail',1)
+  " NOTE1: must harmonize with syntax/krl.vim Comment (see krlFold) 
+  syn match krlConcealFoldTail /\c\v;%(--|\s*<fold>|\s*<endfold>)@!.*$/ transparent containedin=krlComment conceal cchar=*
+  if &conceallevel==#0
+    set conceallevel=1
+    let b:undo_ftplugin = b:undo_ftplugin." cole<"
+  endif
+endif
+
 if has("folding") && get(g:,'krlFoldLevel',1)
 
   if !exists("*KrlFoldText")
@@ -1607,9 +1641,9 @@ if get(g:,'krlMoveAroundKeyMap',1)
   onoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v\ze^\s*end(fct\|dat)?>', 'sW')<Bar>:unlet b:knopCount<CR>
   xnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>(\n)?', 'seWz')<Bar>:unlet b:knopCount<CR>
   " Move around comments
-  nnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^(\s*;.*\n)@<!(\s*;)', 'bs')<Bar>:unlet b:knopCount<cr>
-  onoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^(\s*;.*\n)@<!(\s*;)', 'bsW')<Bar>:unlet b:knopCount<cr>
-  xnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v^(\s*;.*\n)@<!(\s*;)', 'bsW')<Bar>:unlet b:knopCount<cr>
+  nnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*;.*\n)@<!(^\s*;)', 'bs')<Bar>:unlet b:knopCount<cr>
+  onoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*;.*\n)@<!(^\s*;)', 'bsW')<Bar>:unlet b:knopCount<cr>
+  xnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*;.*\n)@<!(^\s*;)', 'bsW')<Bar>:unlet b:knopCount<cr>
   nnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n\s*([^;\t ]\|$)', 's')<Bar>:unlet b:knopCount<cr>
   onoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n(\s*[^;\t ]\|$)', 'seW')<Bar>normal! ==<Bar>:unlet b:knopCount<cr>
   xnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n\ze\s*([^;\t ]\|$)', 'seW')<Bar>:unlet b:knopCount<cr>
@@ -1637,6 +1671,23 @@ if get(g:,'krlMoveAroundKeyMap',1)
   if get(g:,'krlFunctionTextObject',0)
         \|| mapcheck("if","o")=="" && !hasmapto('<plug>KrlTxtObjInnerFunc','o')
     omap <silent><buffer> if <plug>KrlTxtObjInnerFunc
+  endif
+  " inner and around comment text objects
+  if get(g:,'krlCommentTextObject',0)
+        \|| mapcheck("ac","x")=="" && !hasmapto('<plug>KrlTxtObjAroundComment','x')
+    xmap <silent><buffer> ac <plug>KrlTxtObjAroundComment
+  endif
+  if get(g:,'krlCommentTextObject',0)
+        \|| mapcheck("ic","x")=="" && !hasmapto('<plug>KrlTxtObjInnerComment','x')
+    xmap <silent><buffer> ic <plug>KrlTxtObjInnerComment
+  endif
+  if get(g:,'krlCommentTextObject',0)
+        \|| mapcheck("ac","o")=="" && !hasmapto('<plug>KrlTxtObjAroundComment','o')
+    omap <silent><buffer> ac <plug>KrlTxtObjAroundComment
+  endif
+  if get(g:,'krlCommentTextObject',0)
+        \|| mapcheck("ic","o")=="" && !hasmapto('<plug>KrlTxtObjInnerComment','o')
+    omap <silent><buffer> ic <plug>KrlTxtObjInnerComment
   endif
 endif
 
@@ -1788,6 +1839,14 @@ if get(g:,'krlMoveAroundKeyMap',1) " depends on move around key mappings
   onoremap <silent><buffer> <plug>KrlTxtObjAroundFuncInclCo :<C-U>call <SID>KrlFunctionTextObject(0,1)<CR>
   onoremap <silent><buffer> <plug>KrlTxtObjAroundFuncExclCo :<C-U>call <SID>KrlFunctionTextObject(0,0)<CR>
   onoremap <silent><buffer> <plug>KrlTxtObjInnerFunc        :<C-U>call <SID>KrlFunctionTextObject(1,0)<CR>
+endif
+
+" comment text objects
+if get(g:,'krlMoveAroundKeyMap',1) " depends on move around key mappings
+  xnoremap <silent><buffer> <plug>KrlTxtObjAroundComment     :<C-U>call <SID>KrlCommentTextObject(1)<CR>
+  xnoremap <silent><buffer> <plug>KrlTxtObjInnerComment      :<C-U>call <SID>KrlCommentTextObject(0)<CR>
+  onoremap <silent><buffer> <plug>KrlTxtObjAroundComment     :<C-U>call <SID>KrlCommentTextObject(1)<CR>
+  onoremap <silent><buffer> <plug>KrlTxtObjInnerComment      :<C-U>call <SID>KrlCommentTextObject(0)<CR>
 endif
 
 " folding

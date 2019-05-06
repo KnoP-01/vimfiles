@@ -51,9 +51,11 @@
 <Plug>RapidListDef	rapid.txt	/*<Plug>RapidListDef*
 <Plug>RapidListUse	rapid.txt	/*<Plug>RapidListUse*
 <Plug>RapidShowStructs	rapid.txt	/*<Plug>RapidShowStructs*
+<plug>KrlTxtObjAroundComment	krl.txt	/*<plug>KrlTxtObjAroundComment*
 <plug>KrlTxtObjAroundFold	krl.txt	/*<plug>KrlTxtObjAroundFold*
 <plug>KrlTxtObjAroundFuncExclCo	krl.txt	/*<plug>KrlTxtObjAroundFuncExclCo*
 <plug>KrlTxtObjAroundFuncInclCo	krl.txt	/*<plug>KrlTxtObjAroundFuncInclCo*
+<plug>KrlTxtObjInnerComment	krl.txt	/*<plug>KrlTxtObjInnerComment*
 <plug>KrlTxtObjInnerFold	krl.txt	/*<plug>KrlTxtObjInnerFold*
 <plug>KrlTxtObjInnerFunc	krl.txt	/*<plug>KrlTxtObjInnerFunc*
 MatchError	matchit.txt	/*MatchError*
@@ -82,6 +84,8 @@ g:krlAutoComment	krl.txt	/*g:krlAutoComment*
 g:krlAutoFormKeyMap	krl.txt	/*g:krlAutoFormKeyMap*
 g:krlAutoFormUpperCase	krl.txt	/*g:krlAutoFormUpperCase*
 g:krlCommentIndent	krl.txt	/*g:krlCommentIndent*
+g:krlCommentTextObject	krl.txt	/*g:krlCommentTextObject*
+g:krlConcealFoldTail	krl.txt	/*g:krlConcealFoldTail*
 g:krlFoldLevel	krl.txt	/*g:krlFoldLevel*
 g:krlFoldMethodSyntax	krl.txt	/*g:krlFoldMethodSyntax*
 g:krlFoldTextObject	krl.txt	/*g:krlFoldTextObject*

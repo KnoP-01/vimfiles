@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.0.0
-" Last Change: 22. Feb 2018
+" Last Change: 09. Apr 2019
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -52,6 +52,12 @@ if exists("g:rapidLhsQuickfix")
   endif
   unlet g:rapidLhsQuickfix
 endif
+if exists("g:rapidNoPath") 
+  if !exists("g:rapidPath")
+    let g:rapidPath = !g:rapidNoPath
+  endif
+  unlet g:rapidNoPath
+endif
 
 " }}} init
 
@@ -63,7 +69,7 @@ if !exists("*s:KnopVerboseEcho()")
   if get(g:,'knopVerbose',0)
     let g:knopVerboseMsgSet = 1
   endif
-  function s:KnopVerboseEcho(msg)
+  function s:KnopVerboseEcho(msg, ...)
     if get(g:,'knopVerbose',0)
       if exists('g:knopVerboseMsgSet')
         unlet g:knopVerboseMsgSet
@@ -71,6 +77,11 @@ if !exists("*s:KnopVerboseEcho()")
         echo " "
       endif
       echo a:msg
+      if exists('a:1')
+        " for some reason I don't understand this has to be present twice
+        call input("Hit enter> ") 
+        call input("Hit enter> ")
+      endif
     endif
   endfunction " s:KnopVerboseEcho()
 
@@ -128,6 +139,7 @@ if !exists("*s:KnopVerboseEcho()")
     let l:path = substitute(l:path, '\*\* ', '**/'.a:file.' ', "g") " append a / to **, . and ..
     let l:path = substitute(l:path, '\.\. ', '../'.a:file.' ', "g")
     let l:path = substitute(l:path, '\. ', './'.a:file.' ', "g")
+    call s:KnopVerboseEcho(l:path)
     return l:path
   endfunction " s:KnopPreparePath()
 
@@ -136,7 +148,7 @@ if !exists("*s:KnopVerboseEcho()")
     if exists('g:loaded_qf') && get(g:,'qf_window_bottom',1)
           \&& (get(g:,'knopRhsQuickfix',0)
           \||  get(g:,'knopLhsQuickfix',0))
-      call s:KnopVerboseEcho("NOTE: \nIf you use qf.vim then g:knopRhsQuickfix and g:knopLhsQuickfix will not work unless g:qf_window_bottom is 0 (Zero). \nTo use g:knop[RL]hsQuickfix put this in your .vimrc: \n  let g:qf_window_bottom = 0\n\n")
+      call s:KnopVerboseEcho("NOTE: \nIf you use qf.vim then g:knopRhsQuickfix and g:knopLhsQuickfix will not work unless g:qf_window_bottom is 0 (Zero). \nTo use g:knop[RL]hsQuickfix put this in your .vimrc: \n  let g:qf_window_bottom = 0\n\n",1)
       return 0
     endif
     return 1
@@ -150,6 +162,7 @@ if !exists("*s:KnopVerboseEcho()")
       let l:getback=1
       copen
     endif
+    set nobuflisted " to be able to remove from buffer list after writing the temp file
     if get(g:,'knopShortenQFPath',1)
       setlocal modifiable
       silent! %substitute/\v\c^([^|]{40,})/\=pathshorten(submatch(1))/
@@ -356,6 +369,7 @@ if !exists("*s:KnopVerboseEcho()")
           \&& search('\v\c^\s*end(proc|func|trap)>','bcnW') < l:numProcStart
       "
       " search FOR loop local auto declaration
+      call s:KnopVerboseEcho("search FOR loop local auto declaration")
       let l:nFor = 0
       let l:nEndfor = 0
       let l:nSkipFor = 0
@@ -368,7 +382,7 @@ if !exists("*s:KnopVerboseEcho()")
           if      l:nFor>l:nEndfor && 
                 \ l:nSkipFor<=0 &&
                 \ search('\c\v\s+for\s+\zs'.a:currentWord.'>','cW',line("."))
-            call s:KnopVerboseEcho("Found FOR loop local auto declaration")
+            call s:KnopVerboseEcho("Found FOR loop local auto declaration",1)
             return 0
             "
           endif
@@ -379,24 +393,27 @@ if !exists("*s:KnopVerboseEcho()")
       endwhile " FOR loop local auto declaration
       "
       " search Proc/Func/Trap argument declaration
+      call s:KnopVerboseEcho("search Proc/Func/Trap argument declaration")
       call cursor(l:numProcStart,1)
       let l:noneCloseParen = '([^)]|\n)*'
       if search('\c\v^'.l:noneCloseParen.'\('.l:noneCloseParen.'\w(\s|\n)*\zs<'.a:currentWord.'>'.l:noneCloseParen.'\)','cW',line("."))
-        call s:KnopVerboseEcho("Found VARIABLE declaration in ARGUMENT list")
+        call s:KnopVerboseEcho("Found VARIABLE declaration in ARGUMENT list",1)
         return 0
         "
       endif " search Proc/Func/Trap argument declaration
       "
       " search Proc/Func/Trap local declaration
+      call s:KnopVerboseEcho("search Proc/Func/Trap local declaration")
       call cursor(l:numProcStart,1)
       if search(a:declPrefix.'\zs'.a:currentWord.'>','W',l:numProcEnd)
-        call s:KnopVerboseEcho("Found PROC, FUNC or TRAP local VARIABLE declaration")
+        call s:KnopVerboseEcho("Found PROC, FUNC or TRAP local VARIABLE declaration",1)
         return 0
         "
       endif
     endif " search inside Proc/Func/Trap for local declaration
     "
     " search Module local variable declaration
+    call s:KnopVerboseEcho("search Module local variable declaration")
     let l:numEndmodule=s:RapidPutCursorOnModuleAndReturnEndmoduleline()
     while search(a:declPrefix.'\zs'.a:currentWord.'>','W',l:numEndmodule)
       " found something, remember where
@@ -408,16 +425,17 @@ if !exists("*s:KnopVerboseEcho()")
             \|| expand("<cword>") =~ '\c\v^\s*endmodule>' 
             \)
         call cursor(l:numFoundLine,l:numFoundCol)
-        call s:KnopVerboseEcho("Found VARIABLE declaration in this MODULE")
+        call s:KnopVerboseEcho("Found VARIABLE declaration in this MODULE",1)
         return 0
         "
       endif
     endwhile " search Module local variable declaration
     " 
     " search Module local proc (et al) declaration
+    call s:KnopVerboseEcho("search Module local proc (et al) declaration")
     let l:numEndmodule=s:RapidPutCursorOnModuleAndReturnEndmoduleline()
     if search('\v\c^\s*((local|global|task)\s+)?(proc|func\s+\w+|trap|record)\s+\zs'.a:currentWord.'>','cW',l:numEndmodule)
-      call s:KnopVerboseEcho("Found declaration of PROC, FUNC, TRAP or RECORD in this MODULE")
+      call s:KnopVerboseEcho("Found declaration of PROC, FUNC, TRAP or RECORD in this MODULE",1)
       return 0
       "
     endif " search Module local proc (et al) declaration
@@ -426,6 +444,7 @@ if !exists("*s:KnopVerboseEcho()")
     call cursor(l:numSearchStartLine,l:numSearchStartColumn)
     "
     " search global declaration
+    call s:KnopVerboseEcho("search global declaration")
     for l:i in ['task', 'system']
       "
       " first fill location list with all (end)?(proc|func|trap|record) and variable
@@ -434,31 +453,32 @@ if !exists("*s:KnopVerboseEcho()")
       let l:suffix = '>|(end)?(proc|func|trap|record)>)/j' " since this finds all (not only global) ends, the previous must also list local
       if l:i =~ 'task'
         if has("win32")
-          let l:path = './*.prg '.fnameescape(expand("%:p:h")).'/../PROGMOD/*.mod '.fnameescape(expand("%:p:h")).'/../SYSMOD/*.sys'
+          let l:path = './*.prg ./*.mod '.fnameescape(expand("%:p:h")).'/../PROGMOD/*.mod '.fnameescape(expand("%:p:h")).'/../SYSMOD/*.sys'
         else
-          let l:path = './*.prg ./*.Prg ./*.PRG '.fnameescape(expand("%:p:h")).'/../PROGMOD/*.mod '.fnameescape(expand("%:p:h")).'/../PROGMOD/*.Mod '.fnameescape(expand("%:p:h")).'/../PROGMOD/*.MOD '.fnameescape(expand("%:p:h")).'/../SYSMOD/*.sys '.fnameescape(expand("%:p:h")).'/../SYSMOD/*.Sys '.fnameescape(expand("%:p:h")).'/../SYSMOD/*.SYS '
+          let l:path = './*.prg ./*.Prg ./*.PRG ./*.mod ./*.Mod ./*.MOD '.fnameescape(expand("%:p:h")).'/../PROGMOD/*.mod '.fnameescape(expand("%:p:h")).'/../PROGMOD/*.Mod '.fnameescape(expand("%:p:h")).'/../PROGMOD/*.MOD '.fnameescape(expand("%:p:h")).'/../SYSMOD/*.sys '.fnameescape(expand("%:p:h")).'/../SYSMOD/*.Sys '.fnameescape(expand("%:p:h")).'/../SYSMOD/*.SYS '
         endif
       elseif l:i =~ 'system'
         if has("win32")
-          let l:path = './*.prg '.fnameescape(expand("%:p:h")).'/../../TASK*/PROGMOD/*.mod '.fnameescape(expand("%:p:h")).'/../../TASK*/SYSMOD/*.sys'
+          let l:path = './*.prg ./*.mod '.fnameescape(expand("%:p:h")).'/../../TASK*/PROGMOD/*.mod '.fnameescape(expand("%:p:h")).'/../../TASK*/SYSMOD/*.sys'
         else
-          let l:path = './*.prg ./*.Prg ./*.PRG '.fnameescape(expand("%:p:h")).'/../../TASK*/PROGMOD/*.mod '.fnameescape(expand("%:p:h")).'/../../TASK*/PROGMOD/*.Mod '.fnameescape(expand("%:p:h")).'/../../TASK*/PROGMOD/*.MOD '.fnameescape(expand("%:p:h")).'/../../TASK*/SYSMOD/*.sys '.fnameescape(expand("%:p:h")).'/../../TASK*/SYSMOD/*.Sys '.fnameescape(expand("%:p:h")).'/../../TASK*/SYSMOD/*.SYS '
+          let l:path = './*.prg ./*.Prg ./*.PRG ./*.mod ./*.Mod ./*.MOD '.fnameescape(expand("%:p:h")).'/../../TASK*/PROGMOD/*.mod '.fnameescape(expand("%:p:h")).'/../../TASK*/PROGMOD/*.Mod '.fnameescape(expand("%:p:h")).'/../../TASK*/PROGMOD/*.MOD '.fnameescape(expand("%:p:h")).'/../../TASK*/SYSMOD/*.sys '.fnameescape(expand("%:p:h")).'/../../TASK*/SYSMOD/*.Sys '.fnameescape(expand("%:p:h")).'/../../TASK*/SYSMOD/*.SYS '
         endif
       endif
       let l:cmd = ':noautocmd lvimgrep '.l:prefix.a:currentWord.l:suffix.' '.l:path
       try
         execute l:cmd
       catch /^Vim\%((\a\+)\)\=:E480/
-        call s:KnopVerboseEcho(":lvimgrep stopped with E480!")
+        call s:KnopVerboseEcho(":lvimgrep stopped with E480!",1)
         return -1
         "
       catch /^Vim\%((\a\+)\)\=:E683/
-        call s:KnopVerboseEcho(":lvimgrep stopped with E683!")
+        call s:KnopVerboseEcho(":lvimgrep stopped with E683!",1)
         return -1
         "
       endtry
       "
       " search for global proc in loclist
+      call s:KnopVerboseEcho("search for global proc in loclist")
       if l:i =~ 'task'
         let l:procdecl = '\v\c^\s*(task\s+|global\s+)?(proc|func\s+\w+|trap|record)\s+'
       elseif l:i =~ 'system'
@@ -472,9 +492,9 @@ if !exists("*s:KnopVerboseEcho()")
           call add(l:qf,l:loc)
           call setqflist(l:qf)
           if l:i =~ 'task'
-            call s:KnopVerboseEcho("Found declaration of PROC, FUNC, TRAP or RECORD in this TASK")
+            call s:KnopVerboseEcho("Found declaration of PROC, FUNC, TRAP or RECORD in this TASK",1)
           elseif l:i =~ 'system'
-            call s:KnopVerboseEcho("Found declaration of PROC, FUNC, TRAP or RECORD in SYSTEM (other task)")
+            call s:KnopVerboseEcho("Found declaration of PROC, FUNC, TRAP or RECORD in SYSTEM (other task)",1)
           endif
           call s:KnopOpenQf('rapid')
           return 0
@@ -483,6 +503,7 @@ if !exists("*s:KnopVerboseEcho()")
       endfor
       "
       " then search for global variable in loc list
+      call s:KnopVerboseEcho("search for global variable in loc list")
       let l:procdecl = '\v\c^\s*(local\s+|task\s+|global\s+)?(proc|func\s+\w+|trap|record)\s+' " procdecl must also contain local, since all ends are present
       let l:endproc = '\v\c^\s*end(proc|func|trap|record)>'
       let l:skip = 0
@@ -501,9 +522,9 @@ if !exists("*s:KnopVerboseEcho()")
             call add(l:qf,l:loc)
             call setqflist(l:qf)
             if l:i =~ 'task'
-              call s:KnopVerboseEcho("Found VARIABLE declaration in this TASK")
+              call s:KnopVerboseEcho("Found VARIABLE declaration in this TASK",1)
             elseif l:i =~ 'system'
-              call s:KnopVerboseEcho("Found VARIABLE declaration in SYSTEM (other task)")
+              call s:KnopVerboseEcho("Found VARIABLE declaration in SYSTEM (other task)",1)
             endif
             call s:KnopOpenQf('rapid')
             return 0
@@ -518,6 +539,7 @@ if !exists("*s:KnopVerboseEcho()")
     endfor " search 'task' or 'system' global declaration
     "
     " search EIO.cfg
+    call s:KnopVerboseEcho("search EIO.cfg")
     if filereadable("./EIO.cfg")
       let l:path = './EIO.cfg'
     elseif filereadable("./EIO.Cfg")
@@ -537,26 +559,26 @@ if !exists("*s:KnopVerboseEcho()")
     elseif filereadable('./../../../SYSPAR/EIO.CFG')
       let l:path = './../../../SYSPAR/EIO.CFG'
     else
-      call s:KnopVerboseEcho("No EIO.cfg found!")
+      call s:KnopVerboseEcho("No EIO.cfg found!",1)
       return -1
       "
     endif
     let l:strPattern = '\c\v^\s*-name\s+"'.a:currentWord.'>'
     let l:searchResult = s:KnopSearchPathForPatternNTimes(l:strPattern,l:path,1,"rapid")
     if l:searchResult == 0
-      call s:KnopVerboseEcho("Found signal(?) in EIO.cfg. The quickfix window will open. See :he quickfix-window")
+      call s:KnopVerboseEcho("Found signal(?) in EIO.cfg. The quickfix window will open. See :he quickfix-window",1)
       return 0
       "
     endif
     "
+    call s:KnopVerboseEcho("rapid go definition failed",1)
     return -1
   endfunction " s:RapidSearchUserDefined()
 
   function <SID>RapidGoDefinition()
     "
-    " dont start from within qf or loc window
-    if getbufvar('%', "&buftype") == "quickfix" | return | endif
-    let l:declPrefix = '\c\v^\s*(local\s+|task\s+|global\s+)?(var|pers|const|alias)\s+\w+\s+'
+    " let l:declPrefix = '\c\v^\s*((global\s+)?(const\s+)?(bool|int|real|char|frame|pos|axis|e6pos|e6axis|signal|channel)\s+[a-zA-Z0-9_,\[\] \t]*|(decl\s+)?(global\s+)?(struc|enum)\s+|decl\s+(global\s+)?(const\s+)?\w+\s+[a-zA-Z0-9_,\[\] \t]*)'
+    let l:declPrefix = '\c\v^\s*(local\s+|task\s+|global\s+)?(var|pers|const)\s+\w+\s+'
     "
     " suche das naechste wort
     if search('\w','cW',line("."))
@@ -569,34 +591,34 @@ if !exists("*s:KnopVerboseEcho()")
         return s:RapidSearchUserDefined(l:declPrefix,l:currentWord)
         "
       elseif l:currentWord =~ '\v^(sys)?func.*'
-        let l:currentWord = substitute(l:currentWord,'\v^(sys)?func','','')
+        let l:currentWord = substitute(l:currentWord,'\v^%(sys)?func','','')
         call s:KnopVerboseEcho([l:currentWord,"appear to be a FUNCTION. Start search..."])
         return s:RapidSearchUserDefined(l:declPrefix,l:currentWord)
         "
-      elseif l:currentWord =~ '^num.*'
-        let l:currentWord = substitute(l:currentWord,'^num','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a NUMBER. No search performed."])
-      elseif l:currentWord =~ '^bool.*'
-        let l:currentWord = substitute(l:currentWord,'^bool','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a BOOLEAN VALUE. No search performed."])
-      elseif l:currentWord =~ '^string.*'
-        let l:currentWord = substitute(l:currentWord,'^string','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a STRING. No search performed."])
-      elseif l:currentWord =~ '^comment.*'
-        let l:currentWord = substitute(l:currentWord,'^comment','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a COMMENT. No search performed."])
       elseif l:currentWord =~ '^inst.*'
         let l:currentWord = substitute(l:currentWord,'^inst','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a Rapid KEYWORD. No search performed."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a Rapid KEYWORD. No search performed."],1)
+      elseif l:currentWord =~ '^num.*'
+        let l:currentWord = substitute(l:currentWord,'^num','','')
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a NUMBER. No search performed."],1)
+      elseif l:currentWord =~ '^bool.*'
+        let l:currentWord = substitute(l:currentWord,'^bool','','')
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a BOOLEAN VALUE. No search performed."],1)
+      elseif l:currentWord =~ '^string.*'
+        let l:currentWord = substitute(l:currentWord,'^string','','')
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a STRING. No search performed."],1)
+      elseif l:currentWord =~ '^comment.*'
+        let l:currentWord = substitute(l:currentWord,'^comment','','')
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a COMMENT. No search performed."],1)
       else
         let l:currentWord = substitute(l:currentWord,'^none','','')
-        call s:KnopVerboseEcho([l:currentWord,"Could not determine typ of current word. No search performed."])
+        call s:KnopVerboseEcho([l:currentWord,"Could not determine typ of current word. No search performed."],1)
       endif
       return -1
       "
     endif
     "
-    call s:KnopVerboseEcho("Nothing found at or after current cursor pos, which could have a declaration. No search performed.")
+    call s:KnopVerboseEcho("Unable to determine what to search for at current cursor position. No search performed.",1)
     return -1
     "
   endfunction " <SID>RapidGoDefinition()
@@ -606,7 +628,7 @@ if !exists("*s:KnopVerboseEcho()")
   " Auto Form {{{
 
   function s:RapidGetGlobal(sAction)
-    if a:sAction=~'^[gl]'
+    if a:sAction=~'^[lg]'
       let l:sGlobal = a:sAction
     else
       let l:sGlobal = substitute(input("\n[g]lobal or [l]ocal?\n> "),'\W*','','g')
@@ -1229,7 +1251,7 @@ endif
 
 " <PLUG> mappings {{{
 
-" gd mimic
+" Go Definition
 nnoremap <silent><buffer> <plug>RapidGoDef :call <SID>RapidGoDefinition()<CR>:call <SID>RapidCleanBufferList()<CR>
 
 " list all PROCs of current file
@@ -1276,6 +1298,14 @@ if get(g:,'rapidMoveAroundKeyMap',1) " depends on move around key mappings
   onoremap <silent><buffer> <plug>RapidTxtObjAroundFuncInclCo :<C-U>call <SID>RapidFunctionTextObject(0,1)<CR>
   onoremap <silent><buffer> <plug>RapidTxtObjAroundFuncExclCo :<C-U>call <SID>RapidFunctionTextObject(0,0)<CR>
   onoremap <silent><buffer> <plug>RapidTxtObjInnerFunc        :<C-U>call <SID>RapidFunctionTextObject(1,0)<CR>
+endif
+
+" comment text objects
+if get(g:,'rapidMoveAroundKeyMap',1) " depends on move around key mappings
+  xnoremap <silent><buffer> <plug>RapidTxtObjAroundComment     :<C-U>call <SID>RapidCommentTextObject(1)<CR>
+  xnoremap <silent><buffer> <plug>RapidTxtObjInnerComment      :<C-U>call <SID>RapidCommentTextObject(0)<CR>
+  onoremap <silent><buffer> <plug>RapidTxtObjAroundComment     :<C-U>call <SID>RapidCommentTextObject(1)<CR>
+  onoremap <silent><buffer> <plug>RapidTxtObjInnerComment      :<C-U>call <SID>RapidCommentTextObject(0)<CR>
 endif
 
 " conceal all structure values

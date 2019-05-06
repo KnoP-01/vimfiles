@@ -15,7 +15,7 @@ if v:progname =~? "evim"
 endif
 
 set langmenu=none
-language en
+" language en
 
 " Use Vim settings, rather then Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
@@ -40,7 +40,8 @@ set guioptions+=R
 set guioptions+=a
 
 " Switch syntax highlighting on, when the terminal has colors
-if &t_Co > 2 || has("gui_running")
+" for some unknown reason my windows git-bash does not like syntax on at this position?! So I excluded its &term (xterm)
+if &t_Co > 2 && &term!~'xterm-256color' || has("gui_running")
   syntax on
 endif
 
@@ -54,6 +55,16 @@ if has("autocmd")
   filetype plugin indent on
 
   " Put these in an autocmd group, so that we can delete them easily.
+  augroup vimrcRelNum
+    " relativenumber and cursorline only in current window
+    autocmd BufEnter,WinEnter,InsertLeave * setlocal cursorline
+    autocmd BufEnter,WinEnter,InsertLeave *
+          \ if &filetype !=# 'help' | setlocal relativenumber | endif
+    autocmd BufLeave,WinLeave,InsertEnter * setlocal nocursorline
+    autocmd BufLeave,WinLeave,InsertEnter *
+          \ if &filetype !=# 'help' | setlocal norelativenumber | endif
+  augroup END
+
   augroup vimrcEx
     au!
 
@@ -92,8 +103,10 @@ set smartcase
 set showcmd		" display incomplete commands
 set showmode
 set cursorline
+
 set number
 set relativenumber
+
 set nowrap
 set linebreak " in case I use wrap
 
@@ -149,9 +162,9 @@ cnoremap <Right> <Space><BS><Right>
 set wildchar=<Tab> wildcharm=<C-Z> wildmenu wildmode=full
 nnoremap <F8> :ls<cr>:buffer 
 
-" switch tabs with CTRL+Tab and CTRL-SHIFT-Tab
-" nnoremap <C-Tab> :tabnext<cr>
-" nnoremap <C-S-Tab> :tabprev<cr>
+map <F9> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " fun
 nnoremap <silent> <F10> :set norelativenumber nonumber\|Matrix<CR>
@@ -255,9 +268,10 @@ set directory-=.
 
 " My plugin mappings and settings
 " let g:knopLhsQuickfix=0
-let g:knopRhsQuickfix=1
+" let g:knopRhsQuickfix=1
 " let g:knopVerbose=0
-let g:knopVerbose=1
+" let g:knopVerbose=1
+" let g:knopNoVerbose=0
 " let g:knopShortenQFPath=0
 
 " Note: rapid options
@@ -287,7 +301,7 @@ let g:rapidFormatComments=1
 " Note: krl options
 " look also into ~/vimfiles/after/ftplugin/krl.vim
 " let g:krlNoCommentIndent=0 " undokumentiert!
-let g:krlCommentIndent=0
+" let g:krlCommentIndent=0
 " let g:krlFoldKeyMap=1 " deprecated
 " let g:krlFoldingKeyMap=1
 " let g:krlMoveAroundKeyMap=0
@@ -300,6 +314,7 @@ let g:krlCommentIndent=0
 " let g:krlAutoFormKeyMap=1
 let g:krlPathToBodyFiles='d:\daten\scripts\vim_resource\krl resource\'
 " let g:krlAutoFormUpperCase=1
+" let g:krlGroupName=0
 " let g:krlNoHighLink=0
 " let g:krlNoHighlight=1
 " let g:krlShowError=1
@@ -315,6 +330,8 @@ let g:krlPathToBodyFiles='d:\daten\scripts\vim_resource\krl resource\'
 " let g:krlRhsQuickfix " siehe oben g:knop...
 " let g:krlLhsQuickfix " siehe oben g:knop...
 
+" packadd <ordnername_wie_unterhalb_opt>
+
 function! CleverTab()
   if strpart( getline('.'), 0, col('.')-1 ) =~ '\(^\s*\|\s\)$'
     return "\<Tab>"
@@ -323,71 +340,144 @@ function! CleverTab()
 endfunction
 inoremap <Tab> <C-R>=CleverTab()<CR>
 
-" colorscheme Blue
-" colorscheme DarkBlue
-" colorscheme Default
-" colorscheme Delek
-" colorscheme Desert
-" colorscheme ElfLord
-" colorscheme Evening
-" colorscheme Koehler
-" colorscheme Morning
-" colorscheme Murphy
-" colorscheme Pablo
-" colorscheme PeachPuff
-" colorscheme Ron
-" colorscheme Shine
-" colorscheme Torte
+" colorscheme Base2Tone_CaveDark
+" colorscheme Base2Tone_DesertDark
+" colorscheme Base2Tone_DrawbridgeDark
+" colorscheme Base2Tone_EarthDark
+" colorscheme Base2Tone_EveningDark
+" colorscheme Base2Tone_ForestDark
+" colorscheme Base2Tone_HeathDark
+" colorscheme Base2Tone_LakeDark
+" colorscheme Base2Tone_MeadowDark
+" colorscheme Base2Tone_MorningDark
+" colorscheme Base2Tone_PoolDark
+" colorscheme Base2Tone_SeaDark
+" colorscheme Base2Tone_SpaceDark
+" colorscheme BusyBee
+" colorscheme Mustang
+" colorscheme PaperColor
+" colorscheme PerfectDark
 " colorscheme alduin
 " colorscheme anokha
 " colorscheme apprentice
 " colorscheme arcadia
 " colorscheme astroboy
 " colorscheme asu1dark
+" colorscheme atom-dark-256
+" colorscheme atom-dark
+" colorscheme ayu
 " colorscheme blacksea
+" colorscheme blaquemagick
+" colorscheme breezy
 " colorscheme broduo
+" colorscheme brogrammer
+" colorscheme bubblegum-256-dark
 " colorscheme camo
+" colorscheme clear_colors_dark
+" colorscheme codeschool
 " colorscheme darkZ
+" colorscheme darktango
+" colorscheme deep-space
+" colorscheme despacio
+" colorscheme distinguished
 " colorscheme dutch_peasants
+" colorscheme edark
+" colorscheme fahrenheit
+" colorscheme falcon
+" colorscheme farout
+" colorscheme flatlandia
 " colorscheme flattened_dark
-" colorscheme flattened_light
+" colorscheme flattown
+" colorscheme frictionless
 " colorscheme gentooish
+" colorscheme ghostbuster
+" colorscheme gotham
+" colorscheme gotham256
+" colorscheme greygull
+" colorscheme gruvbox
+" colorscheme gummybears
+" colorscheme hemisu
+" colorscheme herald
+" colorscheme hilal
+" colorscheme holokai
+" colorscheme hybrid
+" colorscheme hydrangea
+" colorscheme inkpot
 " colorscheme ir_black
+" colorscheme ir_dark
+" colorscheme janah
+" colorscheme jay
+" colorscheme jellybeans
+" colorscheme jellyx
+" colorscheme kalisi
+" colorscheme landscape
 " colorscheme liquidcarbon
+" colorscheme lizard
+" colorscheme lizard256
+" colorscheme lucius
 " colorscheme luinnar
+" colorscheme lxvc
+" colorscheme material-theme
 " colorscheme midnight
 " colorscheme midnight2
 " colorscheme minty
 " colorscheme molokai
+" colorscheme moneyforward
+" colorscheme monotonic
+" colorscheme moonshine
+" colorscheme moonshine_lowcontrast
+" colorscheme moonshine_minimal
 " colorscheme motus
-" colorscheme Mustang
 " colorscheme mythos
+" colorscheme neodark
+" colorscheme neverland-darker
+" colorscheme neverland
+" colorscheme neverland2-darker
+" colorscheme neverland2
+" colorscheme neverlandgui
+" colorscheme nightshimmer
+" colorscheme nord
 " colorscheme nordisk
 " colorscheme northland
+" colorscheme oceandeep
+" colorscheme patine
 " colorscheme peaksea
-" colorscheme PerfectDark
+" colorscheme petrel
+" colorscheme primary
 " colorscheme psclone
 " colorscheme pyte
+" colorscheme quantum
+" colorscheme railscasts
+" colorscheme rdark
+" colorscheme risto
+" colorscheme scheakur
+" colorscheme seagull
 " colorscheme seattle
+" colorscheme seti
 " colorscheme solarized
 " colorscheme solarized8_dark
 " colorscheme solarized8_dark_flat
 " colorscheme solarized8_dark_high
 " colorscheme solarized8_dark_low
-" colorscheme solarized8_light
-" colorscheme solarized8_light_flat
-" colorscheme solarized8_light_high
-" colorscheme solarized8_light_low
 " colorscheme sorcerer
+" colorscheme stormpetrel
 " colorscheme synic
 " colorscheme tortex
 " colorscheme tortus
 colorscheme tortusless
 " colorscheme true-monochrome
-" colorscheme true-monochrome_ori
+" colorscheme turtles
 " colorscheme unicon
+" colorscheme vitamins
+" colorscheme vividchalk
+" colorscheme vydark
+" colorscheme wombat
+" colorscheme wombat256mod
+" colorscheme zazen
 " colorscheme zenburn
 " colorscheme zendnb
+" colorscheme znake
+
 
 if has("gui_running")
   " set guifont=Consolas:h14
@@ -405,10 +495,8 @@ let g:netrw_browse_split = 0 " reuse current window
 
 " test!
 " plugin vim-qf
-" let g:qf_auto_open_quickfix = 1 " that is default
-let g:qf_window_bottom = 0
-" let g:qf_auto_open_loclist = 1 " that is default
-let g:qf_loclist_window_bottom = 0
+" let g:qf_window_bottom = 0
+" let g:qf_loclist_window_bottom = 0
 let g:qf_mapping_ack_style = 1
 
 command! BindBoth set scrollbind cursorbind | wincmd p | set scrollbind cursorbind | wincmd p
