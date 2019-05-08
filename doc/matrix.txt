@@ -1,0 +1,33 @@
+*matrix.vim*	For Vim version 6.0	Last change: 2012 Sept 21
+
+created by
+Don Yang
+ 
+script type
+game
+ 
+==============================================================================
+						*matrix*
+description
+-----------
+Matrix screensaver for VIM, inspired by Chris Allegretta's cmatrix.
+
+Also available on github for Vundle users:
+https://github.com/uguu-org/vim-matrix-screensaver
+ 
+install details
+:so matrix.vim or add script to plugin directory.
+start screensaver with :Matrix, press keys a few times to exit.
+
+vim-matrix-screensaver
+----------------------
+
+Matrix Screen for VIM
+
+http://www.vim.org/scripts/script.php?script_id=1189
+https://github.com/uguu-org/vim-matrix-screensaver
+
+Usage:
+1. Source matrix.vim
+2. Execute :Matrix to start
+3. Press any key a few times to exit

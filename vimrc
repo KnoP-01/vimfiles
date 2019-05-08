@@ -21,6 +21,74 @@ set langmenu=none
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
+" matchit
+packadd! matchit
+
+" My vim-plug
+command! MyPlugUpdate :call PlugUpdateWrapper()
+function! PlugUpdateWrapper()
+  set statusline=%F%m%r%h%w
+  PlugUpdate
+endfunction
+command! MyPlugInstall :call PlugInstallWrapper()
+function! PlugInstallWrapper()
+  set statusline=%F%m%r%h%w
+  PlugInstall
+endfunction
+" Specify a directory for plugins
+" - For Neovim: ~/.local/share/nvim/plugged
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
+
+  " Make sure you use single quotes
+
+  " Shorthand notation; fetches https://github.com/junegunn/vim-easy-align
+  " Plug 'junegunn/vim-easy-align'
+  Plug 'KnoP-01/tortus'
+  Plug 'KnoP-01/vimbuddy'
+
+  Plug 'xolox/vim-misc'
+  Plug 'xolox/vim-shell'
+
+  Plug 'tpope/vim-vinegar'
+  Plug 'tpope/vim-commentary'
+
+  Plug 'romainl/vim-qf'
+
+  Plug 'uguu-org/vim-matrix-screensaver'
+
+  Plug 'andymass/vim-tradewinds'
+
+  Plug 'vim-scripts/increment.vim--Avadhanula'
+
+  " Any valid git URL is allowed
+  " Plug 'https://github.com/junegunn/vim-github-dashboard.git'
+
+  " Multiple Plug commands can be written in a single line using | separators
+  " Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+
+  " On-demand loading " normalerweise nicht notwendig
+  " Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+  " Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
+
+  " Using a non-master branch
+  " Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
+
+  " Using a tagged release; wildcard allowed (requires git 1.9.2 or above)
+  " Plug 'fatih/vim-go', { 'tag': '*' }
+
+  " Plugin options
+  " Plug 'nsf/gocode', { 'tag': 'v.20150303', 'rtp': 'vim' }
+
+  " Plugin outside ~/.vim/plugged with post-update hook
+  " Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
+  " Unmanaged plugin (manually installed and updated)
+  " Plug '~/my-prototype-plugin'
+
+" Initialize plugin system
+call plug#end()
+
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 
@@ -162,6 +230,7 @@ cnoremap <Right> <Space><BS><Right>
 set wildchar=<Tab> wildcharm=<C-Z> wildmenu wildmode=full
 nnoremap <F8> :ls<cr>:buffer 
 
+" Identify_the_syntax_highlighting_group_used_at_the_cursor
 map <F9> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
@@ -173,8 +242,8 @@ nnoremap <silent> <F10> :set norelativenumber nonumber\|Matrix<CR>
 let g:shell_mappings_enabled = 0
 let g:shell_fullscreen_always_on_top=0
 " work around bug where the statusline disappears
-nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:set statusline=%F%m%r%h%w\ \ \ [Ffmt=%{&ff}]\ \ \ [Pos=%04l\/%L,%04v]\ \ \ [Buf:#%n]\ \ \ %{VimBuddy()}<CR>
-                                                      set statusline=%F%m%r%h%w\ \ \ [Ffmt=%{&ff}]\ \ \ [Pos=%04l\/%L,%04v]\ \ \ [Buf:#%n]\ \ \ %{VimBuddy()}
+nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:set statusline=%F%m%r%h%w\ \ \ [%{&ff}\ %{&enc}]\ \ \ [Pos=%04l\/%L,%04v]\ \ \ [Buf:#%n]\ \ \ %{VimBuddy()}<CR>
+                                                      set statusline=%F%m%r%h%w\ \ \ [%{&ff}\ %{&enc}]\ \ \ [Pos=%04l\/%L,%04v]\ \ \ [Buf:#%n]\ \ \ %{VimBuddy()}
 "
 
 nnoremap <F12> :Vex<CR>
@@ -246,6 +315,20 @@ inoremap <c-l> <esc>viwuea
 nnoremap <c-u> viwU
 nnoremap <c-l> viwu
 
+" disable menu with alt. nessecary for the following
+set winaltkeys=no
+" move from win to win more easyly
+nnoremap <silent> <A-h> <C-W>h
+nnoremap <silent> <A-j> <C-W>j
+nnoremap <silent> <A-k> <C-W>k
+nnoremap <silent> <A-l> <C-W>l
+" move windows more easyly (andymass/vim-tradewinds)
+let g:tradewinds_no_maps = 1
+nmap <A-H> <plug>(tradewinds-h)
+nmap <A-J> <plug>(tradewinds-j)
+nmap <A-K> <plug>(tradewinds-k)
+nmap <A-L> <plug>(tradewinds-l)
+
 " leader mappings
 let mapleader = " "
 let maplocalleader = " "
@@ -259,7 +342,7 @@ nnoremap zl 16zl
 nnoremap zh 16zh
 
 " redirect .swp files to C:\Users\<user>\AppData\Local\Temp
-set directory-=.
+" set directory-=.
 
 " my modification of <c-e> and <c-y>
 " nnoremap <c-e> <c-e><c-e><c-e><c-e><c-e>  
@@ -268,7 +351,7 @@ set directory-=.
 
 " My plugin mappings and settings
 " let g:knopLhsQuickfix=0
-" let g:knopRhsQuickfix=1
+let g:knopRhsQuickfix=1
 " let g:knopVerbose=0
 " let g:knopVerbose=1
 " let g:knopNoVerbose=0
@@ -321,6 +404,7 @@ let g:krlPathToBodyFiles='d:\daten\scripts\vim_resource\krl resource\'
 " let g:krlFormatComments=0
 " let g:krlAutoComment=0
 " let g:krlCloseFolds=1
+let g:krlFoldLevel=2
 " let g:krlFoldMethodSyntax=1
 " let g:krlNoIndent=0
 " let g:krlNoSpaceIndent=0
@@ -340,143 +424,9 @@ function! CleverTab()
 endfunction
 inoremap <Tab> <C-R>=CleverTab()<CR>
 
-" colorscheme Base2Tone_CaveDark
-" colorscheme Base2Tone_DesertDark
-" colorscheme Base2Tone_DrawbridgeDark
-" colorscheme Base2Tone_EarthDark
-" colorscheme Base2Tone_EveningDark
-" colorscheme Base2Tone_ForestDark
-" colorscheme Base2Tone_HeathDark
-" colorscheme Base2Tone_LakeDark
-" colorscheme Base2Tone_MeadowDark
-" colorscheme Base2Tone_MorningDark
-" colorscheme Base2Tone_PoolDark
-" colorscheme Base2Tone_SeaDark
-" colorscheme Base2Tone_SpaceDark
-" colorscheme BusyBee
-" colorscheme Mustang
-" colorscheme PaperColor
-" colorscheme PerfectDark
-" colorscheme alduin
-" colorscheme anokha
-" colorscheme apprentice
-" colorscheme arcadia
-" colorscheme astroboy
-" colorscheme asu1dark
-" colorscheme atom-dark-256
-" colorscheme atom-dark
-" colorscheme ayu
-" colorscheme blacksea
-" colorscheme blaquemagick
-" colorscheme breezy
-" colorscheme broduo
-" colorscheme brogrammer
-" colorscheme bubblegum-256-dark
-" colorscheme camo
-" colorscheme clear_colors_dark
-" colorscheme codeschool
-" colorscheme darkZ
-" colorscheme darktango
-" colorscheme deep-space
-" colorscheme despacio
-" colorscheme distinguished
-" colorscheme dutch_peasants
-" colorscheme edark
-" colorscheme fahrenheit
-" colorscheme falcon
-" colorscheme farout
-" colorscheme flatlandia
-" colorscheme flattened_dark
-" colorscheme flattown
-" colorscheme frictionless
-" colorscheme gentooish
-" colorscheme ghostbuster
-" colorscheme gotham
-" colorscheme gotham256
-" colorscheme greygull
-" colorscheme gruvbox
-" colorscheme gummybears
-" colorscheme hemisu
-" colorscheme herald
-" colorscheme hilal
-" colorscheme holokai
-" colorscheme hybrid
-" colorscheme hydrangea
-" colorscheme inkpot
-" colorscheme ir_black
-" colorscheme ir_dark
-" colorscheme janah
-" colorscheme jay
-" colorscheme jellybeans
-" colorscheme jellyx
-" colorscheme kalisi
-" colorscheme landscape
-" colorscheme liquidcarbon
-" colorscheme lizard
-" colorscheme lizard256
-" colorscheme lucius
-" colorscheme luinnar
-" colorscheme lxvc
-" colorscheme material-theme
-" colorscheme midnight
-" colorscheme midnight2
-" colorscheme minty
-" colorscheme molokai
-" colorscheme moneyforward
-" colorscheme monotonic
-" colorscheme moonshine
-" colorscheme moonshine_lowcontrast
-" colorscheme moonshine_minimal
-" colorscheme motus
-" colorscheme mythos
-" colorscheme neodark
-" colorscheme neverland-darker
-" colorscheme neverland
-" colorscheme neverland2-darker
-" colorscheme neverland2
-" colorscheme neverlandgui
-" colorscheme nightshimmer
-" colorscheme nord
-" colorscheme nordisk
-" colorscheme northland
-" colorscheme oceandeep
-" colorscheme patine
-" colorscheme peaksea
-" colorscheme petrel
-" colorscheme primary
-" colorscheme psclone
-" colorscheme pyte
-" colorscheme quantum
-" colorscheme railscasts
-" colorscheme rdark
-" colorscheme risto
-" colorscheme scheakur
-" colorscheme seagull
-" colorscheme seattle
-" colorscheme seti
-" colorscheme solarized
-" colorscheme solarized8_dark
-" colorscheme solarized8_dark_flat
-" colorscheme solarized8_dark_high
-" colorscheme solarized8_dark_low
-" colorscheme sorcerer
-" colorscheme stormpetrel
-" colorscheme synic
-" colorscheme tortex
-" colorscheme tortus
+" let g:rapidGroupName=0
+" let g:krlGroupName=0
 colorscheme tortusless
-" colorscheme true-monochrome
-" colorscheme turtles
-" colorscheme unicon
-" colorscheme vitamins
-" colorscheme vividchalk
-" colorscheme vydark
-" colorscheme wombat
-" colorscheme wombat256mod
-" colorscheme zazen
-" colorscheme zenburn
-" colorscheme zendnb
-" colorscheme znake
 
 
 if has("gui_running")
@@ -495,8 +445,8 @@ let g:netrw_browse_split = 0 " reuse current window
 
 " test!
 " plugin vim-qf
-" let g:qf_window_bottom = 0
-" let g:qf_loclist_window_bottom = 0
+let g:qf_window_bottom = 0
+let g:qf_loclist_window_bottom = 0
 let g:qf_mapping_ack_style = 1
 
 command! BindBoth set scrollbind cursorbind | wincmd p | set scrollbind cursorbind | wincmd p

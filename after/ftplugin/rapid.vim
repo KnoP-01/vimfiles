@@ -6,3 +6,8 @@ nmap <silent><buffer> <F2> <Plug>RapidConcealStructs
 nmap <silent><buffer> <F3> <Plug>RapidPartConcealStructs
 nmap <silent><buffer> <F4> <Plug>RapidShowStructs
 
+" center when moving to previews/next func
+" nmap [[ [[zt
+" nmap ]] ]]zt
+" nmap [] []zb
+" nmap ][ ][zb
