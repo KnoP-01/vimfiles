@@ -584,7 +584,7 @@ if !exists("*s:KnopVerboseEcho()")
   function <SID>RapidGoDefinition()
     "
     " let l:declPrefix = '\c\v^\s*((global\s+)?(const\s+)?(bool|int|real|char|frame|pos|axis|e6pos|e6axis|signal|channel)\s+[a-zA-Z0-9_,\[\] \t]*|(decl\s+)?(global\s+)?(struc|enum)\s+|decl\s+(global\s+)?(const\s+)?\w+\s+[a-zA-Z0-9_,\[\] \t]*)'
-    let l:declPrefix = '\c\v^\s*(local\s+|task\s+|global\s+)?(var|pers|const)\s+\w+\s+'
+    let l:declPrefix = '\c\v^\s*(local\s+|task\s+|global\s+)?(var|pers|const|alias)\s+\w+\s+'
     "
     " suche das naechste wort
     if search('\w','cW',line("."))

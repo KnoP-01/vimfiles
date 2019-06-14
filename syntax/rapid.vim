@@ -152,7 +152,7 @@ else
   syn keyword rapidType adaptdata trackdata multidata 
   " dispense data types
   syn keyword rapidType beaddata equipdata
-  " Spot options data types
+  " Spot data types
   syn keyword rapidType gundata spotdata forcedata simdata smeqdata
   " Continuous Application Platform data types
   syn keyword rapidType capdata caplatrackdata capspeeddata captrackdata capweavedata flypointdata processtimes restartblkdata supervtimeouts weavestartdata 
@@ -201,9 +201,9 @@ else
   syn keyword rapidKeyword CamFlush CamGetParameter CamGetResult CamLoadJob CamReqImage CamSetExposure CamSetParameter CamSetProgramMode CamSetRunMode CamStartLoadJob CamWaitLoadJob 
   " arc Weldguide and MultiPass instructions
   syn keyword rapidKeyword MPSavePath MPLoadPath MPReadInPath MPOffsEaxOnPath
-  " Paint options instructions
+  " Paint instructions
   syn keyword rapidKeyword SetBrush SetBrushFac
-  " Spot options instructions
+  " Spot instructions
   syn keyword rapidKeyword SetForce Calibrate ReCalcTCP IndGunMove IndGunMoveReset OpenHighLift CloseHighLift SwSetIntSpotData SwSetIntForceData SwSetIntGunData SwSetIntSimData SwGetCalibData SwGetFixTipData 
   " dispense instructions
   syn keyword rapidKeyword SetTmSignal
@@ -235,7 +235,7 @@ else
   syn keyword rapidMovement PathRecMoveBwd PathRecMoveFwd 
   syn keyword rapidMovement PaintL PaintC
   syn keyword rapidMovement StartMove StartMoveRetry StepBwdPath StopMove StopMoveReset
-  " Spot options instructions
+  " Spot instructions
   syn keyword rapidMovement SpotL SpotJ SpotML SpotMJ CalibL CalibJ MeasureWearL 
   syn keyword rapidMovement SMoveJ SMoveJDO SMoveJGO SMoveJSync SMoveL SMoveLDO SMoveLGO SMoveLSync SSearchL STriggJ STriggL
   syn keyword rapidMovement SearchC SearchExtJ SearchL
@@ -300,7 +300,7 @@ else
   syn keyword rapidBuildInFunction contained Tan TanDnum TaskRunMec TaskRunRob TasksInSync TestAndSet TestDI TestSignRead TextGet TextTabFreeToUse TextTabGet TriggDataValid Trunc TruncDnum Type
   syn keyword rapidBuildInFunction contained UIAlphaEntry UIClientExist UIDnumEntry UIDnumTune UIListView UIMessageBox UINumEntry UINumTune
   syn keyword rapidBuildInFunction contained ValidIO ValToStr Vectmagn
-  " Spot options functions
+  " Spot functions
   syn keyword rapidBuildInFunction contained SwGetCurrTargetName SwGetCurrSpotName 
   if exists("g:rapidNoHighlight") && g:rapidNoHighlight==1
         \|| exists("g:rapidNoHighLink") && g:rapidNoHighLink==1
