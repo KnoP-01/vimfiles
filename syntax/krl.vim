@@ -8,6 +8,15 @@
 " Suggestions of improvement are very welcome. Please email me!
 "
 "
+"
+" Note to self:
+" for testing perfomance
+"     open a 1000 lines file.
+"     :syntime on
+"     G
+"     hold down CTRL-U until reaching top
+"     :syntime report
+
 
 " Init {{{
 " Remove any old syntax stuff that was loaded (5.x) or quit when a syntax file

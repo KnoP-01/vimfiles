@@ -7,7 +7,7 @@
 
 
 ==============================================================================
-                        *krl-Introducion*
+                        *krl-Introduction*
 
 Have a look at |krl-tl:dr| to get a quick overview over the most important
 options provided by KRL for Vim.
@@ -88,6 +88,17 @@ Q: I did set g:krlFoldLevel=1 or 2 but folds are open after loading a .src
     file?!   
 A: Unfortunately the order matters: >
 
+    syntax on                   " before filetype plugin on
+    filetype plugin indent on   " after syntax on
+
+Q: Folds are still open although I have syntax on and filetype on in the right
+    order?!  
+A: Some plugin manager mess with those commands, so with vim-plug I had to
+    redo this after plug#end(): >
+
+    call plug#end()
+    syntax off                 " undo what plug#begin() did to syntax
+    filetype plugin indent off " undo what plugin#begin() did to filetype
     syntax on                   " before filetype plugin on
     filetype plugin indent on   " after syntax on
 
@@ -180,7 +191,7 @@ A: `:let g:knopVerbose=1` any time.
                         *krl*   *krl-index* 
 ==============================================================================
 
-|krl-Introducion|
+|krl-Introduction|
     |krl-tl:dr|     Short overview
 |krl-options|       List of all options and <plug> mappings
 |krl-highlighting|

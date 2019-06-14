@@ -22,7 +22,7 @@ set langmenu=none
 set nocompatible
 
 " matchit
-packadd! matchit
+" packadd! matchit " siehe https://github.com/andymass/vim-matchup
 
 " My vim-plug
 command! MyPlugUpdate :call PlugUpdateWrapper()
@@ -47,19 +47,31 @@ call plug#begin('~/.vim/plugged')
   Plug 'KnoP-01/tortus'
   Plug 'KnoP-01/vimbuddy'
 
+  " full screen mode for windows
   Plug 'xolox/vim-misc'
   Plug 'xolox/vim-shell'
 
+  " erweiterung fuer net-rw
   Plug 'tpope/vim-vinegar'
+  " ein- und auskommentieren
   Plug 'tpope/vim-commentary'
 
+  " erweiterung fuer quickfix und loclist
   Plug 'romainl/vim-qf'
 
-  Plug 'uguu-org/vim-matrix-screensaver'
+  " fun
+  " Plug 'uguu-org/vim-matrix-screensaver'
+  Plug 'KnoP-01/vim-matrix-screensaver'
 
+  " fenster anordnen
   Plug 'andymass/vim-tradewinds'
+  " ersatz fuer matchit
+  Plug 'andymass/vim-matchup'
+  let loaded_matchit = 1
+  let g:matchup_matchparen_enabled = 0
 
-  Plug 'vim-scripts/increment.vim--Avadhanula'
+  " Plug 'vim-scripts/increment.vim--Avadhanula'
+  Plug 'mMontu/increment.vim--Avadhanula'
 
   " Any valid git URL is allowed
   " Plug 'https://github.com/junegunn/vim-github-dashboard.git'
@@ -89,6 +101,9 @@ call plug#begin('~/.vim/plugged')
 " Initialize plugin system
 call plug#end()
 
+syntax off                 " undo what plug#begin() did to syntax
+filetype plugin indent off " undo what plugin#begin() did to filetype
+
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 
@@ -108,8 +123,7 @@ set guioptions+=R
 set guioptions+=a
 
 " Switch syntax highlighting on, when the terminal has colors
-" for some unknown reason my windows git-bash does not like syntax on at this position?! So I excluded its &term (xterm)
-if &t_Co > 2 && &term!~'xterm-256color' || has("gui_running")
+if &t_Co > 2 || has("gui_running")
   syntax on
 endif
 
@@ -125,11 +139,15 @@ if has("autocmd")
   " Put these in an autocmd group, so that we can delete them easily.
   augroup vimrcRelNum
     " relativenumber and cursorline only in current window
-    autocmd BufEnter,WinEnter,InsertLeave * setlocal cursorline
-    autocmd BufEnter,WinEnter,InsertLeave *
+    " autocmd BufEnter,WinEnter,InsertLeave * setlocal cursorline
+    autocmd BufEnter,WinEnter * setlocal cursorline
+    " autocmd BufEnter,WinEnter,InsertLeave *
+    autocmd BufEnter,WinEnter *
           \ if &filetype !=# 'help' | setlocal relativenumber | endif
-    autocmd BufLeave,WinLeave,InsertEnter * setlocal nocursorline
-    autocmd BufLeave,WinLeave,InsertEnter *
+    " autocmd BufLeave,WinLeave,InsertEnter * setlocal nocursorline
+    autocmd BufLeave,WinLeave * setlocal nocursorline
+    " autocmd BufLeave,WinLeave,InsertEnter *
+    autocmd BufLeave,WinLeave *
           \ if &filetype !=# 'help' | setlocal norelativenumber | endif
   augroup END
 
@@ -202,6 +220,8 @@ set listchars=nbsp:~,tab:>-,trail:.,eol:$
 
 set nojoinspaces " ein statt 2 spaces nach "saetzen" (nach . ! ?)
 
+" damn typo
+" cnoremap W w
 " center when searching next
 nnoremap n nzz
 " center when searching previous
@@ -231,9 +251,9 @@ set wildchar=<Tab> wildcharm=<C-Z> wildmenu wildmode=full
 nnoremap <F8> :ls<cr>:buffer 
 
 " Identify_the_syntax_highlighting_group_used_at_the_cursor
-map <F9> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+map <F9> :echo "hi<" .  synIDattr(            synID(line("."),col("."),1)  ,"name") . '> trans<'
+      \ .               synIDattr(            synID(line("."),col("."),0)  ,"name") . "> lo<"
+      \ .               synIDattr(synIDtrans( synID(line("."),col("."),1) ),"name") . ">"<CR>
 
 " fun
 nnoremap <silent> <F10> :set norelativenumber nonumber\|Matrix<CR>
@@ -242,11 +262,12 @@ nnoremap <silent> <F10> :set norelativenumber nonumber\|Matrix<CR>
 let g:shell_mappings_enabled = 0
 let g:shell_fullscreen_always_on_top=0
 " work around bug where the statusline disappears
-nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:set statusline=%F%m%r%h%w\ \ \ [%{&ff}\ %{&enc}]\ \ \ [Pos=%04l\/%L,%04v]\ \ \ [Buf:#%n]\ \ \ %{VimBuddy()}<CR>
-                                                      set statusline=%F%m%r%h%w\ \ \ [%{&ff}\ %{&enc}]\ \ \ [Pos=%04l\/%L,%04v]\ \ \ [Buf:#%n]\ \ \ %{VimBuddy()}
+nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:set statusline=%F%m%r%h%w\ \ \ [%{&ff}\ %{&enc}\ %{&ft}]\ \ \ [Buf:#%n]\ \ \ %{VimBuddy()}<CR>
+                                                      set statusline=%F%m%r%h%w\ \ \ [%{&ff}\ %{&enc}\ %{&ft}]\ \ \ [Buf:#%n]\ \ \ %{VimBuddy()}
 "
 
-nnoremap <F12> :Vex<CR>
+" nnoremap <F12> :Vex<CR> " is now - because of vinegar.vim
+nnoremap <F12> :ls<cr>:buffer 
 
 " Atom \V sets following pattern to "very nomagic", i.e. only the backslash
 " has special meaning.
@@ -260,6 +281,8 @@ nnoremap <F12> :Vex<CR>
 " See http://vim.wikia.com/wiki/Search_for_visually_selected_text
 xnoremap * y/\V<C-R>=substitute(escape(@@,"/\\"),"\n","\\\\n","ge")<CR><CR>
 xnoremap # y?\V<C-R>=substitute(escape(@@,"?\\"),"\n","\\\\n","ge")<CR><CR>
+" xnoremap ; y:<C-U>vimgrep /\V<c-r>=escape(@@,"/\\")<cr>/j ./**/*.
+xnoremap ; y:<C-U>vimgrep /\V<c-r>=escape(@@,"/\\")<CR>/j <C-R>=join(split(&path, ","), "/* ")<CR>/*
 
 " indent text object
 function! IndTxtObj(inner)
@@ -311,11 +334,14 @@ nnoremap ' `
 " change current word to upper/lower case in insert mode
 inoremap <c-u> <esc>viwUea
 inoremap <c-l> <esc>viwuea
-" change current word to uppe/lower case in noemal mode
+" change current word to uppe/lower case in normal mode
 nnoremap <c-u> viwU
 nnoremap <c-l> viwu
+" change current word to uppe/lower case since I cant remember u and U
+xnoremap <c-u> U
+xnoremap <c-l> u
 
-" disable menu with alt. nessecary for the following
+" disable menu with alt. necessary for the following
 set winaltkeys=no
 " move from win to win more easyly
 nnoremap <silent> <A-h> <C-W>h
@@ -404,7 +430,7 @@ let g:krlPathToBodyFiles='d:\daten\scripts\vim_resource\krl resource\'
 " let g:krlFormatComments=0
 " let g:krlAutoComment=0
 " let g:krlCloseFolds=1
-let g:krlFoldLevel=2
+let g:krlFoldLevel=1
 " let g:krlFoldMethodSyntax=1
 " let g:krlNoIndent=0
 " let g:krlNoSpaceIndent=0
@@ -423,6 +449,7 @@ function! CleverTab()
   return "\<C-P>"
 endfunction
 inoremap <Tab> <C-R>=CleverTab()<CR>
+
 
 " let g:rapidGroupName=0
 " let g:krlGroupName=0
