@@ -583,7 +583,6 @@ if !exists("*s:KnopVerboseEcho()")
 
   function <SID>RapidGoDefinition()
     "
-    " let l:declPrefix = '\c\v^\s*((global\s+)?(const\s+)?(bool|int|real|char|frame|pos|axis|e6pos|e6axis|signal|channel)\s+[a-zA-Z0-9_,\[\] \t]*|(decl\s+)?(global\s+)?(struc|enum)\s+|decl\s+(global\s+)?(const\s+)?\w+\s+[a-zA-Z0-9_,\[\] \t]*)'
     let l:declPrefix = '\c\v^\s*(local\s+|task\s+|global\s+)?(var|pers|const|alias)\s+\w+\s+'
     "
     " suche das naechste wort
@@ -1002,9 +1001,33 @@ if !exists("*s:KnopVerboseEcho()")
 
   " }}} Function Text Object
 
+  " Comment Text Object {{{
+
+  if get(g:,'rapidMoveAroundKeyMap',1) " depends on move around key mappings
+    function <SID>RapidCommentTextObject(around)
+      if getline('.')!~'^\s*!' && !search('^\s*!',"sW")
+        return
+      endif
+      " starte innerhalb des oder nach dem kommentar
+      silent normal! j
+      silent normal [;
+      if getline(line('.')+1)!~'^\s*!'
+        silent normal! V
+      else
+        silent normal! V
+        silent normal ];
+      endif
+      if a:around && getline(line('.')+1)=~'^\s*$'
+        silent normal! j
+      endif
+    endfunction " RapidCommentTextObject()
+  endif
+
+  " }}} Comment Text Object
+
 endif " !exists("*s:KnopVerboseEcho()")
 
-" Vim Settings {{{ 
+" Vim Settings {{{
 
 " default on; no option
 setlocal commentstring=!%s

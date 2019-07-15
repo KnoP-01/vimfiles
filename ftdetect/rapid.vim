@@ -25,7 +25,7 @@ augroup END
 if !exists("*<SID>RapidAutoCorrCfgLineEnding()")
   function <SID>RapidAutoCorrCfgLineEnding()
     setf rapid
-    if get(g:,'rapidAutoCorrCfgLineEnd',0)
+    if get(g:,'rapidAutoCorrCfgLineEnd',1)
       silent! %s/\r//
       normal ``
     endif

@@ -1294,7 +1294,7 @@ if !exists("*s:KnopVerboseEcho()")
   if get(g:,'krlMoveAroundKeyMap',1) " depends on move around key mappings
     function <SID>KrlCommentTextObject(around)
       if getline('.')!~'^\s*;' && !search('^\s*;',"sW")
-          return
+        return
       endif
       " starte innerhalb des oder nach dem kommentar
       silent normal! j
