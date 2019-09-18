@@ -68,7 +68,8 @@ call plug#begin('~/.vim/plugged')
   " ersatz fuer matchit
   Plug 'andymass/vim-matchup'
   let loaded_matchit = 1
-  let g:matchup_matchparen_enabled = 0
+  let g:matchup_matchparen_enabled = 1
+  let g:matchup_matchparen_status_offscreen = 0
 
   " Plug 'vim-scripts/increment.vim--Avadhanula'
   Plug 'mMontu/increment.vim--Avadhanula'
@@ -262,11 +263,11 @@ nnoremap <silent> <F10> :set norelativenumber nonumber\|Matrix<CR>
 let g:shell_mappings_enabled = 0
 let g:shell_fullscreen_always_on_top=0
 " work around bug where the statusline disappears
-nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:set statusline=%F%m%r%h%w\ \ \ [%{&ff}\ %{&enc}\ %{&ft}]\ \ \ [Buf:#%n]\ \ \ %{VimBuddy()}<CR>
-                                                      set statusline=%F%m%r%h%w\ \ \ [%{&ff}\ %{&enc}\ %{&ft}]\ \ \ [Buf:#%n]\ \ \ %{VimBuddy()}
+nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:set statusline=%F%m%r%h%w\ %#StatusLineNC#\ \ [%{&ff}\ %{&enc}\ %{&ft}]%#ToDo#\ \ [L=%04l,C=%03v,#%02n]\ \ %{VimBuddy()}\ <CR>
+                                                      set statusline=%F%m%r%h%w\ %#StatusLineNC#\ \ [%{&ff}\ %{&enc}\ %{&ft}]%#ToDo#\ \ [L=%04l,C=%03v,#%02n]\ \ %{VimBuddy()}\ 
 "
 
-" nnoremap <F12> :Vex<CR> " is now - because of vinegar.vim
+" nnoremap <F12> :Vex<CR> " is now '-' because of vinegar.vim
 nnoremap <F12> :ls<cr>:buffer 
 
 " Atom \V sets following pattern to "very nomagic", i.e. only the backslash
@@ -397,7 +398,7 @@ let g:rapidConcealStructs=1
 let g:rapidAutoFormKeyMap=1
 " let g:rapidPathToBodyFiles='d:\daten\scripts\vim_resource\rapid resource\'
 let g:rapidNoHighLink=1
-let g:rapidShowError=1
+" let g:rapidShowError=1
 let g:rapidFormatComments=1
 " let g:rapidAutoComment=0
 " let g:rapidNoIndent=0
@@ -428,7 +429,7 @@ let g:krlPathToBodyFiles='d:\daten\scripts\vim_resource\krl resource\'
 " let g:krlNoHighlight=1
 " let g:krlShowError=1
 " let g:krlFormatComments=0
-" let g:krlAutoComment=0
+let g:krlAutoComment=0
 " let g:krlCloseFolds=1
 let g:krlFoldLevel=1
 " let g:krlFoldMethodSyntax=1
@@ -454,6 +455,8 @@ inoremap <Tab> <C-R>=CleverTab()<CR>
 " let g:rapidGroupName=0
 " let g:krlGroupName=0
 colorscheme tortusless
+" colorscheme falcon
+" colorscheme anokha
 
 
 if has("gui_running")

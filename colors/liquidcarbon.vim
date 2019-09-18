@@ -59,7 +59,7 @@ hi  SpellCap        guisp=#0000ff   gui=undercurl
 hi  SpellLocal      guisp=#008b8b   gui=undercurl
 hi  SpellRare       guisp=#ff00ff   gui=undercurl
 hi  StatusLine      guifg=#ddeeff   guibg=#445566   gui=NONE
-hi  StatusLineNC    guifg=#999999   guibg=#445566   gui=italic
+hi  StatusLineNC    guifg=#999999   guibg=#445566   
 hi  TabLine         guifg=fg        guibg=#d3d3d3   gui=underline
 hi  TabLineFill     guifg=fg        guibg=bg        gui=reverse
 hi  TabLineSel      guifg=fg        guibg=bg        gui=bold
@@ -75,7 +75,7 @@ hi  WildMenu        guifg=#000000   guibg=#87ceeb   gui=NONE
 
 "  General {{{2
 " -----------------------------------------------------------------------------
-hi  Comment         guifg=#809090   guibg=NONE      gui=italic
+hi  Comment         guifg=#809090   guibg=NONE      
 hi  Constant        guifg=#cdad00   guibg=NONE      gui=NONE
 hi  String          guifg=#559b70   guibg=NONE      gui=NONE
 hi  Boolean         guifg=#cd69c9   guibg=NONE      gui=NONE
@@ -94,12 +94,12 @@ hi  Todo            guifg=#ff88ee   guibg=NONE      gui=bold
 " Vim {{{2
 " -----------------------------------------------------------------------------
 hi VimError         guifg=#ff0000   guibg=#000000   gui=bold
-hi VimCommentTitle  guifg=#528b8b   guibg=bg        gui=bold,italic
+hi VimCommentTitle  guifg=#528b8b   guibg=bg        gui=bold
 " 2}}}
 
 " QuickFix {{{2
 " -----------------------------------------------------------------------------
-hi qfFileName       guifg=#607b8b   guibg=NONE      gui=italic
+hi qfFileName       guifg=#607b8b   guibg=NONE      
 hi qfLineNr         guifg=#0088aa   guibg=NONE      gui=bold
 hi qfError          guifg=#ff0000   guibg=NONE      gui=bold
 " 2}}}
@@ -112,10 +112,10 @@ hi link pythonDecoratorFunction pythonDecorator
 
 " Diff {{{2
 " -----------------------------------------------------------------------------
-hi diffOldFile      guifg=#da70d6   guibg=NONE      gui=italic
-hi diffNewFile      guifg=#ffff00   guibg=NONE      gui=italic
-hi diffFile         guifg=#ffa500   guibg=NONE      gui=italic
-hi diffLine         guifg=#ff00ff   guibg=NONE      gui=italic
+hi diffOldFile      guifg=#da70d6   guibg=NONE      
+hi diffNewFile      guifg=#ffff00   guibg=NONE      
+hi diffFile         guifg=#ffa500   guibg=NONE      
+hi diffLine         guifg=#ff00ff   guibg=NONE      
 hi link             diffOnly        Constant
 hi link             diffIdentical   Constant
 hi link             diffDiffer      Constant

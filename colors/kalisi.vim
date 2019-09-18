@@ -59,7 +59,7 @@ if &background == "dark"
   " c: int char void
   " html: class href id
   hi Type             guifg=#5d8fbe gui=none ctermfg=67
-  hi StorageClass     guifg=#55aa85 gui=italic
+  hi StorageClass     guifg=#55aa85 
   " c: struct
   " py:  self __name__ Error Exception   and is not
   hi Structure        guifg=#557a95 gui=none
@@ -360,9 +360,9 @@ else
 
   hi Type             guifg=#f47300 guibg=NONE    gui=none
 
-  hi StorageClass     guifg=#0000d7               gui=italic
+  hi StorageClass     guifg=#0000d7               
   hi Structure        guifg=#274aac guibg=NONE    gui=none
-  hi Typedef          guifg=#274aac               gui=italic
+  hi Typedef          guifg=#274aac               
 
   hi Special          guifg=#ffaf00 guibg=NONE    gui=bold
   hi SpecialChar      guifg=#F92672               gui=bold

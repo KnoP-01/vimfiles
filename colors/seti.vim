@@ -67,7 +67,7 @@ hi rubySymbol                   ctermfg=167   ctermbg=NONE  cterm=NONE          
 hi rubyConstant                 ctermfg=140   ctermbg=NONE  cterm=NONE          guifg=#a074c4   guibg=NONE      gui=NONE
 hi rubyStringDelimiter          ctermfg=74    ctermbg=NONE  cterm=NONE          guifg=#55b5db   guibg=NONE      gui=NONE
 hi rubyBlockParameter           ctermfg=74    ctermbg=NONE  cterm=NONE          guifg=#55b5db   guibg=NONE      gui=NONE
-hi rubyInstanceVariable         ctermfg=149   ctermbg=NONE  cterm=NONE          guifg=#9fca56   guibg=NONE      gui=italic
+hi rubyInstanceVariable         ctermfg=149   ctermbg=NONE  cterm=NONE          guifg=#9fca56   guibg=NONE      
 hi rubyInclude                  ctermfg=197   ctermbg=NONE  cterm=NONE          guifg=#ff026a   guibg=NONE      gui=NONE
 hi rubyGlobalVariable           ctermfg=149   ctermbg=NONE  cterm=NONE          guifg=#9fca56   guibg=NONE      gui=NONE
 hi rubyRegexp                   ctermfg=215   ctermbg=NONE  cterm=NONE          guifg=#ffb454   guibg=NONE      gui=NONE
@@ -77,7 +77,7 @@ hi rubyControl                  ctermfg=149   ctermbg=NONE  cterm=NONE          
 hi rubyClassVariable            ctermfg=185   ctermbg=NONE  cterm=NONE          guifg=#e6cd69   guibg=NONE      gui=NONE
 hi rubyOperator                 ctermfg=149   ctermbg=NONE  cterm=NONE          guifg=#9fca56   guibg=NONE      gui=NONE
 hi rubyException                ctermfg=197   ctermbg=NONE  cterm=NONE          guifg=#ff026a   guibg=NONE      gui=NONE
-hi rubyPseudoVariable           ctermfg=149   ctermbg=NONE  cterm=NONE          guifg=#9fca56   guibg=NONE      gui=italic
+hi rubyPseudoVariable           ctermfg=149   ctermbg=NONE  cterm=NONE          guifg=#9fca56   guibg=NONE      
 hi rubyRailsUserClass           ctermfg=140   ctermbg=NONE  cterm=NONE          guifg=#a074c4   guibg=NONE      gui=NONE
 hi rubyRailsARAssociationMethod ctermfg=140   ctermbg=NONE  cterm=NONE          guifg=#a074c4   guibg=NONE      gui=NONE
 hi rubyRailsARMethod            ctermfg=140   ctermbg=NONE  cterm=NONE          guifg=#a074c4   guibg=NONE      gui=NONE

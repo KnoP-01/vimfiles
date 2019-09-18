@@ -53,7 +53,7 @@ if &background == 'light'
 	hi SpellRare guifg=#04530d guibg=#d0ead0 gui=undercurl ctermfg=22 ctermbg=151 guisp=#04530d cterm=underline
 	hi Statement guifg=#0c6cc0 gui=none ctermfg=25
 	hi StatusLine guifg=#dcdcdc guibg=#4a4642 gui=none ctermfg=251 ctermbg=237
-	hi StatusLineNC guifg=#dcdcdc guibg=#7a7672 gui=italic ctermfg=251 ctermbg=242 cterm=none
+	hi StatusLineNC guifg=#dcdcdc guibg=#7a7672 ctermfg=251 ctermbg=242 cterm=none
 	hi String guifg=#1041a8 ctermfg=18
 	hi TabLine guifg=#dcdcdc guibg=#4a4642 gui=none ctermfg=251 ctermbg=237
 	hi TabLineFill guifg=#dcdcdc guibg=#4a4642 gui=none ctermfg=251 ctermbg=237
@@ -113,7 +113,7 @@ else
 	hi SpellRare guifg=#a0cab0 guibg=#121713 gui=undercurl ctermfg=109 ctermbg=233 guisp=#a0cab0 cterm=underline
 	hi Statement guifg=#91b5d4 gui=none ctermfg=109
 	hi StatusLine guifg=#b2b5b2 guibg=#292c2f gui=none ctermfg=247 ctermbg=237
-	hi StatusLineNC guifg=#727572 guibg=#020508 gui=italic ctermfg=235 ctermbg=232 cterm=none
+	hi StatusLineNC guifg=#727572 guibg=#020508 ctermfg=235 ctermbg=232 cterm=none
 	hi String guifg=#a7a053 ctermfg=101
 	hi TabLine guifg=#b2b5b2 guibg=#292c2f gui=none ctermfg=247 ctermbg=237
 	hi TabLineFill guifg=#b2b5b2 guibg=#292c2f gui=none ctermfg=247 ctermbg=237

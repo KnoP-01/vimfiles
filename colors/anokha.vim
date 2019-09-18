@@ -134,7 +134,7 @@ endif
 " vim >= 7.0 only
 if version >= 700
   if !s:mimic_anokha_alt
-    hi CursorLine		guibg=#225555	gui=NONE
+    hi CursorLine		guibg=#003333	gui=underline
     hi CursorColumn		guibg=#225555	gui=NONE
     " tab pages
     hi TabLine	guifg=#00ddad	guibg=#002222	gui=underline
@@ -146,7 +146,7 @@ if version >= 700
     hi PmenuSbar	guifg=#336666	guibg=#336666	gui=NONE
     hi PmenuThumb	guifg=#447777	guibg=#447777	gui=NONE
   else
-    hi CursorLine		guibg=#225522	gui=NONE
+    hi CursorLine		guibg=#003333	gui=underline
     hi CursorColumn		guibg=#225522	gui=NONE
     " tab pages
     hi TabLine	guifg=#44cc44	guibg=#002200	gui=underline
@@ -263,12 +263,12 @@ if 0 < s:mimic_font_style
 
   " set the italic only options
   if 2 == s:mimic_font_style || 3 <= s:mimic_font_style
-    call s:MultiHi("gui=italic", "StatusLineNC", "Comment", "SpecialComment", "Question")
+    call s:MultiHi("gui=none", "StatusLineNC", "Comment", "SpecialComment", "Question")
   endif
 
   " set the bold & italic options
   if 3 <= s:mimic_font_style
-    call s:MultiHi("gui=bold,italic", "MoreMsg", "Title", "Identifier", "Todo")
+    call s:MultiHi("gui=bold", "MoreMsg", "Title", "Identifier", "Todo")
   endif
 
   " Cleanup

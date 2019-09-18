@@ -56,7 +56,7 @@ hi FoldColumn guibg=steelblue3 ctermbg=14 guifg=navyblue ctermfg=11 gui=bold
 "hi SignColumn
 "hi IncSearch  
 hi LineNr guifg=yellow3 ctermfg=3
-hi MatchParen guibg=navyblue gui=italic
+hi MatchParen guibg=navyblue 
 hi ModeMsg guifg=yellow3 gui=bold ctermfg=3
 "hi MoreMsg(   )
 "hi NonText    
@@ -93,7 +93,7 @@ hi Character guifg=mediumpurple3 ctermfg=5
 hi Number guifg=turquoise3 ctermfg=5
 "hi Identifier 
 hi Statement guifg=khaki3 gui=bold ctermfg=15 cterm=underline
-hi PreProc guifg=firebrick3 gui=italic ctermfg=9
+hi PreProc guifg=firebrick3 ctermfg=9
 hi Type  guifg=gold3 gui=bold ctermfg=3
 hi Special guifg=orange ctermfg=208
 hi Underlined ctermfg=white cterm=underline

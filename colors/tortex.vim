@@ -30,7 +30,7 @@ hi Statement    guifg=Yellow                              gui=NONE ctermfg=226 c
 hi Type         guifg=#60ff60                gui=NONE  ctermfg=82 cterm=none
 hi Pmenu        guifg=white          guibg=#445599        gui=none ctermfg=231 ctermbg=61 cterm=none
 hi PmenuSel     guifg=#445599        guibg=gray ctermfg=61 ctermbg=250 cterm=none
-hi Comment                                                gui=italic ctermfg=75  ctermbg=16 cterm=none
+hi Comment                                                ctermfg=75  ctermbg=16 cterm=none
 hi matchparen	guifg=cyan           guibg=#6C6C6C        gui=bold
 hi linenr       guifg=burlywood3                          gui=none  ctermfg=172
 hi ErrorMsg     guifg=white          guibg=red            gui=none ctermfg=231 ctermbg=196 cterm=none

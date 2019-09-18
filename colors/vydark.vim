@@ -50,7 +50,7 @@ endif
 
 " Syntax highlighting 
 hi Comment       guifg=#666677  gui=none
-hi Todo          guifg=#8888aa  guibg=#303030  gui=italic
+hi Todo          guifg=#8888aa  guibg=#303030  
 hi Operator      guifg=#bbbbbb  gui=none
 hi Identifier    guifg=#bbbbbb  gui=none
 hi Statement     guifg=#bbbbbb  gui=none

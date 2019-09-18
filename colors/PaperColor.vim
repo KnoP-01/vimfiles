@@ -810,8 +810,8 @@ fun! s:set_format_attributes()
     let s:ft_bold    = " cterm=bold gui=bold "
     let s:ft_none    = " cterm=none gui=none "
     let s:ft_reverse = " cterm=reverse gui=reverse "
-    let s:ft_italic  = " cterm=italic gui=italic "
-    let s:ft_italic_bold = " cterm=italic,bold gui=italic,bold "
+    let s:ft_italic  = " cterm=italic "
+    let s:ft_italic_bold = " cterm=italic,bold gui=bold "
   elseif s:mode == s:MODE_256_COLOR
     let s:ft_bold    = " cterm=bold "
     let s:ft_none    = " cterm=none "

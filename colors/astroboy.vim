@@ -306,12 +306,12 @@ if has("gui_running") && 0 < s:mimic_font_style
 
   " set the italic only options
   if 2 == s:mimic_font_style || 3 <= s:mimic_font_style
-    call s:MultiHi("gui=italic", "TabLine", "StatusLineNC", "Folded", "Question", "Comment", "Identifier", "Function")
+    call s:MultiHi("gui=none", "TabLine", "StatusLineNC", "Folded", "Question", "Comment", "Identifier", "Function")
   endif
 
   " set the bold & italic options
   if 3 <= s:mimic_font_style
-    call s:MultiHi("gui=bold,italic", "MoreMsg", "Title", "Identifier", "Function", "Todo")
+    call s:MultiHi("gui=bold", "MoreMsg", "Title", "Identifier", "Function", "Todo")
   endif
 
   " cleanup

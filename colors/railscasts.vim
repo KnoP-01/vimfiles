@@ -119,7 +119,7 @@ hi pythonDoctestValue        guifg=#87d7af ctermfg=115
 
 " Mail
 " ----
-hi mailEmail                 guifg=#87af5f ctermfg=107 gui=italic cterm=underline
+hi mailEmail                 guifg=#87af5f ctermfg=107 cterm=underline
 hi mailHeaderKey             guifg=#ffdf5f ctermfg=221
 hi! link mailSubject mailHeaderKey
 

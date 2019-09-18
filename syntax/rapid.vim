@@ -57,20 +57,20 @@ syn case ignore
 " }}} init
 
 if bufname("%") =~ '\c\.cfg$'
-  " highlighting for *.cfg
+  " {{{ highlighting for *.cfg
 
   " Constant values
   " Boolean
   syn keyword rapidBoolean TRUE FALSE Edge High Low
   highlight default link rapidBoolean Boolean
   " Float (num)
-  syn match rapidFloat /\(\W\|_\)\@1<=[+-]\?\d\+\.\?\d*\([eE][+-]\?\d\+\)\?/
+  syn match rapidFloat /\v%(\W|_)@1<=[+-]?\d+\.?\d*%(\s*[eE][+-]?\d+)?/
   highlight default link rapidFloat Float
   " character code in string
   syn match rapidCharCode /[^\\]\zs\\\d{1,3}/ contained
   highlight default link rapidCharCode SpecialChar
   " String. Note: Don't rename group rapidString. Indent depend on this
-  syn region rapidString start=/"/ end=/"/ contains=rapidCharCode containedin=rapidStructVal
+  syn region rapidString start=/"/ end=/"/ contains=rapidCharCode
   highlight default link rapidString String
   " ---
 
@@ -85,6 +85,7 @@ if bufname("%") =~ '\c\.cfg$'
   syn match rapidException /CFG\ze_/
   highlight default link rapidException Exception
   " ---
+  " }}} highlighting for *.cfg
 else
   " highlighting for *.mod, *.sys and *.prg
 
@@ -110,7 +111,7 @@ else
   syn keyword rapidBoolean TRUE FALSE Edge High Low
   highlight default link rapidBoolean Boolean
   " Float (num)
-  syn match rapidFloat /\W\@1<=[+-]\?\d\+\.\?\d*\([eE][+-]\?\d\+\)\?/
+  syn match rapidFloat /\v\W@1<=[+-]?\d+\.?\d*%(\s*[eE][+-]?\d+)?/
   highlight default link rapidFloat Float
   " character code in string
   syn match rapidCharCode /[^\\]\zs\\\d{1,3}/ contained
@@ -173,11 +174,13 @@ else
   syn keyword rapidConditional IF THEN ELSEIF ELSE ENDIF TEST CASE DEFAULT ENDTEST
   highlight default link rapidConditional Conditional
   " Repeat
-  syn keyword rapidRepeat FOR FROM TO STEP ENDFOR WHILE ENDWHILE DO
+  syn keyword rapidRepeat DO
+  syn match rapidRepeat /\c\v^\s*%(<while>|<for>)%([^!]+<do>)@=/
+  syn keyword rapidRepeat FROM TO STEP ENDFOR ENDWHILE
   highlight default link rapidRepeat Repeat
   " Label
   syn keyword rapidLabel GOTO
-  syn match rapidLabel /\c\v^\s*\a\w*\:\ze([^=]|$)/ contains=rapidConditional,rapidOperator
+  syn match rapidLabel /\c\v^\s*\a\w*\:\ze%([^=]|$)/ contains=rapidConditional,rapidOperator
   highlight default link rapidLabel Label
   " Keyword
   syn keyword rapidKeyword AccSet ActEventBuffer ActUnit Add AliasIO AliasIOReset BitClear BitSet BookErrNo BrakeCheck
@@ -262,7 +265,7 @@ else
   syn match rapidNames /[a-zA-Z_][.a-zA-Z0-9_]*/
   highlight default link rapidNames None
   " Function
-  syn match rapidFunction contains=rapidBuildInFunction /\v\c(<(proc|module)\s+)@10<![a-zA-Z_]\w+ *\(/me=e-1
+  syn match rapidFunction contains=rapidBuildInFunction /\v\c%(<(proc|module)\s+)@10<![a-zA-Z_]\w+ *\(/me=e-1
   highlight default link rapidFunction Function
   " call by var: %"product"+NumToStr(nProductNumber)%;
   " call by var: if bBool %stString%;
@@ -330,25 +333,28 @@ else
     "
     " WaitUntil a==b ok
     "            ||
-    syn match rapidError4 /\c\v(^\s*(return|waituntil)>[^!\\]+[^!<>])@<=(\=|:)\=/
-    syn match rapidError5 /\c\v(^\s*if>[^!\\]+[^!<>])@<=(\=|:)\=\ze[^!]*then/
-    syn match rapidError6 /\c\v(^\s*while>[^!\\]+[^!<>])@<=(\=|:)\=\ze[^!]*do/
+    syn match rapidError4 /\c\v%(^\s*%(return|waituntil)>[^!\\]+[^!<>])@<=%(\=|:)\=/
+    syn match rapidError5 /\c\v%(^\s*if>[^!\\]+[^!<>])@<=%(\=|:)\=\ze[^!]*then/
+    syn match rapidError6 /\c\v%(^\s*while>[^!\\]+[^!<>])@<=%(\=|:)\=\ze[^!]*do/
     "
     " WaitUntil a=>b ok
     "            ||
-    syn match rapidError7 /\c\v(^\s*(return|waituntil|if|while)>[^!]+[^!<>])@<=\=[><]/
+    syn match rapidError7 /\c\v%(^\s*%(return|waituntil|if|while)>[^!]+[^!<>])@<=\=[><]/
     "
-    " wait for a><b ok
+    " WaitUntil a><b ok
     "           ||
-    syn match rapidError8 /\c\v(^\s*(return|waituntil|if|while)[^!]+)@<=\>\s*\</
+    syn match rapidError8 /\c\v%(^\s*%(return|waituntil|if|while)[^!]+)@<=\>\s*\</
     "
     " if (a==5) (b==6) ok
     "         |||
-    syn match rapidError9 /\c\v(^\s*(return|wait\s+for|if|while)[^!]+[^!])@<=\)\s*\(/
+    syn match rapidError9 /\c\v%(^\s*%(return|wait\s+for|if|while)[^!]+[^!])@<=\)\s*\(/
     "
     " a == b + 1 ok
     "   ||
-    syn match rapidError0 /\c\v(^\s*((global\s+|task\s+|local\s+)?(var|pers|const)\s+\w+\s+)?\w+(\w|\{|,|\}|\+|\-|\*|\/|\.)*\s*)@<=\=/
+    syn match rapidError0 /\c\v%(^\s*%(%(global\s+|task\s+|local\s+)?%(var|pers|const)\s+\w+\s+)?\w+%(\w|\{|,|\}|\+|\-|\*|\/|\.)*\s*)@<=\=/
+    "
+    " "for" missing "from"
+    syn match rapidError10 /\c\v^\s*for\s+%(\w[0-9a-zA-Z_.{}]*\s+from)@!\S+\s+\S+/
     "
     " this one is tricky. Make sure this does not match trigger instructions
     " a = b and c or (int1=int2)
@@ -366,6 +372,7 @@ else
     highlight default link rapidError7 Error
     highlight default link rapidError8 Error
     highlight default link rapidError9 Error
+    highlight default link rapidError10 Error
   endif
 " }}} Error
 endif

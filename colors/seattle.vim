@@ -28,7 +28,7 @@ let g:colors_name="seattle"
 highlight Normal guifg=#cccccc guibg=#292929
 
 highlight CP_01  guifg=#CCCCCC guibg=#292929
-highlight CP_02  guifg=#7f7f7f guibg=#292929 gui=italic
+highlight CP_02  guifg=#7f7f7f guibg=#292929 
 highlight CP_03  guifg=#87C0E0 guibg=#292929 gui=underline
 
 highlight CP_09  guifg=#AAAAAA guibg=#333333

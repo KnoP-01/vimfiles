@@ -11,7 +11,7 @@ hi  Normal                                  ctermfg=12  ctermbg=8  guifg=#787e82
 set background=dark
 
 hi  ColorColumn                             ctermbg=0  guibg=#1d252b  gui=NONE
-hi  Comment                                 ctermfg=10  guifg=#61707a  gui=italic
+hi  Comment                                 ctermfg=10  guifg=#61707a  
 hi  ConId                                   ctermfg=3  guifg=#947b38  gui=NONE
 hi  Conceal                                 ctermfg=4  guifg=#4384b0  gui=NONE
 hi  Constant                                ctermfg=6  guifg=#35898c  gui=NONE
@@ -70,7 +70,7 @@ hi  WildMenu                                cterm=reverse  ctermfg=7  ctermbg=0 
 hi  cPreCondit                              ctermfg=9  guifg=#b06d43  gui=NONE
 
 hi  gitcommitBranch                         cterm=NONE  ctermfg=5  guifg=#b06886  gui=NONE
-hi  gitcommitComment                        ctermfg=10  guifg=#61707a  gui=italic
+hi  gitcommitComment                        ctermfg=10  guifg=#61707a  
 hi  gitcommitDiscardedFile                  cterm=NONE  ctermfg=1  guifg=#ba656d  gui=NONE
 hi  gitcommitDiscardedType                  ctermfg=1  guifg=#ba656d  gui=NONE
 hi  gitcommitFile                           cterm=NONE  ctermfg=12  guifg=#787e82  gui=NONE
@@ -104,7 +104,7 @@ hi  hs_hlFunctionName                       ctermfg=4  guifg=#4384b0  gui=NONE
 
 hi  htmlArg                                 ctermfg=11  guifg=#6d767d  gui=NONE
 hi  htmlEndTag                              ctermfg=10  guifg=#61707a  gui=NONE
-hi  htmlSpecialTagName                      ctermfg=4  guifg=#4384b0  gui=italic
+hi  htmlSpecialTagName                      ctermfg=4  guifg=#4384b0  
 hi  htmlTag                                 ctermfg=10  guifg=#61707a  gui=NONE
 hi  htmlTagN                                cterm=NONE  ctermfg=14  guifg=#808487  gui=NONE
 hi  htmlTagName                             cterm=NONE  ctermfg=4  guifg=#4384b0  gui=NONE
@@ -122,18 +122,18 @@ hi  pandocCitation                          ctermfg=5  guifg=#b06886  gui=NONE
 hi  pandocCitationDelim                     ctermfg=5  guifg=#b06886  gui=NONE
 hi  pandocCitationID                        cterm=underline  ctermfg=5  guifg=#b06886  gui=underline
 hi  pandocCitationRef                       ctermfg=5  guifg=#b06886  gui=NONE
-hi  pandocComment                           ctermfg=10  guifg=#61707a  gui=italic
+hi  pandocComment                           ctermfg=10  guifg=#61707a  
 hi  pandocDefinitionBlock                   ctermfg=13  guifg=#8e6fbd  gui=NONE
 hi  pandocDefinitionIndctr                  cterm=NONE  ctermfg=13  guifg=#8e6fbd  gui=NONE
 hi  pandocDefinitionTerm                    cterm=standout  ctermfg=13  guifg=#8e6fbd  gui=standout
-hi  pandocEmphasis                          ctermfg=12  guifg=#787e82  gui=italic
-hi  pandocEmphasisDefinition                ctermfg=13  guifg=#8e6fbd  gui=italic
+hi  pandocEmphasis                          ctermfg=12  guifg=#787e82  
+hi  pandocEmphasisDefinition                ctermfg=13  guifg=#8e6fbd  
 hi  pandocEmphasisHeading                   cterm=NONE  ctermfg=9  guifg=#b06d43  gui=NONE
 hi  pandocEmphasisNested                    cterm=NONE  ctermfg=12  guifg=#787e82  gui=NONE
 hi  pandocEmphasisNestedDefinition          cterm=NONE  ctermfg=13  guifg=#8e6fbd  gui=NONE
 hi  pandocEmphasisNestedHeading             cterm=NONE  ctermfg=9  guifg=#b06d43  gui=NONE
 hi  pandocEmphasisNestedTable               cterm=NONE  ctermfg=4  guifg=#4384b0  gui=NONE
-hi  pandocEmphasisTable                     ctermfg=4  guifg=#4384b0  gui=italic
+hi  pandocEmphasisTable                     ctermfg=4  guifg=#4384b0  
 hi  pandocEscapePair                        cterm=NONE  ctermfg=1  guifg=#ba656d  gui=NONE
 hi  pandocFootnote                          ctermfg=2  guifg=#3f8f36  gui=NONE
 hi  pandocFootnoteDefLink                   cterm=NONE  ctermfg=2  guifg=#3f8f36  gui=NONE

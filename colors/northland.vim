@@ -20,7 +20,7 @@ hi StatusLineNC       gui=NONE       guifg=Black         guibg=DarkGray
 
 hi Cursor             gui=NONE       guifg=White         guibg=PaleTurquoise3
  hi CursorIM           gui=NONE       guifg=White         guibg=PaleTurquoise3
-hi CursorLine                                            guibg=#003853
+hi CursorLine                                            guibg=#001020 gui=underline
  hi CursorColumn                                          guibg=#003853
 
 hi ErrorMsg           gui=NONE       guifg=Yellow        guibg=NONE
@@ -77,7 +77,7 @@ hi Title              gui=bold       guifg=#507080       guibg=NONE
 "hi Tooltip
 "hi User1 ... User9
 " ===== :he group-name
-hi Comment gui=italic guifg=DarkGray
+hi Comment guifg=DarkGray
 "*Comment       any comment
 "hi Constant gui=none guifg=#0475B9     "---lighter blue
 hi Constant gui=none guifg=#035587      "---darker blue
@@ -88,7 +88,7 @@ hi Constant gui=none guifg=#035587      "---darker blue
 " Boolean       a boolean constant: TRUE, false
 " Float         a floating point constant: 2.3e10
 "hi Identifier gui=bold,italic guifg=#FB000A    "---lighter
-hi Identifier gui=bold,italic guifg=#BC0007     "---darker
+hi Identifier gui=bold guifg=#BC0007     "---darker
 "*Identifier    any variable name
 " Function      function name (also: methods for classes)
 "hi Statement gui=bold guifg=#FF9500            "---lighter
@@ -102,7 +102,7 @@ hi Statement gui=bold guifg=#BF6F00             "---darker
 " Exception     try, catch, throw
 "hi PreProc gui=bold,italic guifg=#640A9B       "---
 "hi PreProc gui=bold,italic guifg=#576D02       "---
-hi PreProc gui=bold,italic guifg=#AD6141
+hi PreProc gui=bold guifg=#AD6141
 "*PreProc       generic Preprocessor
 " Include       preprocessor #include
 " Define        preprocessor #define

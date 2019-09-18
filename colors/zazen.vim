@@ -11,7 +11,7 @@ endif
 let colors_name = "zazen"
 
 hi Normal       guifg=#cccccc          guibg=#000000   gui=NONE
-hi CursorLine   guifg=NONE             guibg=#555555   gui=NONE
+hi CursorLine   guifg=NONE             guibg=NONE   gui=underline
 hi CursorColumn guifg=NONE             guibg=#1a1a1a   gui=NONE
 hi LineNr       guifg=#555555          guibg=NONE      gui=NONE
 hi Statement    guifg=#a6a6a6          guibg=NONE      gui=bold
@@ -44,7 +44,7 @@ hi DiffText     guifg=#ff0000          guibg=#220000   gui=NONE
 hi Directory    guifg=#929292          guibg=bg        gui=NONE
 hi ErrorMsg     guifg=#6f6f6f          guibg=NONE      gui=NONE
 hi FoldColumn   guifg=#555555          guibg=#414141   gui=bold
-hi Folded       guifg=#828282          guibg=#212121   gui=italic
+hi Folded       guifg=#828282          guibg=#212121
 
 hi IncSearch    guifg=#000000          guibg=#adadad   gui=NONE
 hi Search       guifg=#000000          guibg=#c5c3c3   gui=NONE
@@ -67,7 +67,7 @@ hi SpellCap     guisp=#5d5d5d                          gui=undercurl
 hi SpellLocal   guisp=#434343                          gui=undercurl
 hi SpellRare    guisp=#7d7d7d                          gui=undercurl
 hi StatusLine   guifg=#000000          guibg=#727272   gui=bold
-hi StatusLineNC guifg=#5a5959          guibg=#222222   gui=italic
+hi StatusLineNC guifg=#5a5959          guibg=#222222
 hi TabLine      guifg=fg               guibg=#757575   gui=underline
 hi TabLineFill  guifg=fg               guibg=bg        gui=reverse
 hi TabLineSel   guifg=fg               guibg=bg        gui=bold
@@ -85,8 +85,8 @@ hi MyTagListFileName guifg=#ffffff      guibg=#444444
 hi MyTagListTitle    guifg=#666666      guibg=bg        gui=bold
 
 hi VimError         guifg=#b6b6b6      guibg=#313131   gui=bold
-hi VimCommentTitle  guifg=#5c5c5c      guibg=bg        gui=bold,italic
-hi qfFileName       guifg=#6a6a6a      guibg=NONE      gui=italic
+hi VimCommentTitle  guifg=#5c5c5c      guibg=bg        gui=bold
+hi qfFileName       guifg=#6a6a6a      guibg=NONE
 hi qfLineNr         guifg=fg           guibg=NONE      gui=NONE
 hi qfError          guifg=fg           guibg=#000000   gui=undercurl
 
@@ -126,7 +126,7 @@ if &t_Co > 255
    hi  Directory          ctermfg=246        ctermbg=bg         cterm=NONE
    hi  ErrorMsg           ctermfg=242        ctermbg=NONE       cterm=NONE
    hi  FoldColumn         ctermfg=240        ctermbg=237        cterm=bold
-   hi  Folded             ctermfg=244        ctermbg=234        cterm=italic
+   hi  Folded             ctermfg=244        ctermbg=234        
 
    hi  IncSearch          ctermfg=0          ctermbg=248        cterm=NONE
    hi  Search             ctermfg=0          ctermbg=251        cterm=NONE

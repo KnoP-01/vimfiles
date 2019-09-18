@@ -42,7 +42,7 @@ hi Boolean          ctermfg=69          ctermbg=NONE        cterm=NONE
 hi Float            guifg=#8895dd                           gui=NONE
 hi Float            ctermfg=69          ctermbg=NONE        cterm=NONE
 
-hi Comment          guifg=#636970                           gui=italic
+hi Comment          guifg=#636970                           
 hi Comment          ctermfg=240         ctermbg=NONE        cterm=NONE
 
 hi Identifier       guifg=#8895dd                           gui=NONE

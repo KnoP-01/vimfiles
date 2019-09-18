@@ -46,7 +46,7 @@ hi Delimiter        guifg=#626262
 hi DiffAdd                          guibg=#005f5f
 hi DiffChange       guifg=#d7afaf   guibg=#3a3a3a
 hi DiffDelete       guifg=#d70087   guibg=#5f005f
-hi DiffText                         guibg=#5f0000   gui=italic,bold
+hi DiffText                         guibg=#5f0000   gui=bold
 
 hi Directory        guifg=#87d700                   gui=bold
 hi Error            guifg=#dfdfff   guibg=#87005f
@@ -62,7 +62,7 @@ hi IncSearch        guifg=#5fafff
 
 hi Keyword          guifg=#ffdf00                   gui=bold
 hi Label            guifg=#ffdf00                   gui=none
-hi Macro            guifg=#5fafff                   gui=italic
+hi Macro            guifg=#5fafff                   
 
 hi MatchParen       guifg=#ff8700   guibg=#000000   gui=bold
 hi ModeMsg          guifg=#ffdf00
@@ -85,7 +85,7 @@ hi Search           guifg=#dadada   guibg=#5f8787
 hi SignColumn       guifg=#87d700   guibg=#262626
 hi SpecialChar      guifg=#ff00df                   gui=bold
 hi SpecialComment   guifg=#808080                   gui=bold
-hi Special          guifg=#5fafff   guibg=#080808   gui=italic
+hi Special          guifg=#5fafff   guibg=#080808   
 if has("spell")
     hi SpellBad     guisp=#FF0000   gui=undercurl
     hi SpellCap     guisp=#7070F0   gui=undercurl
@@ -95,9 +95,9 @@ endif
 hi Statement        guifg=#ffdf00                   gui=bold
 hi StatusLine       guifg=#444444   guibg=#dadada
 hi StatusLineNC     guifg=#808080   guibg=#080808
-hi StorageClass     guifg=#87d700                   gui=italic
+hi StorageClass     guifg=#87d700                   
 hi Structure        guifg=#5fafff
-hi Tag              guifg=#ffdf00                   gui=italic
+hi Tag              guifg=#ffdf00                   
 hi Title            guifg=#d75f00
 hi Todo             guifg=#ffffff   guibg=#080808   gui=bold
 

@@ -85,8 +85,8 @@ hi Statement      guifg=#2c90a9    guibg=NONE    gui=NONE
 hi Conditional    guifg=#2c90a9    guibg=NONE    gui=NONE
 hi Operator       guifg=#ffffff    guibg=NONE    gui=NONE
 hi Keyword        guifg=#2c90a9    guibg=NONE    gui=NONE
-hi Comment        guifg=#3f4f5a    guibg=NONE    gui=ITALIC
-hi Special        guifg=#ffffff    guibg=NONE    gui=ITALIC
+hi Comment        guifg=#3f4f5a    guibg=NONE    
+hi Special        guifg=#ffffff    guibg=NONE    
 hi Delimiter      guifg=#2c90a9    guibg=NONE    gui=NONE
 
 hi link Repeat            Conditional
@@ -133,7 +133,7 @@ hi SpellRare     guifg=NONE    guibg=NONE    gui=NONE
 
 
 " Syntax highlighting for Java
-hi JavaDocComment    guifg=#3f4f5a    guibg=NONE    gui=ITALIC
+hi JavaDocComment    guifg=#3f4f5a    guibg=NONE    
 hi JavaAnnotation    guifg=#7a8a8f    guibg=NONE    gui=NONE
 hi JavaParen         guifg=#9fafba    guibg=NONE    gui=NONE
 

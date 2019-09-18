@@ -58,7 +58,7 @@ hi LineNr          guifg=#808080 guibg=#121212 gui=none
 hi Macro           guifg=#d7ffaf guibg=bg      gui=none
 hi MatchParen      guifg=#ff0000 guibg=#1c1c1c gui=bold
 hi ModeMsg         guifg=#ffaf5f guibg=bg      gui=none
-hi MoreMsg         guifg=#888888 guibg=bg      gui=italic
+hi MoreMsg         guifg=#888888 guibg=bg      
 hi NonText         guifg=#121212 guibg=#121212 gui=none
 hi Number          guifg=#0087ff guibg=bg      gui=none
 hi Operator        guifg=#afd700 guibg=bg      gui=none

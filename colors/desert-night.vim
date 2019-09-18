@@ -1,5 +1,5 @@
 " Name:         Desert Night
-" Description:  🏜️  Dark, Warm, Eye-friendly Color Scheme
+" Description:  Dark, Warm, Eye-friendly Color Scheme
 " Author:       Sainnhepark <sainnhe@gmail.com>
 " Maintainer:   Sainnhepark <sainnhe@gmail.com>
 " Website:      https://github.com/sainnhe/vim-color-desert-night/
@@ -100,7 +100,7 @@ if (has('termguicolors') && &termguicolors) || has('gui_running')
   hi TabLineSel guifg=#24221c guibg=#87765d guisp=NONE gui=NONE cterm=NONE
   hi VertSplit guifg=#473f31 guibg=#24221c guisp=NONE gui=NONE cterm=NONE
   hi Visual guifg=NONE guibg=#473f31 guisp=NONE gui=NONE cterm=NONE
-  hi VisualNOS guifg=NONE guibg=#473f31 guisp=NONE gui=italic cterm=italic
+  hi VisualNOS guifg=NONE guibg=#473f31 guisp=NONE 
   hi PreCondit guifg=#e18245 guibg=NONE guisp=NONE gui=NONE cterm=NONE
   hi Title guifg=#e56b55 guibg=NONE guisp=NONE gui=NONE cterm=NONE
   hi PreProc guifg=#e56b55 guibg=NONE guisp=NONE gui=NONE cterm=NONE
@@ -129,8 +129,8 @@ if (has('termguicolors') && &termguicolors) || has('gui_running')
   hi Float guifg=#bfab36 guibg=NONE guisp=NONE gui=NONE cterm=NONE
   hi Boolean guifg=#99b05f guibg=NONE guisp=NONE gui=NONE cterm=NONE
   hi SpecialChar guifg=#99b05f guibg=NONE guisp=NONE gui=NONE cterm=NONE
-  hi Comment guifg=#87765d guibg=NONE guisp=NONE gui=italic cterm=italic
-  hi SpecialComment guifg=#87765d guibg=NONE guisp=NONE gui=italic cterm=italic
+  hi Comment guifg=#87765d guibg=NONE guisp=NONE 
+  hi SpecialComment guifg=#87765d guibg=NONE guisp=NONE 
   hi Ignore guifg=#87765d guibg=NONE guisp=NONE gui=NONE cterm=NONE
   hi Underlined guifg=NONE guibg=NONE guisp=NONE gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
   hi CursorIM guifg=NONE guibg=fg guisp=NONE gui=NONE cterm=NONE

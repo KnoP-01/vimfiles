@@ -11,7 +11,7 @@ let colors_name = "solarized8_dark"
 set background=dark
 
 hi! Normal cterm=NONE gui=NONE ctermfg=12 guifg=#839496 ctermbg=8 guibg=#002b36
-hi! Comment cterm=NONE gui=NONE,italic ctermfg=10 guifg=#586e75 ctermbg=NONE guibg=NONE
+hi! Comment cterm=NONE gui=NONE ctermfg=10 guifg=#586e75 ctermbg=NONE guibg=NONE
 hi! Constant cterm=NONE gui=NONE ctermfg=6 guifg=#2aa198 ctermbg=NONE guibg=NONE
 hi! Identifier cterm=NONE gui=NONE ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE
 hi! Statement cterm=NONE gui=NONE ctermfg=2 guifg=#719e07 ctermbg=NONE guibg=NONE
@@ -126,7 +126,7 @@ hi! vimHiGroup cterm=NONE gui=NONE ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NO
 hi! vimGroup cterm=NONE,bold gui=NONE,bold ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE
 hi! link diffAdded Statement
 hi! link diffLine Identifier
-hi! gitcommitComment cterm=NONE gui=NONE,italic ctermfg=10 guifg=#586e75 ctermbg=NONE guibg=NONE
+hi! gitcommitComment cterm=NONE gui=NONE ctermfg=10 guifg=#586e75 ctermbg=NONE guibg=NONE
 hi! link gitcommitUntracked gitcommitComment
 hi! link gitcommitDiscarded gitcommitComment
 hi! link gitcommitSelected gitcommitComment
@@ -149,7 +149,7 @@ hi! htmlTag cterm=NONE gui=NONE ctermfg=10 guifg=#586e75 ctermbg=NONE guibg=NONE
 hi! htmlEndTag cterm=NONE gui=NONE ctermfg=10 guifg=#586e75 ctermbg=NONE guibg=NONE
 hi! htmlTagN cterm=NONE,bold gui=NONE,bold ctermfg=14 guifg=#93a1a1 ctermbg=NONE guibg=NONE
 hi! htmlTagName cterm=NONE,bold gui=NONE,bold ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE
-hi! htmlSpecialTagName cterm=NONE gui=NONE,italic ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE
+hi! htmlSpecialTagName cterm=NONE gui=NONE ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE
 hi! htmlArg cterm=NONE gui=NONE ctermfg=11 guifg=#657b83 ctermbg=NONE guibg=NONE
 hi! javaScript cterm=NONE gui=NONE ctermfg=3 guifg=#b58900 ctermbg=NONE guibg=NONE
 hi! perlHereDoc ctermfg=14 guifg=#93a1a1 ctermbg=8 guibg=#002b36 cterm=NONE gui=NONE
@@ -185,7 +185,7 @@ hi! hsniceoperator ctermfg=6 guifg=#2aa198 ctermbg=NONE guibg=NONE cterm=NONE gu
 hi! pandocTitleBlock ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE
 hi! pandocTitleBlockTitle ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold
 hi! pandocTitleComment ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold
-hi! pandocComment ctermfg=10 guifg=#586e75 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE,italic
+hi! pandocComment ctermfg=10 guifg=#586e75 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE
 hi! pandocVerbatimBlock ctermfg=3 guifg=#b58900 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE
 hi! link pandocVerbatimBlockDeep pandocVerbatimBlock
 hi! link pandocCodeBlock pandocVerbatimBlock
@@ -202,7 +202,7 @@ hi! pandocListReference ctermfg=5 guifg=#d33682 ctermbg=NONE guibg=NONE cterm=NO
 hi! pandocDefinitionBlock ctermfg=13 guifg=#6c71c4 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE
 hi! pandocDefinitionTerm ctermfg=13 guifg=#6c71c4 ctermbg=NONE guibg=NONE cterm=NONE,standout gui=NONE,standout
 hi! pandocDefinitionIndctr ctermfg=13 guifg=#6c71c4 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold
-hi! pandocEmphasisDefinition ctermfg=13 guifg=#6c71c4 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE,italic
+hi! pandocEmphasisDefinition ctermfg=13 guifg=#6c71c4 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE
 hi! pandocEmphasisNestedDefinition ctermfg=13 guifg=#6c71c4 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold
 hi! pandocStrongEmphasisDefinition ctermfg=13 guifg=#6c71c4 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold
 hi! pandocStrongEmphasisNestedDefinition ctermfg=13 guifg=#6c71c4 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold
@@ -217,7 +217,7 @@ hi! link pandocTableStructureTop pandocTableStructre
 hi! link pandocTableStructureEnd pandocTableStructre
 hi! pandocTableZebraLight ctermfg=4 guifg=#268bd2 ctermbg=8 guibg=#002b36 cterm=NONE gui=NONE
 hi! pandocTableZebraDark ctermfg=4 guifg=#268bd2 ctermbg=0 guibg=#073642 cterm=NONE gui=NONE
-hi! pandocEmphasisTable ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE,italic
+hi! pandocEmphasisTable ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE
 hi! pandocEmphasisNestedTable ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold
 hi! pandocStrongEmphasisTable ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold
 hi! pandocStrongEmphasisNestedTable ctermfg=4 guifg=#268bd2 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold
@@ -255,7 +255,7 @@ hi! pandocCitation ctermfg=5 guifg=#d33682 ctermbg=NONE guibg=NONE cterm=NONE gu
 hi! pandocCitationID ctermfg=5 guifg=#d33682 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE
 hi! pandocCitationRef ctermfg=5 guifg=#d33682 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE
 hi! pandocStyleDelim ctermfg=10 guifg=#586e75 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE
-hi! pandocEmphasis ctermfg=12 guifg=#839496 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE,italic
+hi! pandocEmphasis ctermfg=12 guifg=#839496 ctermbg=NONE guibg=NONE cterm=NONE gui=NONE
 hi! pandocEmphasisNested ctermfg=12 guifg=#839496 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold
 hi! pandocStrongEmphasis ctermfg=12 guifg=#839496 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold
 hi! pandocStrongEmphasisNested ctermfg=12 guifg=#839496 ctermbg=NONE guibg=NONE cterm=NONE,bold gui=NONE,bold

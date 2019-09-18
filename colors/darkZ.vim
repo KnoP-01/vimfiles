@@ -43,7 +43,7 @@ hi DiffDelete   guibg=gray45         guifg=black		gui=none
 hi CursorLine   guibg=gray24
 hi CursorColumn guibg=gray24
 
-hi Comment      guifg=gray55		gui=italic
+hi Comment      guifg=gray55		
 hi Constant     guifg=#FF77FF       gui=none
 hi Identifier   guifg=#6FDEF8       gui=none
 hi Function     guifg=#82EF2A       gui=none
