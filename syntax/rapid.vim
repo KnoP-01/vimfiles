@@ -1,9 +1,9 @@
 " ABB Rapid Command syntax file for Vim
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 2.0.0
-" Last Change: 23. Mar 2018
-" Credits: 
+" Version: 2.0.1
+" Last Change: 16.10.2019
+" Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
 "
@@ -33,26 +33,33 @@ endif
 let s:keepcpo= &cpo
 set cpo&vim
 
-" if rapidNoHighLink exists it overrides rapidNoHighlight
-if exists("g:rapidNoHighLink")
+" if rapidGroupName exists it overrides rapidNoHighlight and rapidNoHighLink
+if exists("g:rapidGroupName")
+  silent! unlet g:rapidNoHighLink
   silent! unlet g:rapidNoHighlight
 endif
-" if rapidNoHighlight still exists it's pushed to rapidNoHighLink
+" if rapidNoHighLink exists it overrides rapidNoHighlight and it's pushed to rapidGroupName
+if exists("g:rapidNoHighLink")
+  silent! unlet g:rapidNoHighlight
+  let g:rapidGroupName = g:rapidNoHighLink
+  unlet g:rapidNoHighLink
+endif
+" if rapidNoHighlight still exists it's pushed to rapidGroupName
 if exists("g:rapidNoHighlight")
-  let g:rapidNoHighLink = g:rapidNoHighlight
+  let g:rapidGroupName = g:rapidNoHighlight
   unlet g:rapidNoHighlight
 endif
 " if colorscheme is tortus rapidNoHighLink defaults to 1
 if (get(g:,'colors_name'," ")=="tortus" || get(g:,'colors_name'," ")=="tortusless") 
-      \&& !exists("g:rapidNoHighLink")
-  let g:rapidNoHighLink=1 
+      \&& !exists("g:rapidGroupName")
+  let g:rapidGroupName=1 
 endif
-" rapidNoHighLink defaults to 0 if it's not initialized yet or 0
-if !get(g:,"rapidNoHighLink",0)
-  let g:rapidNoHighLink=0 
+" rapidGroupName defaults to 0 if it's not initialized yet or 0
+if !get(g:,"rapidGroupName",0)
+  let g:rapidGroupName=0 
 endif
 
-"Rapid does ignore case
+" Rapid does ignore case
 syn case ignore
 " }}} init
 
@@ -89,6 +96,8 @@ if bufname("%") =~ '\c\.cfg$'
 else
   " highlighting for *.mod, *.sys and *.prg
 
+" Comment {{{ 
+"
   " Comment
   " TODO Comment
   syn match rapidTodoComment contained /\<todo\>\|\<fixme\>\|\<xxx\>/
@@ -99,14 +108,15 @@ else
   " Line comment
   syn match rapidComment /\!.*$/ contains=rapidTodoComment,rapidDebugComment
   highlight default link rapidComment Comment
-  " ---
+" }}} Comment and Folding 
 
-  " Header
+" Header {{{
   syn match rapidHeader /^%%%/
   highlight default link rapidHeader PreProc
-  " ---
+" }}} Header
 
-  " Constant values
+
+" Constant values {{{
   " Boolean
   syn keyword rapidBoolean TRUE FALSE Edge High Low
   highlight default link rapidBoolean Boolean
@@ -119,7 +129,7 @@ else
   " String. Note: Don't rename group rapidString. Indent depend on this
   syn region rapidString start=/"/ end=/"/ contains=rapidCharCode
   highlight default link rapidString String
-  " ---
+" }}} Constant values
 
   " anytype (preceded by 'alias|pers|var|const|func'
   " TODO: still missing are userdefined types which are part of a parameter:
@@ -243,8 +253,7 @@ else
   syn keyword rapidMovement SMoveJ SMoveJDO SMoveJGO SMoveJSync SMoveL SMoveLDO SMoveLGO SMoveLSync SSearchL STriggJ STriggL
   syn keyword rapidMovement SearchC SearchExtJ SearchL
   syn keyword rapidMovement TriggC TriggJ TriggL TriggJIOs TriggLIOs
-  if exists("g:rapidNoHighlight") && g:rapidNoHighlight==1
-        \|| exists("g:rapidNoHighLink") && g:rapidNoHighLink==1
+  if g:rapidGroupName
     highlight default link rapidMovement Movement
   else
     highlight default link rapidMovement Special
@@ -305,8 +314,7 @@ else
   syn keyword rapidBuildInFunction contained ValidIO ValToStr Vectmagn
   " Spot functions
   syn keyword rapidBuildInFunction contained SwGetCurrTargetName SwGetCurrSpotName 
-  if exists("g:rapidNoHighlight") && g:rapidNoHighlight==1
-        \|| exists("g:rapidNoHighLink") && g:rapidNoHighLink==1
+  if g:rapidGroupName
     highlight default link rapidBuildInFunction BuildInFunction
   else
     highlight default link rapidBuildInFunction Function

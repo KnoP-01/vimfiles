@@ -676,7 +676,7 @@ exe "hi MoreMsg"        . s:fg_blue   .s:bg_none   .s:fmt_none
 exe "hi ModeMsg"        . s:fg_blue   .s:bg_none   .s:fmt_none
 exe "hi LineNr"         . s:fg_base01 .s:bg_base02 .s:fmt_none
 exe "hi Question"       . s:fg_cyan   .s:bg_none   .s:fmt_bold
-exe "hi StatusLine"     . s:fg_base0  .s:bg_base02 .s:fmt_none
+exe "hi StatusLine"     . s:fg_base2  .s:bg_base01 .s:fmt_none
 exe "hi StatusLineNC"   . s:fg_base1  .s:bg_base02 .s:fmt_none
 exe "hi VertSplit"      . s:fg_base0  .s:bg_base02 .s:fmt_none
 exe "hi Title"          . s:fg_orange .s:bg_none   .s:fmt_bold
@@ -684,7 +684,7 @@ exe "hi Visual"         . s:fg_none   .s:bg_base02 .s:fmt_stnd
 exe "hi VisualNOS"      . s:fg_none   .s:bg_base02 .s:fmt_stnd
 exe "hi WarningMsg"     . s:fg_red    .s:bg_none   .s:fmt_bold
 exe "hi WildMenu"       . s:fg_base1  .s:bg_base02 .s:fmt_none
-exe "hi Folded"         . s:fg_base0  .s:bg_base02 .s:fmt_undr   .s:sp_base03
+exe "hi Folded"         . s:fg_base0  .s:bg_base02 .s:fmt_none   .s:sp_base03
 exe "hi FoldColumn"     . s:fg_base0  .s:bg_base02 .s:fmt_bold
 exe "hi DiffAdd"        . s:fg_green  .s:bg_none   .s:fmt_revr
 exe "hi DiffChange"     . s:fg_yellow .s:bg_none   .s:fmt_revr
@@ -704,11 +704,11 @@ exe "hi TabLine"        . s:fg_base0  .s:bg_base02 .s:fmt_undr   .s:sp_base0
 exe "hi TabLineSel"     . s:fg_base2  .s:bg_base01 .s:fmt_undr   .s:sp_base0
 exe "hi TabLineFill"    . s:fg_base0  .s:bg_base02 .s:fmt_undr   .s:sp_base0
 exe "hi CursorColumn"   . s:fg_none   .s:bg_base02 .s:fmt_none
-exe "hi CursorLine"     . s:fg_none   .s:bg_base02 .s:fmt_uopt
+exe "hi CursorLine"     . s:fg_none   .s:bg_back .s:fmt_undr
 exe "hi ColorColumn"    . s:fg_none   .s:bg_base02 .s:fmt_none
 exe "hi Cursor"         . s:fg_none   .s:bg_none   .s:fmt_revr
 exe "hi lCursor"        . s:fg_none   .s:bg_none   .s:fmt_stnd
-exe "hi MatchParen"     . s:fg_red    .s:bg_base01 .s:fmt_bold
+exe "hi MatchParen"     . s:fg_none   .s:bg_base02 .s:fmt_bold
 
 "}}}
 " Extended highlighting "{{{

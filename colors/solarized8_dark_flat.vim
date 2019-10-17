@@ -107,7 +107,7 @@ hi! CursorLine cterm=NONE,underline gui=NONE,underline ctermfg=NONE guifg=NONE c
 hi! ColorColumn cterm=NONE gui=NONE ctermfg=NONE guifg=NONE ctermbg=0 guibg=#073642
 hi! Cursor cterm=NONE gui=NONE ctermfg=8 guifg=#002b36 ctermbg=12 guibg=#839496
 hi! link lCursor Cursor
-hi! MatchParen cterm=NONE,bold gui=NONE,bold ctermfg=15 guifg=#fdf6e3 ctermbg=0 guibg=#073642
+hi! MatchParen cterm=NONE,bold gui=bold ctermbg=0 guibg=#073642
 hi! link vimVar Identifier
 hi! link vimFunc Function
 hi! link vimUserFunc Function

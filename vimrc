@@ -67,9 +67,12 @@ call plug#begin('~/.vim/plugged')
   Plug 'andymass/vim-tradewinds'
   " ersatz fuer matchit
   Plug 'andymass/vim-matchup'
-  let loaded_matchit = 1
-  let g:matchup_matchparen_enabled = 1
+  " let loaded_matchit = 1 " wird von matchup gesetzt
+  let g:matchup_matchparen_enabled = 0
   let g:matchup_matchparen_status_offscreen = 0
+  let g:matchup_mouse_enabled = 0
+  " let g:matchup_matchparen_deferred = 1               " delay until display matching paren
+  " let g:matchup_matchparen_deferred_show_delay = 800 " delay until display matching paren
 
   " Plug 'vim-scripts/increment.vim--Avadhanula'
   Plug 'mMontu/increment.vim--Avadhanula'
@@ -257,14 +260,14 @@ map <F9> :echo "hi<" .  synIDattr(            synID(line("."),col("."),1)  ,"nam
       \ .               synIDattr(synIDtrans( synID(line("."),col("."),1) ),"name") . ">"<CR>
 
 " fun
-nnoremap <silent> <F10> :set norelativenumber nonumber\|Matrix<CR>
+nnoremap <silent> <F10> :Matrix<CR>
 
 " fullscreen on <F11> shell.vim
 let g:shell_mappings_enabled = 0
 let g:shell_fullscreen_always_on_top=0
 " work around bug where the statusline disappears
-nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:set statusline=%F%m%r%h%w\ %#StatusLineNC#\ \ [%{&ff}\ %{&enc}\ %{&ft}]%#ToDo#\ \ [L=%04l,C=%03v,#%02n]\ \ %{VimBuddy()}\ <CR>
-                                                      set statusline=%F%m%r%h%w\ %#StatusLineNC#\ \ [%{&ff}\ %{&enc}\ %{&ft}]%#ToDo#\ \ [L=%04l,C=%03v,#%02n]\ \ %{VimBuddy()}\ 
+nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:set statusline=%F%m%r%h%w\ %#StatusLineNC#\ \ [%{&ff}\ %{&enc}\ %{&ft}]%#ToDo#\ \ [L%04l,C%03v,#%02n]\ %#SpecialChar#\ %{VimBuddy()}\ <CR>
+                                                      set statusline=%F%m%r%h%w\ %#StatusLineNC#\ \ [%{&ff}\ %{&enc}\ %{&ft}]%#ToDo#\ \ [L%04l,C%03v,#%02n]\ %#SpecialChar#\ %{VimBuddy()}\ 
 "
 
 " nnoremap <F12> :Vex<CR> " is now '-' because of vinegar.vim
@@ -338,23 +341,28 @@ inoremap <c-l> <esc>viwuea
 " change current word to uppe/lower case in normal mode
 nnoremap <c-u> viwU
 nnoremap <c-l> viwu
-" change current word to uppe/lower case since I cant remember u and U
+" change current visual selection to uppe/lower case since I cant remember u and U
 xnoremap <c-u> U
 xnoremap <c-l> u
 
 " disable menu with alt. necessary for the following
 set winaltkeys=no
-" move from win to win more easyly
+" move from window to window more easily
 nnoremap <silent> <A-h> <C-W>h
 nnoremap <silent> <A-j> <C-W>j
 nnoremap <silent> <A-k> <C-W>k
 nnoremap <silent> <A-l> <C-W>l
-" move windows more easyly (andymass/vim-tradewinds)
+" change window size more easily
+nnoremap <silent> <A-C-Up> 5<C-W>+
+nnoremap <silent> <A-C-Down> 5<C-W>-
+nnoremap <silent> <A-C-Left> 10<C-W><
+nnoremap <silent> <A-C-Right> 10<C-W>>
+" move window more easily (andymass/vim-tradewinds)
 let g:tradewinds_no_maps = 1
-nmap <A-H> <plug>(tradewinds-h)
-nmap <A-J> <plug>(tradewinds-j)
-nmap <A-K> <plug>(tradewinds-k)
-nmap <A-L> <plug>(tradewinds-l)
+nmap <A-Left> <plug>(tradewinds-h)
+nmap <A-Down> <plug>(tradewinds-j)
+nmap <A-Up>   <plug>(tradewinds-k)
+nmap <A-Right> <plug>(tradewinds-l)
 
 " leader mappings
 let mapleader = " "
@@ -367,6 +375,9 @@ nnoremap <leader>e :edit $HOME/.vim/vimrc<cr>
 " my modification of zmappings
 nnoremap zl 16zl
 nnoremap zh 16zh
+
+" save to ctrl+s
+nnoremap <c-s> :w<cr>
 
 " redirect .swp files to C:\Users\<user>\AppData\Local\Temp
 " set directory-=.
@@ -409,6 +420,7 @@ let g:rapidFormatComments=1
 " let g:rapidLhsQuickfix " siehe oben g:knop...
 
 " Note: krl options
+" let g:krlShortenQFPath=0
 " look also into ~/vimfiles/after/ftplugin/krl.vim
 " let g:krlNoCommentIndent=0 " undokumentiert!
 " let g:krlCommentIndent=0
@@ -422,7 +434,7 @@ let g:rapidFormatComments=1
 " nnoremap <leader>f gd
 " let g:krlListUsageKeyMap=1
 " let g:krlAutoFormKeyMap=1
-let g:krlPathToBodyFiles='d:\daten\scripts\vim_resource\krl resource\'
+" let g:krlPathToBodyFiles='d:\daten\scripts\vim_resource\krl resource\'
 " let g:krlAutoFormUpperCase=1
 " let g:krlGroupName=0
 " let g:krlNoHighLink=0
@@ -431,10 +443,11 @@ let g:krlPathToBodyFiles='d:\daten\scripts\vim_resource\krl resource\'
 " let g:krlFormatComments=0
 let g:krlAutoComment=0
 " let g:krlCloseFolds=1
-let g:krlFoldLevel=1
+let g:krlFoldLevel=2
 " let g:krlFoldMethodSyntax=1
 " let g:krlNoIndent=0
 " let g:krlNoSpaceIndent=0
+" let g:krlSpaceIndent=0
 " let g:krlNoKeyWord=0
 " let g:krlNoPath=0
 " let g:krlNoVerbose=1 " siehe oben g:knop...
@@ -454,14 +467,45 @@ inoremap <Tab> <C-R>=CleverTab()<CR>
 
 " let g:rapidGroupName=0
 " let g:krlGroupName=0
-colorscheme tortusless
-" colorscheme falcon
 " colorscheme anokha
+" colorscheme BusyBee
+" colorscheme edark
+" colorscheme falcon
+" colorscheme flatlandia
+" colorscheme flattened_dark
+" colorscheme frictionless
+" colorscheme holokai
+" colorscheme jellybeans
+" colorscheme lizard
+" colorscheme midnight2
+" colorscheme mythos
+" colorscheme neodark
+" colorscheme oceandeep
+" colorscheme petrel
+" colorscheme rdark
+" colorscheme scheakur
+" colorscheme seti
+" colorscheme solarized
+" colorscheme solarized8_dark_flat
+" colorscheme stormpetrel
+" colorscheme true-monochrome
+" colorscheme tortex
+" colorscheme tortus
+colorscheme tortusless
+" colorscheme vitamins
+" colorscheme vividchalk
+" colorscheme vydark
+" colorscheme wombat256mod
+" colorscheme zazen
+" highlight Todo          guibg=#404040   guifg=white 
+" colorscheme zendnb
+" colorscheme znake
 
 
 if has("gui_running")
   " set guifont=Consolas:h14
-  set guifont=terminus:h16
+  " set guifont=terminus:h16
+  set guifont=Anonymous_Pro:h14
   " testzeile: 1lI7 2Z 5S 6b 08B0 pgq oO0Q ODODCO ‰ˆ¸ƒ÷‹ '` ,. :; +-*/= `''"'""`
   if 0
     let g:loeschmich="testzeile: 1lI7 2Z 5S 6b 08B0 pgq oO0Q ODODCO ‰ˆ¸ƒ÷‹ '` ,. :; +-*/= `''\"'\"\"`"

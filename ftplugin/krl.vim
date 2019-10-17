@@ -1,13 +1,16 @@
 " Kuka Robot Language file type plugin for Vim
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 2.0.0
-" Last Change: 07. Apr 2019
+" Version: 2.0.1
+" Last Change: 16.10.2019
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
+"          Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
 "
 " ToDo's {{{
+" BUG:  - matchit fold, text object fold doesn't work
+" TODO: - see and use :h :syn-iskeyword
 " TODO  - Clean .dat or highlight unused data in .dat (if .src is present)
 "       - make search for enum value declaration possible. Problem: there may be
 "         more then one enum that uses this value
@@ -27,12 +30,25 @@ let b:did_ftplugin = 1
 let s:keepcpo = &cpo
 set cpo&vim
 
+" if krlShortenQFPath exists it's pushed to knopShortenQFPath
+if exists("g:krlShortenQFPath")
+  if !exists("g:knopShortenQFPath")
+    let g:knopShortenQFPath=g:krlShortenQFPath
+  endif
+  unlet g:krlShortenQFPath
+endif
 " if krlNoVerbose exists it's pushed to knopNoVerbose
 if exists("g:krlNoVerbose")
   if !exists("g:knopNoVerbose")
     let g:knopNoVerbose=g:krlNoVerbose
   endif
   unlet g:krlNoVerbose
+endif
+if exists("g:krlVerbose")
+  if !exists("g:knopVerbose")
+    let g:knopVerbose=get(g:,'krlVerbose')
+  endif
+  unlet g:krlVerbose
 endif
 " if knopVerbose exists it overrides knopNoVerbose
 if exists("g:knopVerbose")
@@ -177,7 +193,6 @@ if !exists("*s:KnopVerboseEcho()")
       let l:getback=1
       copen
     endif
-    set nobuflisted " to be able to remove from buffer list after writing the temp file
     if get(g:,'knopShortenQFPath',1)
       setlocal modifiable
       silent! %substitute/\v\c^([^|]{40,})/\=pathshorten(submatch(1))/
@@ -192,6 +207,7 @@ if !exists("*s:KnopVerboseEcho()")
       endif
       execute 'silent save! ' . g:knopTmpFile
       setlocal nomodifiable
+      setlocal nobuflisted " to be able to remove from buffer list after writing the temp file
     endif
     augroup KnopOpenQf
       au!
@@ -260,11 +276,32 @@ if !exists("*s:KnopVerboseEcho()")
 
   function <SID>KrlCleanBufferList()
     if exists("g:knopTmpFile")
-      execute 'silent! bd! ' . substitute(g:knopTmpFile,'.*[\\/]\(VI\w\+\.tmp\)','\1','')
+      let l:knopTmpFile = substitute(g:knopTmpFile,'.*[\\/]\(VI\w\+\.tmp\)','\1','')
     endif
     if exists("g:krlTmpFile")
-      execute 'silent! bd! ' . substitute(g:krlTmpFile,'.*[\\/]\(VI\w\+\.tmp\)','\1','')
+      let l:krlTmpFile = substitute(g:krlTmpFile,'.*[\\/]\(VI\w\+\.tmp\)','\1','')
     endif
+    let l:b = {}
+    for l:b in getbufinfo()
+      " delete temp file buffer
+      if exists("g:knopTmpFile")
+            \&& l:b["name"] =~ l:knopTmpFile . '$'
+            \&& !l:b["hidden"]
+        call setbufvar(l:b["bufnr"],"&buflisted",0)
+      endif
+      if exists("g:krlTmpFile")
+            \&& l:b["name"] =~ l:krlTmpFile . '$'
+            \&& !l:b["hidden"]
+        call setbufvar(l:b["bufnr"],"&buflisted",0)
+      endif
+      " delete those strange empty unnamed buffers
+      if        l:b["name"]==""       " not named
+            \&& l:b["windows"]==[]    " not shown in any window
+            \&& !l:b["hidden"]        " not hidden
+            \&& !l:b["changed"]       " not modified
+        execute "silent bwipeout! " . l:b["bufnr"]
+      endif
+    endfor
   endfunction " <SID>KrlCleanBufferList()
 
   function <SID>KrlIsVkrc()
@@ -1104,6 +1141,7 @@ if !exists("*s:KnopVerboseEcho()")
       endif
       execute 'silent save! ' . g:krlTmpFile
       setlocal nomodifiable
+      setlocal nobuflisted " to be able to remove from buffer list after writing the temp file
       if exists("l:getback")
         unlet l:getback
         wincmd p
@@ -1241,7 +1279,7 @@ if !exists("*s:KnopVerboseEcho()")
 
   " Fold Text Object {{{
 
-  if exists("loaded_matchit") " depends on matchit
+  if exists("loaded_matchit") " depends on matchit (or matchup)
     function <SID>KrlFoldTextObject(inner)
       let l:col = col('.')
       let l:line = line('.')
@@ -1271,11 +1309,15 @@ if !exists("*s:KnopVerboseEcho()")
       if l:foundFold==1
         silent normal 0V%
         if a:inner == 1
+          silent normal! k
+          " ggf fold oeffnen der innerhalb des fold ist dessen inhalt geloescht werden soll 
+          silent normal! zo
+          normal! '<
+          silent normal 0V%
           " eigentlich will ich an der stelle nur <esc> druecken um die visual
           " selection wieder abzubrechen, aber das funktioniert irgendwie
           " nicht, also dieser hack
           silent normal! :<C-U><CR>
-          " normal! '<
           silent normal! j
           silent normal! V
           silent normal! '>
@@ -1491,7 +1533,7 @@ if get(g:,'krlPath',1)
   setlocal path-=/usr/include
 
   let b:undo_ftplugin = b:undo_ftplugin." pa<"
-endif
+endif " get(g:,'krlPath',1)
 
 " folding
 if <SID>KrlIsVkrc() && get(g:,'krlConcealFoldTail',1)
@@ -1594,14 +1636,16 @@ endif " has("folding") && get(g:,'krlFoldLevel',1)
 " Match It and Fold Text Object mapping {{{
 
 " matchit support
-if exists("loaded_matchit")
+if exists("loaded_matchit") " depends on matchit (or matchup)
+  " ggf for, while etc aufsplitten
   let b:match_words = '^\s*\<if\>\s[^;]\+\<then\>.*:^\s*\<else\>.*:^\s*\<endif\>.*,'
         \.'^\s*\<\(for\|while\|loop\|repeat\)\>.*:^\s*\<exit\>.*:^\s*\<\(end\(for\|while\|loop\)\|until\)\>.*,'
         \.'^\s*\<switch\>.*:^\s*\<case\>.*:^\s*\<default\>.*:^\s*\<endswitch\>.*,'
         \.'^\s*\(global\s\+\)\?\<def\(fct\)\?\>.*:^\s*\<resume\>.*:^\s*\<return\>.*:^\s*\<end\(fct\)\?\>.*,'
         \.'^\s*\<defdat\>.*:^\s*\<enddat\>.*,'
         \.'^\s*\<spline\>.*:^\s*\<endspline\>.*,'
-        \.'^\s*;\s*\<fold\>.*:^\s*;\s*\<endfold\>.*'
+        \.'\<fold\>:\<endfold\>'
+        " \.'^\s*;\s*\<fold\>.*:^\s*;\s*\<endfold\>.*'    " doesn't work because of syntax item krlFoldComment
   let b:match_ignorecase = 1 " KRL does ignore case
   " matchit makes fold text objects easy
   if get(g:,'krlFoldTextObject',0)
@@ -1857,7 +1901,7 @@ if has("folding") && get(g:,'krlFoldLevel',1)
 endif
 
 " fold text objects
-if exists("loaded_matchit") " depends on matchit
+if exists("loaded_matchit") " depends on matchit (or matchup)
   xnoremap <silent><buffer> <plug>KrlTxtObjAroundFold     :<C-U>call <SID>KrlFoldTextObject(0)<CR>
   xnoremap <silent><buffer> <plug>KrlTxtObjInnerFold      :<C-U>call <SID>KrlFoldTextObject(1)<CR>
   onoremap <silent><buffer> <plug>KrlTxtObjAroundFold     :<C-U>call <SID>KrlFoldTextObject(0)<CR>

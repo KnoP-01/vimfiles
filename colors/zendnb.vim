@@ -65,7 +65,7 @@ delfunction s:GetValue
 hi Normal	guifg=#c0c0c0	guibg=#000000	gui=NONE	ctermfg=gray		cterm=NONE
 hi Cursor	guifg=bg	guibg=#66ee66	gui=NONE	ctermfg=black	ctermbg=green	cterm=NONE
 hi CursorIM	guifg=bg	guibg=#88bbee	gui=NONE	ctermfg=black	ctermbg=blue	cterm=NONE
-hi MatchParen	guifg=bg	guibg=#66eeee	gui=NONE	ctermfg=black	ctermbg=cyan	cterm=NONE
+hi MatchParen	guibg=#333333	gui=none	ctermfg=black	ctermbg=cyan	cterm=NONE
 
 " search
 hi Search	guifg=bg	guibg=#40d040	gui=NONE	ctermfg=black	ctermbg=green	cterm=NONE
@@ -83,7 +83,7 @@ endif
 " line numbers and folding
 hi LineNr	guifg=#306030	guibg=bg	gui=NONE	ctermfg=darkgreen		cterm=NONE
 hi NonText	guifg=#306030	guibg=#002000	gui=NONE	ctermfg=darkgreen	ctermbg=black	cterm=NONE
-hi Folded	guifg=#30c030	guibg=#004000	gui=NONE	ctermfg=grey	ctermbg=darkgreen	cterm=NONE
+hi Folded	guifg=#30c030	guibg=#000000	gui=NONE	ctermfg=grey	ctermbg=darkgreen	cterm=NONE
 hi FoldColumn	guifg=#30d030	guibg=#002000	gui=NONE	ctermfg=grey 	ctermbg=darkgreen	cterm=NONE
 hi SignColumn	guifg=#60d0d0	guibg=#002000	gui=NONE	ctermfg=cyan	ctermbg=darkgreen	cterm=NONE
 

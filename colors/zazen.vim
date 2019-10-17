@@ -14,20 +14,20 @@ hi Normal       guifg=#cccccc          guibg=#000000   gui=NONE
 hi CursorLine   guifg=NONE             guibg=NONE   gui=underline
 hi CursorColumn guifg=NONE             guibg=#1a1a1a   gui=NONE
 hi LineNr       guifg=#555555          guibg=NONE      gui=NONE
-hi Statement    guifg=#a6a6a6          guibg=NONE      gui=bold
-hi Function     guifg=#eeeeee          guibg=NONE      gui=bold
+hi Statement    guifg=#a6a6a6          guibg=NONE      gui=NONE
+hi Function     guifg=#eeeeee          guibg=NONE      gui=NONE
 hi String       guifg=#838383          guibg=NONE      gui=NONE
-hi Type         guifg=#eeeeee          guibg=NONE      gui=bold
-hi Conditional  guifg=#787878          guibg=NONE      gui=bold
+hi Type         guifg=#eeeeee          guibg=NONE      gui=NONE
+hi Conditional  guifg=#787878          guibg=NONE      gui=NONE
 hi Todo         guifg=#ff0000          guibg=#220000   gui=underline
 hi Comment      guifg=#777777          guibg=NONE      gui=NONE
 hi PmenuSel     guifg=#000000          guibg=#a9a9aa   gui=bold
 hi Special      guifg=#868585          guibg=NONE      gui=NONE
-hi Identifier   guifg=#ffffff          guibg=NONE      gui=bold
-hi Keyword      guifg=#666666          guibg=NONE      gui=bold
-hi PreProc      guifg=#6b6b6b          guibg=NONE      gui=bold
+hi Identifier   guifg=#ffffff          guibg=NONE      gui=NONE
+hi Keyword      guifg=#666666          guibg=NONE      gui=NONE
+hi PreProc      guifg=#6b6b6b          guibg=NONE      gui=NONE
 hi Include      guifg=#e0e0e0          guibg=NONE      gui=NONE
-hi Constant     guifg=#838383          guibg=#222222   gui=bold
+hi Constant     guifg=#838383          guibg=NONE   gui=NONE
 hi Delimiter    guifg=#838383          guibg=NONE      gui=NONE
 
 hi Visual       guifg=#ffffff          guibg=#515151   gui=NONE
@@ -43,12 +43,12 @@ hi DiffText     guifg=#ff0000          guibg=#220000   gui=NONE
 
 hi Directory    guifg=#929292          guibg=bg        gui=NONE
 hi ErrorMsg     guifg=#6f6f6f          guibg=NONE      gui=NONE
-hi FoldColumn   guifg=#555555          guibg=#414141   gui=bold
+hi FoldColumn   guifg=#555555          guibg=#414141   gui=NONE
 hi Folded       guifg=#828282          guibg=#212121
 
 hi IncSearch    guifg=#000000          guibg=#adadad   gui=NONE
 hi Search       guifg=#000000          guibg=#c5c3c3   gui=NONE
-hi MatchParen   guifg=#000000          guibg=#a8a8a8   gui=bold
+hi MatchParen   guibg=#333333
 hi ModeMsg      guifg=#ffffff          guibg=#767676   gui=bold
 hi MoreMsg      guifg=#7c7c7c          guibg=bg        gui=bold
 hi NonText      guifg=#7e7e7e          guibg=bg        gui=bold
@@ -75,14 +75,14 @@ hi Title        guifg=#6d6d6d          guibg=bg        gui=bold
 hi VertSplit    guifg=#222222          guibg=#222222
 hi WarningMsg   guifg=#cfcfcf          guibg=#5b5b5b   gui=NONE
 hi WildMenu     guifg=#000000          guibg=#828282   gui=NONE
-hi Boolean      guifg=#616060          guibg=NONE      gui=bold
+hi Boolean      guifg=#616060          guibg=NONE      gui=NONE
 hi Ignore       guifg=bg               guibg=NONE      gui=NONE
 hi Error        guifg=#ff7272          guibg=NONE      gui=undercurl guisp=#ff0000
 
 " -----------------------------------------------------------------------------
 " Taglist
 hi MyTagListFileName guifg=#ffffff      guibg=#444444
-hi MyTagListTitle    guifg=#666666      guibg=bg        gui=bold
+hi MyTagListTitle    guifg=#666666      guibg=bg        gui=NONE
 
 hi VimError         guifg=#b6b6b6      guibg=#313131   gui=bold
 hi VimCommentTitle  guifg=#5c5c5c      guibg=bg        gui=bold
@@ -96,20 +96,20 @@ if &t_Co > 255
    hi  CursorLine         ctermfg=NONE       ctermbg=240        cterm=NONE
    hi  CursorColumn       ctermfg=NONE       ctermbg=234        cterm=NONE
    hi  LineNr             ctermfg=240        ctermbg=NONE       cterm=NONE
-   hi  Statement          ctermfg=248        ctermbg=NONE       cterm=bold
-   hi  Function           ctermfg=255        ctermbg=NONE       cterm=bold
+   hi  Statement          ctermfg=248        ctermbg=NONE       cterm=NONE
+   hi  Function           ctermfg=255        ctermbg=NONE       cterm=NONE
    hi  String             ctermfg=244        ctermbg=NONE       cterm=NONE
-   hi  Type               ctermfg=255        ctermbg=NONE       cterm=bold
-   hi  Conditional        ctermfg=243        ctermbg=NONE       cterm=bold
+   hi  Type               ctermfg=255        ctermbg=NONE       cterm=NONE
+   hi  Conditional        ctermfg=243        ctermbg=NONE       cterm=NONE
    hi  Todo               ctermfg=9          ctermbg=NONE       cterm=underline
    hi  Comment            ctermfg=243        ctermbg=NONE       cterm=NONE
    hi  PmenuSel           ctermfg=0          ctermbg=248        cterm=bold
    hi  Special            ctermfg=244        ctermbg=NONE       cterm=NONE
-   hi  Identifier         ctermfg=15         ctermbg=NONE       cterm=bold
-   hi  Keyword            ctermfg=242        ctermbg=NONE       cterm=bold
-   hi  PreProc            ctermfg=242        ctermbg=NONE       cterm=bold
+   hi  Identifier         ctermfg=15         ctermbg=NONE       cterm=NONE
+   hi  Keyword            ctermfg=242        ctermbg=NONE       cterm=NONE
+   hi  PreProc            ctermfg=242        ctermbg=NONE       cterm=NONE
    hi  Include            ctermfg=254        ctermbg=NONE       cterm=NONE
-   hi  Constant           ctermfg=244        ctermbg=235        cterm=bold
+   hi  Constant           ctermfg=244        ctermbg=NONE        cterm=NONE
    hi  Delimiter          ctermfg=244        ctermbg=NONE       cterm=NONE
 
    hi  Visual             ctermfg=15         ctermbg=239        cterm=NONE
@@ -157,7 +157,7 @@ if &t_Co > 255
    hi  VertSplit          ctermfg=234        ctermbg=234
    hi  WarningMsg         ctermfg=252        ctermbg=240        cterm=NONE
    hi  WildMenu           ctermfg=0          ctermbg=244        cterm=NONE
-   hi  Boolean            ctermfg=241        ctermbg=NONE       cterm=bold
+   hi  Boolean            ctermfg=241        ctermbg=NONE       cterm=NONE
    hi  Ignore             ctermfg=bg         ctermbg=NONE       cterm=NONE
    hi  Error              ctermfg=210        ctermbg=NONE       cterm=underline
 
@@ -169,5 +169,5 @@ if &t_Co > 255
 
    " Taglist
    hi MyTagListFileName   ctermfg=15         ctermbg=238
-   hi MyTagListTitle      ctermfg=241        ctermbg=bg         cterm=bold
+   hi MyTagListTitle      ctermfg=241        ctermbg=bg         cterm=NONE
 end

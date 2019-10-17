@@ -84,7 +84,7 @@ hi link diffRemoved             Statement
 hi link diffLine                PreProc
 hi link diffSubname             Comment
 
-call s:hifg("Normal","#EEEEEE","White",87)
+call s:hifg("Normal","#FFFFAA","White",87)
 if &background == "light" || has("gui_running")
     hi Normal guibg=Black ctermbg=Black
 else
@@ -102,7 +102,8 @@ highlight Ignore        ctermfg=Black
 highlight WildMenu      guifg=Black   guibg=#ffff00 gui=bold ctermfg=Black ctermbg=Yellow cterm=bold
 highlight Cursor        guifg=Black guibg=White ctermfg=Black ctermbg=White
 call s:hibg("ColorColumn","#333333","DarkGrey",81)
-call s:hibg("CursorLine","#333333","DarkGrey",81)
+" call s:hibg("CursorLine","#333333","DarkGrey",81)
+highlight CursorLine  gui=underline guibg=black
 call s:hibg("CursorColumn","#333333","DarkGrey",81)
 highlight NonText       guifg=#404040 ctermfg=8
 highlight SpecialKey    guifg=#404040 ctermfg=8
@@ -121,7 +122,8 @@ highlight Title         guifg=Magenta ctermfg=Magenta
 highlight VisualNOS     gui=none cterm=none
 call s:hibg("Visual"    ,"#555577","LightBlue",83)
 call s:hibg("VisualNOS" ,"#444444","DarkBlue",81)
-call s:hibg("MatchParen","#1100AA","DarkBlue",18)
+" call s:hibg("MatchParen","#1100AA","DarkBlue",18)
+highlight matchparen     guibg=#222222 gui=none cterm=none
 highlight WarningMsg    guifg=Red ctermfg=Red
 highlight Error         ctermbg=DarkRed
 highlight SpellBad      ctermbg=DarkRed
@@ -130,8 +132,9 @@ highlight SpellRare     ctermbg=DarkMagenta
 highlight SpellCap      ctermbg=DarkBlue
 highlight SpellLocal    ctermbg=DarkCyan
 
-call s:hibg("Folded"    ,"#110077","DarkBlue",17)
-call s:hifg("Folded"    ,"#aaddee","LightCyan",63)
+" call s:hibg("Folded"    ,"#110077","DarkBlue",17)
+" call s:hifg("Folded"    ,"#aaddee","LightCyan",63)
+highlight Folded gui=none guibg=#222222 guifg=DarkGrey
 highlight FoldColumn    none
 high link FoldColumn    Folded
 highlight DiffAdd       ctermbg=4 guibg=DarkBlue
@@ -162,10 +165,12 @@ if !has("gui_mac")
 endif
 hi Identifier cterm=none
 " Commented numbers at the end are *old* 256 color values
-call s:hifg("Comment"        ,"#9933CC","DarkMagenta",34) " 92
+" call s:hifg("Comment"        ,"#9933CC","DarkMagenta",34) " 92
+highlight Comment guifg=DarkGrey guibg=black
 " 26 instead?
-call s:hifg("Constant"       ,"#339999","DarkCyan",21) " 30
-call s:hifg("String"         ,"#66FF00","LightGreen",44,82) " 82
+" call s:hifg("Constant"       ,"#339999","DarkCyan",21) " 30
+call s:hifg("Constant"         ,"#FFFFFF","White",44,82) " 82
+call s:hifg("String"         ,"#FFFFFF","White",44,82) " 82
 call s:hifg("Identifier"     ,"#FFCC00","Yellow",72) " 220
 call s:hifg("Statement"      ,"#FF6600","Brown",68) " 202
 call s:hifg("PreProc"        ,"#AAFFFF","LightCyan",47) " 213

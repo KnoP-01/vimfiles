@@ -43,6 +43,7 @@ endfunction
 "}}}
 
 hi Cursor guibg=fg guifg=bg ctermfg=0 ctermbg=11
+hi CursorLine gui=underline guibg=bg ctermfg=0 ctermbg=11
 "hi CursorIM   
 hi Directory gui=bold
 hi DiffAdd guibg=slategray4 ctermbg=0

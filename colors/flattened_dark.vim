@@ -21,7 +21,7 @@ hi  Conceal                                 cterm=NONE  ctermfg=4  guifg=#268bd2
 hi  Constant                                cterm=NONE  ctermfg=6  guifg=#2aa198  gui=NONE
 hi  Cursor                                  cterm=NONE  ctermfg=8  ctermbg=12  guifg=#002b36  guibg=#839496  gui=NONE
 hi  CursorColumn                            cterm=NONE  ctermbg=0  guibg=#073642  gui=NONE
-hi  CursorLine                              cterm=NONE  ctermbg=0  guibg=#073642  guisp=#93a1a1  gui=NONE
+hi  CursorLine                              cterm=NONE  ctermbg=0  guibg=#002b36  guisp=#93a1a1  gui=underline
 hi  CursorLineNr                            cterm=NONE ctermfg=3  guifg=#b58900  gui=NONE
 hi  DiffAdd                                 cterm=NONE  ctermfg=2  ctermbg=0  guifg=#719e07  guibg=#073642  guisp=#719e07  gui=NONE
 hi  DiffChange                              cterm=NONE  ctermfg=3  ctermbg=0  guifg=#b58900  guibg=#073642  guisp=#b58900  gui=NONE
@@ -36,7 +36,7 @@ hi  HelpExample                             cterm=NONE  ctermfg=14  guifg=#93a1a
 hi  Identifier                              cterm=NONE  ctermfg=4  guifg=#268bd2  gui=NONE
 hi  IncSearch                               cterm=standout  ctermfg=9  guifg=#cb4b16  gui=standout
 hi  LineNr                                  cterm=NONE  ctermfg=10  ctermbg=0  guifg=#586e75  guibg=#073642  gui=NONE
-hi  MatchParen                              cterm=NONE  ctermfg=1  ctermbg=10  guifg=#dc322f  guibg=#586e75  gui=NONE
+hi  MatchParen                              cterm=NONE  ctermfg=1  ctermbg=10  guibg=#073642  gui=BOLD
 hi  ModeMsg                                 cterm=NONE  ctermfg=4  guifg=#268bd2  gui=NONE
 hi  MoreMsg                                 cterm=NONE  ctermfg=4  guifg=#268bd2  gui=NONE
 hi  NonText                                 cterm=NONE  ctermfg=11  guifg=#657b83  gui=NONE

@@ -1,13 +1,14 @@
 " Kuka Robot Language syntax file for Vim
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 2.0.0
-" Last Change: 04. Apr 2019
+" Version: 2.0.1
+" Last Change: 16.10.2019
 " Credits: Thanks for contributions to this to Michael Jagusch
+"          Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
 "
-"
+" TODO: see and use :h :syn-iskeyword
 "
 " Note to self:
 " for testing perfomance
@@ -134,7 +135,8 @@ syn match krlParamdef /[:]\s*out\>/
 highlight default link krlParamdef StorageClass
 " Not a typedef but I like to have those highlighted
 " different then types, structures or strorage classes
-syn keyword krlTypedef DEF END DEFFCT ENDFCT DEFDAT ENDDAT
+syn match krlTypedef /\c\v<deffct>(\s+\w+\s+\w+\()@=/
+syn keyword krlTypedef DEF END ENDFCT DEFDAT ENDDAT
 highlight default link krlTypedef Typedef
 " }}} Type, StorageClass and Typedef
 

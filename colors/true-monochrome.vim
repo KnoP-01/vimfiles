@@ -30,7 +30,7 @@ hi VisualNOS       guifg=#000000    guibg=#FFFFFF    ctermfg=black    ctermbg=wh
 "" grey fg w/white bg
 hi CursorColumn    guifg=#A0A0A0    guibg=#FFFFFF    ctermfg=grey     ctermbg=white    gui=NONE         cterm=NONE
 " hi CursorLine      guifg=#A0A0A0    guibg=#FFFFFF    ctermfg=grey     ctermbg=white    gui=NONE         cterm=NONE
-hi CursorLine      gui=NONE         cterm=NONE
+hi CursorLine          guibg=#1f1f1f    ctermfg=grey     ctermbg=black    gui=NONE         cterm=NONE
 
 "" grey fg w/black bg
 hi Comment         guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    cterm=NONE
@@ -45,7 +45,7 @@ hi Identifier      guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=bl
 hi Ignore          guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=NONE         cterm=NONE
 hi Label           guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=BOLD         cterm=BOLD
 hi LineNr          guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=NONE         cterm=NONE
-hi MatchParen      guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=NONE         cterm=NONE
+hi MatchParen      guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=UNDERLINE         cterm=NONE
 hi ModeMsg         guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=NONE         cterm=NONE
 hi MoreMsg         guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=NONE         cterm=NONE
 hi NonText         guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=NONE         cterm=NONE
@@ -57,8 +57,8 @@ hi PreProc         guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=bl
 hi Special         guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=BOLD         cterm=BOLD
 hi SpecialKey      guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    cterm=NONE
 hi Statement       guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=BOLD         cterm=BOLD
-hi StatusLine      guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=BOLD         cterm=BOLD
-hi StatusLineNC    guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    cterm=NONE
+hi StatusLineNC    guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=UNDERLINE         cterm=BOLD
+hi StatusLine      guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    cterm=NONE
 hi StorageClass    guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=BOLD         cterm=BOLD
 hi Structure       guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=BOLD         cterm=BOLD
 hi TabLine         guifg=#A0A0A0    guibg=#000000    ctermfg=grey     ctermbg=black    gui=NONE         cterm=NONE

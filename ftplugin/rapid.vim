@@ -1,9 +1,10 @@
 " ABB Rapid Command file type plugin for Vim
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 2.0.0
-" Last Change: 09. Apr 2019
+" Version: 2.0.1
+" Last Change: 16.10.2019
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
+"          Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
 "
@@ -24,12 +25,25 @@ let b:did_ftplugin = 1
 let s:keepcpo = &cpo
 set cpo&vim
 
+" if rapidShortenQFPath exists it's pushed to knopShortenQFPath
+if exists("g:rapidShortenQFPath")
+  if !exists("g:knopShortenQFPath")
+    let g:knopShortenQFPath=g:rapidShortenQFPath
+  endif
+  unlet g:rapidShortenQFPath
+endif
 " if rapidNoVerbose exists it's pushed to knopNoVerbose
 if exists("g:rapidNoVerbose")
   if !exists("g:knopNoVerbose")
     let g:knopNoVerbose=g:rapidNoVerbose
   endif
   unlet g:rapidNoVerbose
+endif
+if exists("g:rapidVerbose")
+  if !exists("g:knopVerbose")
+    let g:knopVerbose=get(g:,'rapidVerbose')
+  endif
+  unlet g:rapidVerbose
 endif
 " if knopVerbose exists it overrides knopNoVerbose
 if exists("g:knopVerbose")
@@ -162,7 +176,6 @@ if !exists("*s:KnopVerboseEcho()")
       let l:getback=1
       copen
     endif
-    set nobuflisted " to be able to remove from buffer list after writing the temp file
     if get(g:,'knopShortenQFPath',1)
       setlocal modifiable
       silent! %substitute/\v\c^([^|]{40,})/\=pathshorten(submatch(1))/
@@ -177,6 +190,7 @@ if !exists("*s:KnopVerboseEcho()")
       endif
       execute 'silent save! ' . g:knopTmpFile
       setlocal nomodifiable
+      setlocal nobuflisted " to be able to remove from buffer list after writing the temp file
     endif
     augroup KnopOpenQf
       au!
@@ -245,11 +259,32 @@ if !exists("*s:KnopVerboseEcho()")
 
   function <SID>RapidCleanBufferList()
     if exists("g:knopTmpFile")
-      execute 'silent! bd! ' . substitute(g:knopTmpFile,'.*[\\/]\(VI\w\+\.tmp\)','\1','')
+      let l:knopTmpFile = substitute(g:knopTmpFile,'.*[\\/]\(VI\w\+\.tmp\)','\1','')
     endif
     if exists("g:rapidTmpFile")
-      execute 'silent! bd! ' . substitute(g:rapidTmpFile,'.*[\\/]\(VI\w\+\.tmp\)','\1','')
+      let l:rapidTmpFile = substitute(g:rapidTmpFile,'.*[\\/]\(VI\w\+\.tmp\)','\1','')
     endif
+    let l:b = {}
+    for l:b in getbufinfo()
+      " delete temp file buffer
+      if exists("g:knopTmpFile")
+            \&& l:b["name"] =~ l:knopTmpFile . '$'
+            \&& !l:b["hidden"]
+        call setbufvar(l:b["bufnr"],"&buflisted",0)
+      endif
+      if exists("g:rapidTmpFile")
+            \&& l:b["name"] =~ l:rapidTmpFile . '$'
+            \&& !l:b["hidden"]
+        call setbufvar(l:b["bufnr"],"&buflisted",0)
+      endif
+      " delete those strange empty unnamed buffers
+      if        l:b["name"]==""       " not named
+            \&& l:b["windows"]==[]    " not shown in any window
+            \&& !l:b["hidden"]        " not hidden
+            \&& !l:b["changed"]       " not modified
+        execute "silent bwipeout! " . l:b["bufnr"]
+      endif
+    endfor
   endfunction " <SID>RapidCleanBufferList()
 
   function s:RapidCurrentWordIs()
@@ -306,8 +341,7 @@ if !exists("*s:KnopVerboseEcho()")
         "
       elseif l:currentChar =~ '\d' && 
             \(  synIDattr(synID(line("."),col("."),0),"name")=="rapidFloat" 
-            \|| synIDattr(synID(line("."),col("."),0),"name")==""
-            \)
+            \|| synIDattr(synID(line("."),col("."),0),"name")=="")
         return ("num" . l:word)
         "
       elseif l:nextChar == "(" && 
@@ -884,8 +918,6 @@ if !exists("*s:KnopVerboseEcho()")
   " List Def/Usage {{{ 
 
   function <SID>RapidListDefinition()
-    " dont start from within qf or loc window
-    if getbufvar('%', "&buftype")=="quickfix" | return | endif
     " list defs in qf
     if s:KnopSearchPathForPatternNTimes('\v\c^\s*(global\s+|task\s+|local\s+)?(proc|func|trap|record|module)>','%','','rapid')==0
       if getqflist()==[] | return | endif
@@ -896,7 +928,7 @@ if !exists("*s:KnopVerboseEcho()")
       endif
       if getbufvar('%', "&buftype")!="quickfix" | return | endif
       setlocal modifiable
-      %substitute/\v\c^.*\|\s*((global\s+|task\s+|local\s+)?(proc|func|trap|record|module)>)/\1/
+      silent %substitute/\v\c^.*\|\s*((global\s+|task\s+|local\s+)?(proc|func|trap|record|module)>)/\1/
       0
       if !exists("g:rapidTmpFile")
         let g:rapidTmpFile=tempname()
@@ -908,6 +940,7 @@ if !exists("*s:KnopVerboseEcho()")
       endif
       execute 'silent save! ' . g:rapidTmpFile
       setlocal nomodifiable
+      setlocal nobuflisted " to be able to remove from buffer list after writing the temp file
       if exists("l:getback")
         unlet l:getback
         wincmd p
@@ -921,6 +954,7 @@ if !exists("*s:KnopVerboseEcho()")
     "
     if search('\w','cW',line("."))
       let l:currentWord = s:RapidCurrentWordIs()
+      "
       if l:currentWord =~ '^userdefined.*'
         let l:currentWord = substitute(l:currentWord,'^userdefined','','')
         call s:KnopVerboseEcho([l:currentWord,"appear to be userdefined. Start search..."])
@@ -930,9 +964,6 @@ if !exists("*s:KnopVerboseEcho()")
       elseif l:currentWord =~ '^num.*'
         let l:currentWord = substitute(l:currentWord,'^num','','')
         call s:KnopVerboseEcho([l:currentWord,"appear to be a NUMBER. Start search..."])
-      elseif l:currentWord =~ '^bool.*'
-        let l:currentWord = substitute(l:currentWord,'^bool','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a BOOLEAN VALUE. Start search..."])
       elseif l:currentWord =~ '^string.*'
         let l:currentWord = substitute(l:currentWord,'^string','','')
         call s:KnopVerboseEcho([l:currentWord,"appear to be a STRING. Start search..."])
@@ -942,9 +973,12 @@ if !exists("*s:KnopVerboseEcho()")
       elseif l:currentWord =~ '^inst.*'
         let l:currentWord = substitute(l:currentWord,'^inst','','')
         call s:KnopVerboseEcho([l:currentWord,"appear to be a Rapid KEYWORD. Start search..."])
+      elseif l:currentWord =~ '^bool.*'
+        let l:currentWord = substitute(l:currentWord,'^bool','','')
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a BOOLEAN VALUE. Start search..."])
       else
         let l:currentWord = substitute(l:currentWord,'^none','','')
-        call s:KnopVerboseEcho([l:currentWord,"Could not determine typ of current word. No search performed."])
+        call s:KnopVerboseEcho([l:currentWord,"Unable to determine what to search for at current cursor position. No search performed!"],1)
         return
         "
       endif
@@ -956,6 +990,7 @@ if !exists("*s:KnopVerboseEcho()")
           if bufname(get(l:i,'bufnr')) !~ '\~$'
                 \&& (get(l:i,'text') =~ '\v\c^([^"]*"[^"]*"[^"]*)*[^"]*<'.l:currentWord.'>'
                 \|| (bufname(get(l:i,'bufnr')) !~ '\v\c\w+\.mod$'
+                \&&  bufname(get(l:i,'bufnr')) !~ '\v\c\w+\.sys$'
                 \&&  bufname(get(l:i,'bufnr')) !~ '\v\c\w+\.prg$'))
             call add(l:qfresult,l:i)
           endif
@@ -964,7 +999,7 @@ if !exists("*s:KnopVerboseEcho()")
         call s:KnopOpenQf('rapid')
       endif
     else
-      call s:KnopVerboseEcho("Nothing found at or after current cursor pos, which could have a declaration. No search performed.")
+      call s:KnopVerboseEcho("Unable to determine what to search for at current cursor position. No search performed.",1)
     endif
   endfunction " <SID>RapidListUsage()
 
