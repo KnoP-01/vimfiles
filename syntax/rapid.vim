@@ -74,7 +74,7 @@ if bufname("%") =~ '\c\.cfg$'
   syn match rapidFloat /\v%(\W|_)@1<=[+-]?\d+\.?\d*%(\s*[eE][+-]?\d+)?/
   highlight default link rapidFloat Float
   " character code in string
-  syn match rapidCharCode /[^\\]\zs\\\d{1,3}/ contained
+  syn match rapidCharCode /[^\\]\zs\\\d\{1,3}/ contained
   highlight default link rapidCharCode SpecialChar
   " String. Note: Don't rename group rapidString. Indent depend on this
   syn region rapidString start=/"/ end=/"/ contains=rapidCharCode
@@ -106,7 +106,7 @@ else
   syn match rapidDebugComment contained /\<debug\>/
   highlight default link rapidDebugComment Debug
   " Line comment
-  syn match rapidComment /\!.*$/ contains=rapidTodoComment,rapidDebugComment
+  syn match rapidComment /!.*$/ contains=rapidTodoComment,rapidDebugComment
   highlight default link rapidComment Comment
 " }}} Comment and Folding 
 
@@ -114,7 +114,6 @@ else
   syn match rapidHeader /^%%%/
   highlight default link rapidHeader PreProc
 " }}} Header
-
 
 " Constant values {{{
   " Boolean
@@ -124,13 +123,14 @@ else
   syn match rapidFloat /\v\W@1<=[+-]?\d+\.?\d*%(\s*[eE][+-]?\d+)?/
   highlight default link rapidFloat Float
   " character code in string
-  syn match rapidCharCode /[^\\]\zs\\\d{1,3}/ contained
+  syn match rapidCharCode /[^\\]\zs\\\d\{1,3}/ contained
   highlight default link rapidCharCode SpecialChar
   " String. Note: Don't rename group rapidString. Indent depend on this
   syn region rapidString start=/"/ end=/"/ contains=rapidCharCode
   highlight default link rapidString String
 " }}} Constant values
 
+  " Type {{{
   " anytype (preceded by 'alias|pers|var|const|func'
   " TODO: still missing are userdefined types which are part of a parameter:
   " proc message( mystring msMessagePart1{},
@@ -139,7 +139,6 @@ else
   "               \ mystring msMsg4{})
   " syn match rapidAnyType /\v^\s*(global\s+|task\s+|local\s+)?(alias|pers|var|const|func)\s+\w+>/ contains=rapidStorageClass,rapidType,rapidTypeDef
   " highlight default link rapidAnyType Type
-  " Type
   syn keyword rapidType aiotrigg bool btnres busstate buttondata byte
   syn keyword rapidType cameradev cameratarget cfgdomain clock confdata corrdescr datapos dionum dir dnum
   syn keyword rapidType egmframetype egmident egm_minmax egmstate egmstopmode errdomain errnum errstr errtype event_type exec_level extjoint handler_type
@@ -175,9 +174,9 @@ else
   " structures or strorage classes
   syn keyword rapidTypeDef MODULE ENDMODULE PROC ERROR UNDO BACKWARD ENDPROC RECORD ENDRECORD TRAP ENDTRAP FUNC ENDFUNC
   highlight default link rapidTypeDef TypeDef
-  " ---
+  " }}}
 
-  " Statement
+  " Statement {{{
   " syn keyword rapidStatement
   " highlight default link rapidStatement Statement
   " Conditional
@@ -227,9 +226,9 @@ else
   syn keyword rapidException EXIT ErrRaise ExitCycle RAISE RaiseToUser RETRY RETURN TRYNEXT
   syn match rapidException /^\s*Stop\s*[\\;]/me=e-1
   highlight default link rapidException Exception
-  " ---
+  " }}}
 
-  " special keyword for move command
+  " special keyword for move command {{{
   " arc instructions
   syn keyword rapidMovement ArcC ArcC1 ArcC2 ArcCEnd ArcC1End ArcC2End ArcCStart ArcC1Start ArcC2Start 
   syn keyword rapidMovement ArcL ArcL1 ArcL2 ArcLEnd ArcL1End ArcL2End ArcLStart ArcL1Start ArcL2Start ArcMoveExtJ 
@@ -258,36 +257,36 @@ else
   else
     highlight default link rapidMovement Special
   endif
-  " ---
+  " }}}
 
-  " Operator
+  " Operator {{{
   syn keyword rapidOperator and or xor not Div Mod
   syn match rapidOperator /[-+*/<>:=]/
   highlight default link rapidOperator Operator
-  " ---
+  " }}}
 
-  " Delimiter
+  " Delimiter {{{
   syn match rapidDelimiter /[\\(){},;|\[\]]/
   highlight default link rapidDelimiter Delimiter
-  " ---
+  " }}}
 
   syn match rapidNames /[a-zA-Z_][.a-zA-Z0-9_]*/
   highlight default link rapidNames None
-  " Function
+  " Function {{{
   syn match rapidFunction contains=rapidBuildInFunction /\v\c%(<(proc|module)\s+)@10<![a-zA-Z_]\w+ *\(/me=e-1
   highlight default link rapidFunction Function
   " call by var: %"product"+NumToStr(nProductNumber)%;
   " call by var: if bBool %stString%;
   syn match rapidCallByVar /%\ze[^%]/
   highlight default link rapidCallByVar Function
-  " ---
+  " }}}
 
   " nicht schoen, aber num muss nach rapidNames folgen
   " TODO optimier das (nicht gefolgt von : und nicht vorneangestellter \
   syn match rapidType /\c\<num\>\s\+\ze\w\+/ " avoid false highlighting if its a \num:= argument
   highlight default link rapidType Type
 
-  " BuildInFunction
+  " BuildInFunction {{{
   " dispense functions
   syn keyword rapidBuildInFunction contained GetSignal
   " Integrated Vision Platform functions
@@ -319,7 +318,7 @@ else
   else
     highlight default link rapidBuildInFunction Function
   endif
-  " ---
+  " }}}
 
   " rapid structrure values. added to be able to conceal them
   syn region rapidConcealableString start=/"/ end=/"/ contained contains=rapidCharCode conceal 
