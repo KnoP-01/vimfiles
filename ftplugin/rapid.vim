@@ -99,6 +99,21 @@ if !exists("*s:KnopVerboseEcho()")
     endif
   endfunction " s:KnopVerboseEcho()
 
+  function s:KnopAddFileToCompleteOption(file,path,...)
+    " don't add a:file if it's the current buffer
+    " not so easy actualy
+    " if bufname("%") =~ substitute(a:file,'[$/\\]','\\\1','g')
+    "   return 
+    " endif
+    if findfile(a:file,a:path)!=''
+      execute "setlocal complete+=k" . substitute(findfile(a:file,a:path),'\\','/','g')
+    elseif exists('a:1')
+      if findfile(a:1,'.')!=''
+        execute "setlocal complete+=k" . substitute(findfile(a:1,'.'),'\\','/','g')
+      endif
+    endif
+  endfunction " s:KnopAddFileToCompleteOption()
+
   function s:KnopDirExists(in)
     if finddir( substitute(a:in,'\\','','g') )!=''
       return 1
@@ -195,12 +210,10 @@ if !exists("*s:KnopVerboseEcho()")
     augroup KnopOpenQf
       au!
       " reposition after closing
-      let l:cmd = 'au BufWinLeave <buffer='.bufnr('%').'> let g:knopPositionQf=1'
-      execute l:cmd
+      execute 'au BufWinLeave <buffer='.bufnr('%').'> let g:knopPositionQf=1'
     augroup END
     if a:useSyntax!='' 
-      let l:cmd = 'set syntax='.a:useSyntax 
-      execute l:cmd
+      execute 'set syntax='.a:useSyntax 
     endif
     if exists('g:knopPositionQf') && s:KnopQfCompatible() 
       unlet g:knopPositionQf
@@ -218,9 +231,8 @@ if !exists("*s:KnopVerboseEcho()")
   endfunction " s:KnopOpenQf()
 
   function s:KnopSearchPathForPatternNTimes(Pattern,path,n,useSyntax)
-    let l:cmd = ':noautocmd ' . a:n . 'vimgrep /' . a:Pattern . '/j ' . a:path
     try
-      execute l:cmd
+      execute ':noautocmd ' . a:n . 'vimgrep /' . a:Pattern . '/j ' . a:path
     catch /^Vim\%((\a\+)\)\=:E303/
       call s:KnopVerboseEcho(":vimgrep stopped with E303. No match found")
       return -1
@@ -370,10 +382,6 @@ if !exists("*s:KnopVerboseEcho()")
     return "none"
   endfunction " s:RapidCurrentWordIs()
 
-  " }}} Rapid Helper
-
-  " Go Definition {{{
-
   function s:RapidPutCursorOnModuleAndReturnEndmoduleline()
     if search('\c^\s*module\s','bcW')
       let l:numEndmodule = search('\v\c^\s*endmodule>','nW')
@@ -389,6 +397,10 @@ if !exists("*s:KnopVerboseEcho()")
     endif
     return l:numEndmodule
   endfunction
+
+  " }}} Rapid Helper
+
+  " Go Definition {{{
 
   function s:RapidSearchUserDefined(declPrefix,currentWord)
     "
@@ -498,9 +510,8 @@ if !exists("*s:KnopVerboseEcho()")
           let l:path = './*.prg ./*.Prg ./*.PRG ./*.mod ./*.Mod ./*.MOD ./*.sys ./*.Sys ./*.SYS '.fnameescape(expand("%:p:h")).'/../../TASK*/PROGMOD/*.mod '.fnameescape(expand("%:p:h")).'/../../TASK*/PROGMOD/*.Mod '.fnameescape(expand("%:p:h")).'/../../TASK*/PROGMOD/*.MOD '.fnameescape(expand("%:p:h")).'/../../TASK*/SYSMOD/*.sys '.fnameescape(expand("%:p:h")).'/../../TASK*/SYSMOD/*.Sys '.fnameescape(expand("%:p:h")).'/../../TASK*/SYSMOD/*.SYS '
         endif
       endif
-      let l:cmd = ':noautocmd lvimgrep '.l:prefix.a:currentWord.l:suffix.' '.l:path
       try
-        execute l:cmd
+        execute ':noautocmd lvimgrep '.l:prefix.a:currentWord.l:suffix.' '.l:path
       catch /^Vim\%((\a\+)\)\=:E480/
         call s:KnopVerboseEcho(":lvimgrep stopped with E480!",1)
         return -1
@@ -645,7 +656,9 @@ if !exists("*s:KnopVerboseEcho()")
         call s:KnopVerboseEcho([l:currentWord,"appear to be a BOOLEAN VALUE. No search performed."],1)
       elseif l:currentWord =~ '^string.*'
         let l:currentWord = substitute(l:currentWord,'^string','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a STRING. No search performed."],1)
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a STRING. Start search..."])
+        return s:RapidSearchUserDefined(l:declPrefix,l:currentWord)
+        "
       elseif l:currentWord =~ '^comment.*'
         let l:currentWord = substitute(l:currentWord,'^comment','','')
         call s:KnopVerboseEcho([l:currentWord,"appear to be a COMMENT. No search performed."],1)
@@ -762,40 +775,53 @@ if !exists("*s:KnopVerboseEcho()")
     return substitute(a:sDataType,'^\(..\).*','\l\1','')."Result"
   endfunction " s:RapidGetReturnVar()
 
-  function s:RapidPositionForEdit()
+  function s:RapidPositionForEdit(sType)
     let l:commentline = '^\s*!'
     " empty file
     if line('$')==1 && getline('.')=='' | return | endif
-    " proc, func, trap or record
-    if search('\v\c^\s*(local\s+)?(proc|func|trap|record|endmodule)>','csW')
-      let l:prevline = getline(line('.')-1)
-      while l:prevline=~l:commentline
-        normal! k
+    if a:sType =~ '\v(PROC|FUNC|TRAP)' " position for PROC, FUNC or TRAP
+      if search('\v\c^\s*(local\s+)?(proc|func|trap|endmodule)>','csW')
         let l:prevline = getline(line('.')-1)
-      endwhile
-      normal! O
-      normal! O
-      if getline(line('.')-1) != ''
+        while l:prevline=~l:commentline
+          normal! k
+          let l:prevline = getline(line('.')-1)
+        endwhile
+        normal! k
         normal! o
+        normal! O
+        if getline(line('.')-1) != ''
+          normal! o
+        endif
+        return
       endif
-    elseif search('\v\c^\s*endmodule>','csW')
-      normal! O
-      if getline(line('.')-1) != ''
+    else " position for RECORD close to top of module
+      if search('\c^\s*module\s','bcsW') || search('\c^\s*module\s','csW')
+        execute "normal " . nextnonblank(line('.')+1) . "gg"
+        let l:nextline = getline(line('.')+1)
+        while l:nextline=~l:commentline
+          normal! j
+          let l:nextline = getline(line('.')+1)
+        endwhile
         normal! o
-      endif
-    else
-      normal! G
-      if getline('.') != ''
         normal! o
+        if getline(line('.')+1) != ''
+          normal! O
+        endif
+        return
       endif
-      if getline(line('.')-1) != ''
-        normal! o
-      endif
+    endif
+    " default positioning for PROC, FUNC, TRAP and RECORD if no ancor was found
+    normal! G
+    if getline('.') != ''
+      normal! o
+    endif
+    if getline(line('.')-1) != ''
+      normal! o
     endif
   endfunction " s:RapidPositionForEdit()
 
-  function s:RapidPositionForRead()
-    call s:RapidPositionForEdit()
+  function s:RapidPositionForRead(sType)
+    call s:RapidPositionForEdit(a:sType)
     if getline('.')=~'^\s*$'
           \&& line('.')!=line('$')
       delete
@@ -805,13 +831,12 @@ if !exists("*s:KnopVerboseEcho()")
   function s:RapidReadBody(sBodyFile,sType,sName,sGlobal,sDataType,sReturnVar)
     let l:sBodyFile = glob(fnameescape(g:rapidPathToBodyFiles)).a:sBodyFile
     if !filereadable(glob(l:sBodyFile))
-      call s:KnopVerboseEcho([l:sBodyFile,": Body file not readable."])
+      call s:KnopVerboseEcho([l:sBodyFile,": Body file not readable."],1)
       return
     endif
     " read body
-    call s:RapidPositionForRead()
-    let l:cmd = "silent .-1read ".glob(l:sBodyFile)
-    execute l:cmd
+    call s:RapidPositionForRead(a:sType)
+    execute "silent .-1read ".glob(l:sBodyFile)
     " set marks
     let l:start = line('.')
     let l:end = search('\v\c^\s*end(proc|trap|record|func)?>','cnW')
@@ -826,8 +851,7 @@ if !exists("*s:KnopVerboseEcho()")
     " indent
     if exists("b:did_indent")
       if l:start>0 && l:end>l:start
-        let l:cmd = "silent normal! " . (l:end-l:start+1) . "=="
-        execute l:cmd
+        execute "silent normal! " . (l:end-l:start+1) . "=="
       endif
     endif
     " position cursor
@@ -838,7 +862,7 @@ if !exists("*s:KnopVerboseEcho()")
   endfunction " s:RapidReadBody()
 
   function s:RapidDefaultBody(sType,sName,sGlobal,sDataType,sReturnVar)
-    call s:RapidPositionForEdit()
+    call s:RapidPositionForEdit(a:sType)
     call setline('.',a:sGlobal . a:sType . " " . a:sDataType . " " . a:sName . '()')
     if a:sType =~ '\v\c(trap|record)' | silent substitute/()// | endif
     if a:sType =~ '\v\c(proc|trap|record)' | silent substitute/  / / | endif
@@ -865,8 +889,7 @@ if !exists("*s:KnopVerboseEcho()")
     let l:start = search(a:sType,'bW')
     if exists("b:did_indent")
       if l:start>0 && l:end>l:start
-        let l:cmd = "silent normal! " . (l:end-l:start+1) . "=="
-        execute l:cmd
+        execute "silent normal! " . (l:end-l:start+1) . "=="
       endif
     endif
     call search('^\s*!','eW',l:end)
@@ -875,9 +898,7 @@ if !exists("*s:KnopVerboseEcho()")
   function <SID>RapidAutoForm(sAction)
     " check input
     if a:sAction !~ '^[ gl][ pftr][ bndsprjtw]$' | return | endif
-    if getbufvar('%', "&buftype") == "quickfix" | return | endif
     "
-    " get global/local
     let l:sGlobal = s:RapidGetGlobal(a:sAction)
     if l:sGlobal == '' | return | endif " return if empty string was entered by user
     let l:sGlobal = substitute(l:sGlobal,'g','','g')
@@ -904,8 +925,14 @@ if !exists("*s:KnopVerboseEcho()")
           \|| l:sType =~ 'RECORD' && filereadable(glob(fnameescape(g:rapidPathToBodyFiles)).'RECORD.mod')
           \|| l:sType =~ 'FUNC' && filereadable(glob(fnameescape(g:rapidPathToBodyFiles)).'FUNC.mod') )
       call s:RapidReadBody(l:sType.'.mod',l:sType,l:sName,l:sGlobal,l:sDataType,l:sReturnVar)
+      call s:KnopVerboseEcho(g:rapidPathToBodyFiles . l:sType . '.mod body inserted.',1)
     else
       call s:RapidDefaultBody(l:sType,l:sName,l:sGlobal,l:sDataType,l:sReturnVar)
+      if exists("g:rapidPathToBodyFiles")
+        call s:KnopVerboseEcho(g:rapidPathToBodyFiles . l:sType . '.mod is not readable. Fallback to default body.',1)
+      else
+        call s:KnopVerboseEcho('Default body inserted.',1)
+      endif
     endif
     "
     normal! zz
@@ -945,37 +972,37 @@ if !exists("*s:KnopVerboseEcho()")
         unlet l:getback
         wincmd p
       endif
+    else
+      call s:KnopVerboseEcho("Nothing found.",1)
     endif
   endfunction " <SID>RapidListDefinition()
 
   function <SID>RapidListUsage()
-    " dont start from within qf or loc window
-    if getbufvar('%', "&buftype")=="quickfix" | return | endif
     "
     if search('\w','cW',line("."))
       let l:currentWord = s:RapidCurrentWordIs()
       "
       if l:currentWord =~ '^userdefined.*'
         let l:currentWord = substitute(l:currentWord,'^userdefined','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be userdefined. Start search..."])
-      elseif l:currentWord =~ '\v^(sys)?func.*'
-        let l:currentWord = substitute(l:currentWord,'\v^(sys)?func','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a FUNCTION. Start search..."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be userdefined"])
+      elseif l:currentWord =~ '\v^%(sys)?func.*'
+        let l:currentWord = substitute(l:currentWord,'\v^%(sys)?func','','')
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a FUNCTION"])
       elseif l:currentWord =~ '^num.*'
         let l:currentWord = substitute(l:currentWord,'^num','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a NUMBER. Start search..."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a NUMBER"])
       elseif l:currentWord =~ '^string.*'
         let l:currentWord = substitute(l:currentWord,'^string','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a STRING. Start search..."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a STRING"])
       elseif l:currentWord =~ '^comment.*'
         let l:currentWord = substitute(l:currentWord,'^comment','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a COMMENT. Start search..."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a COMMENT"])
       elseif l:currentWord =~ '^inst.*'
         let l:currentWord = substitute(l:currentWord,'^inst','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a Rapid KEYWORD. Start search..."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a Rapid KEYWORD"])
       elseif l:currentWord =~ '^bool.*'
         let l:currentWord = substitute(l:currentWord,'^bool','','')
-        call s:KnopVerboseEcho([l:currentWord,"appear to be a BOOLEAN VALUE. Start search..."])
+        call s:KnopVerboseEcho([l:currentWord,"appear to be a BOOL VALUE"])
       else
         let l:currentWord = substitute(l:currentWord,'^none','','')
         call s:KnopVerboseEcho([l:currentWord,"Unable to determine what to search for at current cursor position. No search performed!"],1)
@@ -984,19 +1011,22 @@ if !exists("*s:KnopVerboseEcho()")
       endif
       if s:KnopSearchPathForPatternNTimes('\c\v^[^!]*<'.l:currentWord.'>',s:KnopPreparePath(&path,'*'),'','rapid')==0
         call setqflist(s:KnopUniqueListItems(getqflist()))
-        " rule out if l:currentWord is part of a strings except in *.cfg files
+        " rule out l:currentWord inside a backup file
         let l:qfresult = []
         for l:i in getqflist()
           if bufname(get(l:i,'bufnr')) !~ '\~$'
-                \&& (get(l:i,'text') =~ '\v\c^([^"]*"[^"]*"[^"]*)*[^"]*<'.l:currentWord.'>'
-                \|| (bufname(get(l:i,'bufnr')) !~ '\v\c\w+\.mod$'
-                \&&  bufname(get(l:i,'bufnr')) !~ '\v\c\w+\.sys$'
-                \&&  bufname(get(l:i,'bufnr')) !~ '\v\c\w+\.prg$'))
+        "         \&& (get(l:i,'text') =~ '\v\c^([^"]*"[^"]*"[^"]*)*[^"]*<'.l:currentWord.'>'
+        "         \|| (bufname(get(l:i,'bufnr')) !~ '\v\c\w+\.mod$'
+        "         \&&  bufname(get(l:i,'bufnr')) !~ '\v\c\w+\.sys$'
+        "         \&&  bufname(get(l:i,'bufnr')) !~ '\v\c\w+\.prg$'))
             call add(l:qfresult,l:i)
           endif
         endfor
         call setqflist(l:qfresult)
+        call s:KnopVerboseEcho("Opening quickfix with results.",1)
         call s:KnopOpenQf('rapid')
+      else
+        call s:KnopVerboseEcho("Nothing found.",1)
       endif
     else
       call s:KnopVerboseEcho("Unable to determine what to search for at current cursor position. No search performed.",1)
@@ -1008,7 +1038,7 @@ if !exists("*s:KnopVerboseEcho()")
   " Function Text Object {{{
 
   if get(g:,'rapidMoveAroundKeyMap',1) " depends on move around key mappings
-    function s:RapidFunctionTextObject(inner,withcomment)
+    function <SID>RapidFunctionTextObject(inner,withcomment)
       if a:inner==1
         let l:n = 1
       else
@@ -1075,14 +1105,14 @@ endif
 let b:undo_ftplugin = "setlocal com< cms< sua<"
 
 " auto insert comment char when i_<CR>, o or O on a comment line
-if exists("g:rapidAutoComment") && g:rapidAutoComment==1
+if get(g:,'rapidAutoComment',1)
   setlocal formatoptions+=r
   setlocal formatoptions+=o
   let b:undo_ftplugin = b:undo_ftplugin." fo<"
 endif
 
 " format comments
-if exists("g:rapidFormatComments") && g:rapidFormatComments==1
+if get(g:,'rapidFormatComments',1)
   if &textwidth ==# 0
     " 78 Chars 
     setlocal textwidth=78
@@ -1094,10 +1124,11 @@ if exists("g:rapidFormatComments") && g:rapidFormatComments==1
   if stridx(b:undo_ftplugin, " fo<")==(-1)
     let b:undo_ftplugin = b:undo_ftplugin." fo<"
   endif
-endif
+endif " format comments
 
-" set vims path
-if !exists("g:rapidNoPath") || g:rapidNoPath!=1
+" path for gf, :find etc
+if get(g:,'rapidPath',1)
+
   let s:rapidpath=&path.'./**,'
   let s:rapidpath=substitute(s:rapidpath,'\/usr\/include,','','g')
   " if finddir('../PROGMOD')          !='' | let s:rapidpath.='../PROGMOD/**,'            | endif
@@ -1114,8 +1145,16 @@ if !exists("g:rapidNoPath") || g:rapidNoPath!=1
   if finddir('../CS')               !='' | let s:rapidpath.='../CS/**,'                 | endif
   " if finddir('./SYSPAR')            !='' | let s:rapidpath.='./SYSPAR/**,'              | endif
   execute "setlocal path=".s:rapidpath
+  setlocal path-=/usr/include
+
   let b:undo_ftplugin = b:undo_ftplugin." pa<"
-endif
+endif " get(g:,'rapidPath',1)
+
+" complete option
+" EIO.cfg
+call s:KnopAddFileToCompleteOption('EIO.cfg',&path,'EIO.cfg')
+" syntax file
+call s:KnopAddFileToCompleteOption('syntax/rapid.vim',&rtp)
 
 " conceal structure values (for MoveJ * v2500,z100...)
 if get(g:,'rapidConcealStructs',1)
@@ -1179,36 +1218,53 @@ if get(g:,'rapidMoveAroundKeyMap',1)
   onoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v\ze^\s*end(proc\|func\|trap\|record\|module)>', 'sW')<Bar>:unlet b:knopCount<CR>
   xnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(proc\|func\|trap\|record\|module)>(\n)?', 'seWz')<Bar>:unlet b:knopCount<CR>
   " Move around comments
-  nnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^(\s*!.*\n)@<!(\s*!)', 'bs')<Bar>:unlet b:knopCount<cr>
-  onoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^(\s*!.*\n)@<!(\s*!)', 'bsW')<Bar>:unlet b:knopCount<cr>
-  xnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v^(\s*!.*\n)@<!(\s*!)', 'bsW')<Bar>:unlet b:knopCount<cr>
+  nnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*!.*\n)@<!(^\s*!)', 'bs')<Bar>:unlet b:knopCount<cr>
+  onoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*!.*\n)@<!(^\s*!)', 'bsW')<Bar>:unlet b:knopCount<cr>
+  xnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*!.*\n)@<!(^\s*!)', 'bsW')<Bar>:unlet b:knopCount<cr>
   nnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*!.*\n\s*([^!\t ]\|$)', 's')<Bar>:unlet b:knopCount<cr>
   onoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*!.*\n(\s*[^!\t ]\|$)', 'seW')<Bar>normal! ==<Bar>:unlet b:knopCount<cr>
   xnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*!.*\n\ze\s*([^!\t ]\|$)', 'seW')<Bar>:unlet b:knopCount<cr>
   " inner and around function text objects
-  if get(g:,'rapidMoveAroundKeyMap',0)
+  if get(g:,'rapidFunctionTextObject',0)
         \|| mapcheck("aF","x")=="" && !hasmapto('<plug>RapidTxtObjAroundFuncInclCo','x')
     xmap <silent><buffer> aF <plug>RapidTxtObjAroundFuncInclCo
   endif
-  if get(g:,'rapidMoveAroundKeyMap',0)
+  if get(g:,'rapidFunctionTextObject',0)
         \|| mapcheck("af","x")=="" && !hasmapto('<plug>RapidTxtObjAroundFuncExclCo','x')
     xmap <silent><buffer> af <plug>RapidTxtObjAroundFuncExclCo
   endif
-  if get(g:,'rapidMoveAroundKeyMap',0)
+  if get(g:,'rapidFunctionTextObject',0)
         \|| mapcheck("if","x")=="" && !hasmapto('<plug>RapidTxtObjInnerFunc','x')
     xmap <silent><buffer> if <plug>RapidTxtObjInnerFunc
   endif
-  if get(g:,'rapidMoveAroundKeyMap',0)
+  if get(g:,'rapidFunctionTextObject',0)
         \|| mapcheck("aF","o")=="" && !hasmapto('<plug>RapidTxtObjAroundFuncInclCo','o')
     omap <silent><buffer> aF <plug>RapidTxtObjAroundFuncInclCo
   endif
-  if get(g:,'rapidMoveAroundKeyMap',0)
+  if get(g:,'rapidFunctionTextObject',0)
         \|| mapcheck("af","o")=="" && !hasmapto('<plug>RapidTxtObjAroundFuncExclCo','o')
     omap <silent><buffer> af <plug>RapidTxtObjAroundFuncExclCo
   endif
-  if get(g:,'rapidMoveAroundKeyMap',0)
+  if get(g:,'rapidFunctionTextObject',0)
         \|| mapcheck("if","o")=="" && !hasmapto('<plug>RapidTxtObjInnerFunc','o')
     omap <silent><buffer> if <plug>RapidTxtObjInnerFunc
+  endif
+  " inner and around comment text objects
+  if get(g:,'rapidCommentTextObject',0)
+        \|| mapcheck("ac","x")=="" && !hasmapto('<plug>RapidTxtObjAroundComment','x')
+    xmap <silent><buffer> ac <plug>RapidTxtObjAroundComment
+  endif
+  if get(g:,'rapidCommentTextObject',0)
+        \|| mapcheck("ic","x")=="" && !hasmapto('<plug>RapidTxtObjInnerComment','x')
+    xmap <silent><buffer> ic <plug>RapidTxtObjInnerComment
+  endif
+  if get(g:,'rapidCommentTextObject',0)
+        \|| mapcheck("ac","o")=="" && !hasmapto('<plug>RapidTxtObjAroundComment','o')
+    omap <silent><buffer> ac <plug>RapidTxtObjAroundComment
+  endif
+  if get(g:,'rapidCommentTextObject',0)
+        \|| mapcheck("ic","o")=="" && !hasmapto('<plug>RapidTxtObjInnerComment','o')
+    omap <silent><buffer> ic <plug>RapidTxtObjInnerComment
   endif
 endif
 
@@ -1219,9 +1275,9 @@ endif
 " if the mapping does not exist and there is no plug-mapping just map it,
 " otherwise look for the config variable
 
-if get(g:,'rapidGoDefinitionKeyMap',0)
-      \|| mapcheck("gd","n")=="" && !hasmapto('<plug>RapidGoDef','n')
-  " Go Definition
+if get(g:,'rapidGoDefinitionKeyMap',1)
+      \&& !hasmapto('<plug>RapidGoDef','n')
+  " Go Definition; The condition is different because gd is a vim command
   nmap <silent><buffer> gd <plug>RapidGoDef
 endif
 if get(g:,'rapidListDefKeyMap',0)
@@ -1236,6 +1292,7 @@ if get(g:,'rapidListUsageKeyMap',0)
 endif
 
 if get(g:,'rapidAutoFormKeyMap',0)
+      \|| mapcheck("<leader>n","n")=="" && !hasmapto('<plug>RapidAutoForm','n')
   nnoremap <silent><buffer> <leader>n    :call <SID>RapidAutoForm("   ")<cr>
   nnoremap <silent><buffer> <leader>nn   :call <SID>RapidAutoForm("   ")<cr>
   "
@@ -1297,6 +1354,7 @@ endif " g:rapidAutoFormKeyMap
 if get(g:,'rapidConcealStructKeyMap',0)
         \|| mapcheck("<F2>","n")=="" && mapcheck("<F3>","n")=="" && mapcheck("<F4>","n")==""
         \&& !hasmapto('<plug>RapidConcealStructs','n') && !hasmapto('<plug>RapidPartConcealStructs','n') && !hasmapto('<plug>RapidShowStructs','n')
+        \&& !exists("g:rapidFoldKeyMap")
   " conceal all structure values
   nmap <silent><buffer> <F4> <plug>RapidConcealStructs
   " conceal less structure values
@@ -1306,7 +1364,6 @@ if get(g:,'rapidConcealStructKeyMap',0)
 elseif get(g:,'rapidConcealStructsKeyMap',0)
   " deprecated
   " compatiblity
-  " conceal struct values, usefull for * robtargets
   nmap <silent><buffer> <F2> <plug>RapidConcealStructs
   nmap <silent><buffer> <F3> <plug>RapidShowStructs
 endif
@@ -1374,9 +1431,7 @@ endif
 
 " conceal all structure values
 nnoremap <silent><buffer> <plug>RapidConcealStructs     :call <SID>RapidConcealLevel(2)<CR>
-" conceal less structure values
 nnoremap <silent><buffer> <plug>RapidPartConcealStructs :call <SID>RapidConcealLevel(1)<CR>
-" conceal no structure values
 nnoremap <silent><buffer> <plug>RapidShowStructs        :call <SID>RapidConcealLevel(0)<CR>
 
 " }}} <plug> mappings

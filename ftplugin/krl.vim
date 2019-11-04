@@ -116,6 +116,21 @@ if !exists("*s:KnopVerboseEcho()")
     endif
   endfunction " s:KnopVerboseEcho()
 
+  function s:KnopAddFileToCompleteOption(file,path,...)
+    " don't add a:file if it's the current buffer
+    " not so easy actualy
+    " if bufname("%") =~ substitute(a:file,'[$/\\]','\\\1','g')
+    "   return 
+    " endif
+    if findfile(a:file,a:path)!=''
+      execute "setlocal complete+=k" . substitute(findfile(a:file,a:path),'\\','/','g')
+    elseif exists('a:1')
+      if findfile(a:1,'.')!=''
+        execute "setlocal complete+=k" . substitute(findfile(a:1,'.'),'\\','/','g')
+      endif
+    endif
+  endfunction " s:KnopAddFileToCompleteOption()
+
   function s:KnopDirExists(in)
     if finddir( substitute(a:in,'\\','','g') )!=''
       return 1
@@ -212,12 +227,10 @@ if !exists("*s:KnopVerboseEcho()")
     augroup KnopOpenQf
       au!
       " reposition after closing
-      let l:cmd = 'au BufWinLeave <buffer='.bufnr('%').'> let g:knopPositionQf=1'
-      execute l:cmd
+      execute 'au BufWinLeave <buffer='.bufnr('%').'> let g:knopPositionQf=1'
     augroup END
     if a:useSyntax!='' 
-      let l:cmd = 'set syntax='.a:useSyntax 
-      execute l:cmd
+      execute 'set syntax='.a:useSyntax 
     endif
     if exists('g:knopPositionQf') && s:KnopQfCompatible() 
       unlet g:knopPositionQf
@@ -235,9 +248,8 @@ if !exists("*s:KnopVerboseEcho()")
   endfunction " s:KnopOpenQf()
 
   function s:KnopSearchPathForPatternNTimes(Pattern,path,n,useSyntax)
-    let l:cmd = ':noautocmd ' . a:n . 'vimgrep /' . a:Pattern . '/j ' . a:path
     try
-      execute l:cmd
+      execute ':noautocmd ' . a:n . 'vimgrep /' . a:Pattern . '/j ' . a:path
     catch /^Vim\%((\a\+)\)\=:E303/
       call s:KnopVerboseEcho(":vimgrep stopped with E303. No match found")
       return -1
@@ -317,9 +329,8 @@ if !exists("*s:KnopVerboseEcho()")
 
   function s:KrlPathWithGlobalDataLists()
     call setloclist(0,[])
-    let l:cmd = ':noautocmd lvimgrep /\c\v^\s*defdat\s+(\w+\s+public|\$\w+)/j ' . s:KnopPreparePath(&path,'*.dat')
     try
-      execute l:cmd
+      execute ':noautocmd lvimgrep /\c\v^\s*defdat\s+(\w+\s+public|\$\w+)/j ' . s:KnopPreparePath(&path,'*.dat')
     catch /^Vim\%((\a\+)\)\=:E480/
       call s:KnopVerboseEcho(":lvimgrep stopped with E480! No global data lists found in \'path\'.")
       return ' '
@@ -383,6 +394,9 @@ if !exists("*s:KnopVerboseEcho()")
         return ("comment" . l:word)
         "
       elseif l:countStrChr == 1
+        if l:strUntilCursor =~ '\c\<varstate\s*(\s*"$'
+          return ("var" . l:word)
+        endif
         return ("string" . l:word)
         "
       elseif l:currentChar == "$"
@@ -721,8 +735,7 @@ if !exists("*s:KnopVerboseEcho()")
         return ''
         "
       endif
-      let l:cmd = "edit ".l:sFilename
-      execute l:cmd
+      execute "edit ".l:sFilename
       set fileformat=dos
       setf krl
     endif
@@ -934,8 +947,7 @@ if !exists("*s:KnopVerboseEcho()")
     endif
     " read body
     call s:KrlPositionForRead()
-    let l:cmd = "silent .-1read ".glob(l:sBodyFile)
-    execute l:cmd
+    execute "silent .-1read ".glob(l:sBodyFile)
     " set marks
     let l:start = line('.')
     let l:end = search('\v\c^\s*end(fct|dat)?>','cnW')
@@ -961,8 +973,7 @@ if !exists("*s:KnopVerboseEcho()")
     " indent
     if exists("b:did_indent")
       if l:start>0 && l:end>l:start
-        let l:cmd = "silent normal! " . (l:end-l:start+1) . "=="
-        execute l:cmd
+        execute "silent normal! " . (l:end-l:start+1) . "=="
       endif
     endif
     " position cursor
@@ -1041,14 +1052,12 @@ if !exists("*s:KnopVerboseEcho()")
     if a:sAction !~ '^[ lg][ adf][ abcfiprx6]$' | return | endif
     "
     let l:sGlobal = s:KrlGetGlobal(a:sAction)
-    if l:sGlobal == ''
-      return
-    else
-      let l:sGlobal = substitute(l:sGlobal,'local','','g')
-    endif
+    if l:sGlobal == '' | return | endif " return if empty string was entered by user
+    let l:sGlobal = substitute(l:sGlobal,'local','','g')
     "
+    " get def, deffct or defdat
     let l:sType = s:KrlGetType(a:sAction)
-    if l:sType == '' | return | endif
+    if l:sType == '' | return | endif " return if empty string was entered by user
     "
     if l:sType =~ '^defdat\>'
       "
@@ -1146,12 +1155,12 @@ if !exists("*s:KnopVerboseEcho()")
         unlet l:getback
         wincmd p
       endif
+    else
+      call s:KnopVerboseEcho("Nothing found.",1)
     endif
   endfunction " <SID>KrlListDefinition()
 
   function <SID>KrlListUsage()
-    " dont start from within qf or loc window
-    if getbufvar('%', "&buftype")=="quickfix" | return | endif
     "
     if search('\w','cW',line("."))
       let l:currentWord = s:KrlCurrentWordIs()
@@ -1168,12 +1177,12 @@ if !exists("*s:KnopVerboseEcho()")
         let l:currentWord = substitute(l:currentWord,'^var','','')
         let l:currentWord = substitute(l:currentWord,'\$','\\$','g') " escape embeddend dollars in var name (e.g. TMP_$STOPM)
         call s:KnopVerboseEcho([l:currentWord,"appear to be a user defined VARIABLE"])
-      elseif l:currentWord =~ '\v^(sys)?(proc|func)'
+      elseif l:currentWord =~ '\v^%(sys)?%(proc|func)'
         let l:type = "DEF"
         if l:currentWord =~ '^sys'
           let l:type = "KSS " . l:type
         endif
-        if l:currentWord =~ '^\v(sys)?func'
+        if l:currentWord =~ '^\v%(sys)?func'
           let l:type = l:type . "FCT"
         endif
         let l:currentWord = substitute(l:currentWord,'\v^%(sys)?%(proc|func)','','')
@@ -1224,11 +1233,11 @@ if !exists("*s:KnopVerboseEcho()")
             call add(l:qftmp2,l:i)
           endif
         endfor
-        " rule out if l:currentWord is part of a strings and inside a backup file
+        " rule out l:currentWord inside a backup file
         let l:qfresult = []
         for l:i in l:qftmp2
           if bufname(get(l:i,'bufnr')) !~ '\~$'
-                \&& get(l:i,'text') =~ '\v\c^([^"]*"[^"]*"[^"]*)*[^"]*'.l:currentWord
+        "         \&& (get(l:i,'text') =~ '\v\c^([^"]*"[^"]*"[^"]*)*[^"]*<'.l:currentWord.'>'
             call add(l:qfresult,l:i)
           endif
         endfor
@@ -1535,6 +1544,28 @@ if get(g:,'krlPath',1)
   let b:undo_ftplugin = b:undo_ftplugin." pa<"
 endif " get(g:,'krlPath',1)
 
+" complete option
+" <filename>.dat
+if bufname("%") !~ '\.dat$'
+  call s:KnopAddFileToCompleteOption(substitute(bufname("%"),'\.src','.dat','g'),&path)
+endif
+" $config.dat
+call s:KnopAddFileToCompleteOption('system/$config.dat',&path,'$config.dat')
+" R1/Mada/$robcor.dat
+call s:KnopAddFileToCompleteOption('R1/Mada/$robcor.dat',&path,'$robcor.dat')
+" R1/Mada/$machine.dat
+call s:KnopAddFileToCompleteOption('R1/Mada/$machine.dat',&path,'$machine.dat')
+" STEU/Mada/$machine.dat
+call s:KnopAddFileToCompleteOption('Steu/Mada/$machine.dat',&path)
+" STEU/Mada/$custom.dat
+call s:KnopAddFileToCompleteOption('Steu/Mada/$custom.dat',&path,'$custom.dat')
+" STEU/Mada/$option.dat
+call s:KnopAddFileToCompleteOption('Steu/Mada/$option.dat',&path,'$option.dat')
+" TP/Signals.dat
+call s:KnopAddFileToCompleteOption('TP/Signals.dat',&path,'Signals.dat')
+" syntax file
+call s:KnopAddFileToCompleteOption('syntax/krl.vim',&rtp)
+
 " folding
 if <SID>KrlIsVkrc() && get(g:,'krlConcealFoldTail',1)
 " if get(g:,'krlConcealFoldTail',1)
@@ -1744,7 +1775,7 @@ endif
 
 if get(g:,'krlGoDefinitionKeyMap',1) 
       \&& !hasmapto('<plug>KrlGoDef','n')
-  " Go Definition
+  " Go Definition; The condition is different because gd is a vim command
   nmap <silent><buffer> gd <plug>KrlGoDef
 endif
 if get(g:,'krlListDefKeyMap',0)
@@ -1817,8 +1848,8 @@ endif " g:krlAutoFormKeyMap
 
 if has("folding") && get(g:,'krlFoldLevel',1)
   if get(g:,'krlFoldingKeyMap',0) 
-        \|| (mapcheck("<F2>","n")=="" && mapcheck("<F3>","n")=="" && mapcheck("<F4>","n")==""
-        \&& !hasmapto('<plug>KrlCloseAllFolds','n') && !hasmapto('<plug>KrlCloseLessFolds','n') && !hasmapto('<plug>KrlCloseNoFolds','n'))
+        \|| mapcheck("<F2>","n")=="" && mapcheck("<F3>","n")=="" && mapcheck("<F4>","n")==""
+        \&& !hasmapto('<plug>KrlCloseAllFolds','n') && !hasmapto('<plug>KrlCloseLessFolds','n') && !hasmapto('<plug>KrlCloseNoFolds','n')
         \&& !exists("g:krlFoldKeyMap")
     " close all folds
     nmap <silent><buffer> <F4> <plug>KrlCloseAllFolds

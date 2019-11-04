@@ -42,8 +42,6 @@ call plug#begin('~/.vim/plugged')
 
   " Make sure you use single quotes
 
-  " Shorthand notation; fetches https://github.com/junegunn/vim-easy-align
-  " Plug 'junegunn/vim-easy-align'
   Plug 'KnoP-01/tortus'
   Plug 'KnoP-01/vimbuddy'
 
@@ -76,6 +74,9 @@ call plug#begin('~/.vim/plugged')
 
   " Plug 'vim-scripts/increment.vim--Avadhanula'
   Plug 'mMontu/increment.vim--Avadhanula'
+
+  " Shorthand notation; fetches https://github.com/junegunn/vim-easy-align
+  " Plug 'junegunn/vim-easy-align'
 
   " Any valid git URL is allowed
   " Plug 'https://github.com/junegunn/vim-github-dashboard.git'
@@ -121,9 +122,9 @@ endif
 " let &guioptions = substitute(&guioptions, 'L', 'l', 'g')
 " let &guioptions = substitute(&guioptions, 'r', 'R', 'g')
 set guioptions-=L
-set guioptions+=l
+" set guioptions+=l
 set guioptions-=r
-set guioptions+=R
+" set guioptions+=R
 set guioptions+=a
 
 " Switch syntax highlighting on, when the terminal has colors
@@ -180,7 +181,10 @@ else " has("autocmd")
 
 endif " has("autocmd")
 
+set nrformats-=octal " don't use octal in case of leading 0
+
 set scrolloff=0
+set sidescrolloff=5
 set history=50		" keep 50 lines of command line history
 
 set laststatus=2 " always show status line
@@ -199,6 +203,7 @@ set relativenumber
 
 set nowrap
 set linebreak " in case I use wrap
+set display+=lastline " show mor of the line in case of wrap
 
 set diffopt=filler,icase,iwhite
 
@@ -252,7 +257,7 @@ nnoremap <F6> gg=G``zz
 cnoremap <Left> <Space><BS><Left>
 cnoremap <Right> <Space><BS><Right>
 set wildchar=<Tab> wildcharm=<C-Z> wildmenu wildmode=full
-nnoremap <F8> :ls<cr>:buffer 
+" nnoremap <F8> Rolodex " see below!
 
 " Identify_the_syntax_highlighting_group_used_at_the_cursor
 map <F9> :echo "hi<" .  synIDattr(            synID(line("."),col("."),1)  ,"name") . '> trans<'
@@ -266,9 +271,31 @@ nnoremap <silent> <F10> :Matrix<CR>
 let g:shell_mappings_enabled = 0
 let g:shell_fullscreen_always_on_top=0
 " work around bug where the statusline disappears
-nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:set statusline=%F%m%r%h%w\ %#StatusLineNC#\ \ [%{&ff}\ %{&enc}\ %{&ft}]%#ToDo#\ \ [L%04l,C%03v,#%02n]\ %#SpecialChar#\ %{VimBuddy()}\ <CR>
-                                                      set statusline=%F%m%r%h%w\ %#StatusLineNC#\ \ [%{&ff}\ %{&enc}\ %{&ft}]%#ToDo#\ \ [L%04l,C%03v,#%02n]\ %#SpecialChar#\ %{VimBuddy()}\ 
-"
+nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call s:MyStatusline()<cr>
+function! s:MyStatusline()
+  set statusline=%F                " Path to the file in the buffer, as typed or relative to current directory
+  set statusline+=%m               " Modified flag, text is       "[+]" ; "[-]" if 'modifiable' is off
+  set statusline+=%r               " Readonly flag, text is       "[RO]"
+  set statusline+=%h               " Help buffer flag, text is    "[help]"
+  set statusline+=%w               " Preview window flag, text is "[Preview]"
+  set statusline+=%=               " Separation point between left and right aligned items
+  set statusline+=%#StatusLineNC#  " change coloring
+  set statusline+=[                " literal [
+  set statusline+=%{&ff}           " file format
+  set statusline+=\ %{&enc}        " encoding
+  set statusline+=\ %{&ft}         " file type
+  set statusline+=]                " literal ]
+  set statusline+=%#ToDo#          " change coloring
+  set statusline+=[                " literal [
+  set statusline+=%p%%             " percent of file
+  set statusline+=\ L%04l          " 4 digits line number
+  set statusline+=\ C%03v          " 3 digits column number
+  set statusline+=\ #%02n          " 2 digits buffer number
+  set statusline+=]                " literal ]
+  set statusline+=%#SpecialChar#   " change coloring
+  set statusline+=\ %{VimBuddy()}\ "
+endfunction
+call s:MyStatusline()
 
 " nnoremap <F12> :Vex<CR> " is now '-' because of vinegar.vim
 nnoremap <F12> :ls<cr>:buffer 
@@ -353,16 +380,16 @@ nnoremap <silent> <A-j> <C-W>j
 nnoremap <silent> <A-k> <C-W>k
 nnoremap <silent> <A-l> <C-W>l
 " change window size more easily
-nnoremap <silent> <A-C-Up> 5<C-W>+
-nnoremap <silent> <A-C-Down> 5<C-W>-
-nnoremap <silent> <A-C-Left> 10<C-W><
-nnoremap <silent> <A-C-Right> 10<C-W>>
+nnoremap <silent> <A-C-Up>      5<C-W>+
+nnoremap <silent> <A-C-Down>    5<C-W>-
+nnoremap <silent> <A-C-Left>   10<C-W><
+nnoremap <silent> <A-C-Right>  10<C-W>>
 " move window more easily (andymass/vim-tradewinds)
 let g:tradewinds_no_maps = 1
-nmap <A-Left> <plug>(tradewinds-h)
-nmap <A-Down> <plug>(tradewinds-j)
-nmap <A-Up>   <plug>(tradewinds-k)
-nmap <A-Right> <plug>(tradewinds-l)
+nmap <A-Left>   <plug>(tradewinds-h)
+nmap <A-Down>   <plug>(tradewinds-j)
+nmap <A-Up>     <plug>(tradewinds-k)
+nmap <A-Right>  <plug>(tradewinds-l)
 
 " leader mappings
 let mapleader = " "
@@ -387,6 +414,21 @@ nnoremap <c-s> :w<cr>
 " nnoremap <c-y> <c-y><c-y><c-y><c-y><c-y>  
 " use zb, zt and zz instead
 
+" Swap v and CTRL-V, because Block mode is more useful that Visual mode
+nnoremap    v   <C-V>
+nnoremap <C-V>     v
+vnoremap    v   <C-V>
+vnoremap <C-V>     v
+
+" dragvisuals.vim
+vmap <expr> H DVB_Drag('left')
+vmap <expr> L DVB_Drag('right')
+vmap <expr> J DVB_Drag('down')
+vmap <expr> K DVB_Drag('up')
+" vmap  <expr>  D DVB_Duplicate() " default
+
+
+
 " My plugin mappings and settings
 " let g:knopLhsQuickfix=0
 let g:knopRhsQuickfix=1
@@ -397,21 +439,27 @@ let g:knopRhsQuickfix=1
 
 " Note: rapid options
 " look also into ~/vimfiles/after/ftplugin/rapid.vim
+" augroup RapidAutoForm
+" au!
+" au User RapidAutoFormPost exec "normal {"
+" augroup END
 " let g:rapidNoCommentIndent=0 " undokumentiert
-let g:rapidAutoCorrCfgLineEnd=1
-let g:rapidMoveAroundKeyMap=2
+" let g:rapidCommentIndent=0
+" let g:rapidCommentTextObject=0
+" let g:rapidFormatComments=1
+let g:rapidAutoComment=0
+" let g:rapidAutoCorrCfgLineEnd=1
+" let g:rapidMoveAroundKeyMap=2
 " let g:rapidGoDefinitionKeyMap=1
 " let g:rapidListDefKeyMap=1
 " let g:rapidListUsageKeyMap=1
 " let g:rapidConcealStructsKeyMap=1 " deprecated
 " let g:rapidConcealStructKeyMap=1
 let g:rapidConcealStructs=1
-let g:rapidAutoFormKeyMap=1
+" let g:rapidAutoFormKeyMap=1
 " let g:rapidPathToBodyFiles='d:\daten\scripts\vim_resource\rapid resource\'
-let g:rapidNoHighLink=1
+" let g:rapidNoHighLink=1
 " let g:rapidShowError=1
-let g:rapidFormatComments=1
-" let g:rapidAutoComment=0
 " let g:rapidNoIndent=0
 " let g:rapidNoSpaceIndent=0
 " let g:rapidNoPath=0
@@ -422,8 +470,11 @@ let g:rapidFormatComments=1
 " Note: krl options
 " let g:krlShortenQFPath=0
 " look also into ~/vimfiles/after/ftplugin/krl.vim
-" let g:krlNoCommentIndent=0 " undokumentiert!
+" let g:krlNoCommentIndent=0
 " let g:krlCommentIndent=0
+" let g:krlCommentTextObject=0
+" let g:krlFormatComments=0
+let g:krlAutoComment=0
 " let g:krlFoldKeyMap=1 " deprecated
 " let g:krlFoldingKeyMap=1
 " let g:krlMoveAroundKeyMap=0
@@ -440,8 +491,6 @@ let g:rapidFormatComments=1
 " let g:krlNoHighLink=0
 " let g:krlNoHighlight=1
 " let g:krlShowError=1
-" let g:krlFormatComments=0
-let g:krlAutoComment=0
 " let g:krlCloseFolds=1
 let g:krlFoldLevel=2
 " let g:krlFoldMethodSyntax=1
@@ -538,40 +587,40 @@ set shellquote="
 "This function turns Rolodex Vim on or off for the current tab
 "If turning off, it sets all windows to equal height
 function! ToggleRolodexTab()
-    if exists("t:rolodex_tab") > 0
-        unlet t:rolodex_tab
-        call ClearRolodexSettings()
-        execute "normal \<C-W>="
-    else
-        let t:rolodex_tab = 1
-        call SetRolodexSettings()
-    endif
+  if exists("t:rolodex_tab") > 0
+    unlet t:rolodex_tab
+    call ClearRolodexSettings()
+    execute "normal \<C-W>="
+  else
+    let t:rolodex_tab = 1
+    call SetRolodexSettings()
+  endif
 endfunction
  
 "This function clears the Rolodex Vim settings and restores the previous values
 function! ClearRolodexSettings()
-    "Assume if one exists they all will
-    if exists("g:remember_ea") > 0
-        let &equalalways=g:remember_ea
-        let &winheight=g:remember_wh
-        let &winminheight=g:remember_wmh
-        let &winwidth=g:remember_ww
-        let &winminwidth=g:remember_wmw
-        let &helpheight=g:remember_hh
-    endif
+  "Assume if one exists they all will
+  if exists("g:remember_ea") > 0
+    let &equalalways=g:remember_ea
+    let &winheight=g:remember_wh
+    let &winminheight=g:remember_wmh
+    let &winwidth=g:remember_ww
+    let &winminwidth=g:remember_wmw
+    let &helpheight=g:remember_hh
+  endif
 endfunction
  
 "This function set the Rolodex Vim settings and remembers the previous values for later
 function! SetRolodexSettings()
-    if exists("t:rolodex_tab") > 0
-        let g:remember_ea=&equalalways
-        let g:remember_wh=&winheight
-        let g:remember_wmh=&winminheight
-        let g:remember_ww=&winwidth
-        let g:remember_wmw=&winminwidth
-        let g:remember_hh=&helpheight
-        set noequalalways winminheight=0 winheight=9999 winminwidth=0 winwidth=9999 helpheight=9999
-    endif
+  if exists("t:rolodex_tab") > 0
+    let g:remember_ea=&equalalways
+    let g:remember_wh=&winheight
+    let g:remember_wmh=&winminheight
+    let g:remember_ww=&winwidth
+    let g:remember_wmw=&winminwidth
+    let g:remember_hh=&helpheight
+    set noequalalways winminheight=0 winheight=9999 winminwidth=0 winwidth=9999 helpheight=9999
+  endif
 endfunction
  
 "These two autocmds make Vim change the settings whenever a new tab is selected
@@ -581,7 +630,9 @@ au TabLeave * call ClearRolodexSettings()
 au TabEnter * call SetRolodexSettings()
  
 "With this mapping, F2 toggles a tab to be Rolodex style
-noremap <F8> :call ToggleRolodexTab()<CR>
+noremap <F8> :call ToggleRolodexTab()<cr>
 
+" get rid of maps from AlignMapsPlugin
+let g:loaded_AlignMapsPlugin=1
 
 " vim:sw=2 sts=2 et

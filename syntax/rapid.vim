@@ -63,8 +63,8 @@ endif
 syn case ignore
 " }}} init
 
+" {{{ highlighting for *.cfg
 if bufname("%") =~ '\c\.cfg$'
-  " {{{ highlighting for *.cfg
 
   " Constant values
   " Boolean
@@ -92,9 +92,10 @@ if bufname("%") =~ '\c\.cfg$'
   syn match rapidException /CFG\ze_/
   highlight default link rapidException Exception
   " ---
-  " }}} highlighting for *.cfg
 else
-  " highlighting for *.mod, *.sys and *.prg
+" }}} highlighting for *.cfg
+
+" highlighting for *.mod, *.sys and *.prg
 
 " Comment {{{ 
 "
@@ -108,29 +109,22 @@ else
   " Line comment
   syn match rapidComment /!.*$/ contains=rapidTodoComment,rapidDebugComment
   highlight default link rapidComment Comment
-" }}} Comment and Folding 
+" }}} Comment 
 
 " Header {{{
   syn match rapidHeader /^%%%/
   highlight default link rapidHeader PreProc
 " }}} Header
 
-" Constant values {{{
-  " Boolean
-  syn keyword rapidBoolean TRUE FALSE Edge High Low
-  highlight default link rapidBoolean Boolean
-  " Float (num)
-  syn match rapidFloat /\v\W@1<=[+-]?\d+\.?\d*%(\s*[eE][+-]?\d+)?/
-  highlight default link rapidFloat Float
-  " character code in string
-  syn match rapidCharCode /[^\\]\zs\\\d\{1,3}/ contained
-  highlight default link rapidCharCode SpecialChar
-  " String. Note: Don't rename group rapidString. Indent depend on this
-  syn region rapidString start=/"/ end=/"/ contains=rapidCharCode
-  highlight default link rapidString String
-" }}} Constant values
+" Operator {{{
+" Boolean operator
+  syn keyword rapidOperator and or xor not Div Mod
+" Arithmetic and Compare operator
+  syn match rapidOperator /[-+*/<>:=]/
+  highlight default link rapidOperator Operator
+" }}} Operator
 
-  " Type {{{
+" Type, StorageClass and Typedef {{{
   " anytype (preceded by 'alias|pers|var|const|func'
   " TODO: still missing are userdefined types which are part of a parameter:
   " proc message( mystring msMessagePart1{},
@@ -144,7 +138,7 @@ else
   syn keyword rapidType egmframetype egmident egm_minmax egmstate egmstopmode errdomain errnum errstr errtype event_type exec_level extjoint handler_type
   syn keyword rapidType icondata identno intnum iodev iounit_state jointtarget
   syn keyword rapidType listitem loaddata loadidnum loadsession mecunit motsetdata
-  " num, siehe unten
+  syn keyword rapidType num
   syn keyword rapidType opcalc opnum orient paridnum paridvalidnum pathrecid pos pose progdisp
   syn keyword rapidType rawbytes restartdata rmqheader rmqmessage rmqslot robjoint robtarget
   syn keyword rapidType sensor sensorstate shapedata signalorigin signalai signalao signaldi signaldo signalgi signalgo socketdev socketstatus speeddata stoppointdata string stringdig switch symnum syncident 
@@ -174,9 +168,29 @@ else
   " structures or strorage classes
   syn keyword rapidTypeDef MODULE ENDMODULE PROC ERROR UNDO BACKWARD ENDPROC RECORD ENDRECORD TRAP ENDTRAP FUNC ENDFUNC
   highlight default link rapidTypeDef TypeDef
-  " }}}
+" }}} Type, StorageClass and Typedef
 
-  " Statement {{{
+" Delimiter {{{
+  syn match rapidDelimiter /[\\(){},;|\[\]]/
+  highlight default link rapidDelimiter Delimiter
+" }}} Delimiter
+
+" Constant values {{{
+  " Boolean
+  syn keyword rapidBoolean TRUE FALSE Edge High Low
+  highlight default link rapidBoolean Boolean
+  " Float (num)
+  syn match rapidFloat /\v\W@1<=[+-]?\d+\.?\d*%(\s*[eE][+-]?\d+)?/
+  highlight default link rapidFloat Float
+  " String. Note: Don't rename group rapidString. Indent depend on this
+  syn region rapidString start=/"/ end=/"/ contains=rapidCharCode
+  highlight default link rapidString String
+  " character code in string
+  syn match rapidCharCode /[^\\]\zs\\\d\{1,3}/ contained
+  highlight default link rapidCharCode SpecialChar
+" }}} Constant values
+
+" Statements, keywords et al {{{
   " syn keyword rapidStatement
   " highlight default link rapidStatement Statement
   " Conditional
@@ -226,9 +240,9 @@ else
   syn keyword rapidException EXIT ErrRaise ExitCycle RAISE RaiseToUser RETRY RETURN TRYNEXT
   syn match rapidException /^\s*Stop\s*[\\;]/me=e-1
   highlight default link rapidException Exception
-  " }}}
+" }}} Statements, keywords et al
 
-  " special keyword for move command {{{
+" special keyword for move command {{{
   " arc instructions
   syn keyword rapidMovement ArcC ArcC1 ArcC2 ArcCEnd ArcC1End ArcC2End ArcCStart ArcC1Start ArcC2Start 
   syn keyword rapidMovement ArcL ArcL1 ArcL2 ArcLEnd ArcL1End ArcL2End ArcLStart ArcL1Start ArcL2Start ArcMoveExtJ 
@@ -257,36 +271,18 @@ else
   else
     highlight default link rapidMovement Special
   endif
-  " }}}
+" }}} special keyword for move command 
 
-  " Operator {{{
-  syn keyword rapidOperator and or xor not Div Mod
-  syn match rapidOperator /[-+*/<>:=]/
-  highlight default link rapidOperator Operator
-  " }}}
-
-  " Delimiter {{{
-  syn match rapidDelimiter /[\\(){},;|\[\]]/
-  highlight default link rapidDelimiter Delimiter
-  " }}}
-
+" Structure value {{{
   syn match rapidNames /[a-zA-Z_][.a-zA-Z0-9_]*/
-  highlight default link rapidNames None
-  " Function {{{
-  syn match rapidFunction contains=rapidBuildInFunction /\v\c%(<(proc|module)\s+)@10<![a-zA-Z_]\w+ *\(/me=e-1
-  highlight default link rapidFunction Function
-  " call by var: %"product"+NumToStr(nProductNumber)%;
-  " call by var: if bBool %stString%;
-  syn match rapidCallByVar /%\ze[^%]/
-  highlight default link rapidCallByVar Function
-  " }}}
+  " highlight default link rapidNames None
+  " rapid structrure values. added to be able to conceal them
+  syn region rapidConcealableString start=/"/ end=/"/ contained contains=rapidCharCode conceal 
+  highlight default link rapidConcealableString String
+  syn region rapidStructVal matchgroup=rapidDelimiter start=/\[/ end=/\]/ contains=ALLBUT,rapidString keepend extend conceal cchar=* 
+" }}} Structure value
 
-  " nicht schoen, aber num muss nach rapidNames folgen
-  " TODO optimier das (nicht gefolgt von : und nicht vorneangestellter \
-  syn match rapidType /\c\<num\>\s\+\ze\w\+/ " avoid false highlighting if its a \num:= argument
-  highlight default link rapidType Type
-
-  " BuildInFunction {{{
+" BuildInFunction {{{
   " dispense functions
   syn keyword rapidBuildInFunction contained GetSignal
   " Integrated Vision Platform functions
@@ -318,12 +314,16 @@ else
   else
     highlight default link rapidBuildInFunction Function
   endif
-  " }}}
+" }}}
 
-  " rapid structrure values. added to be able to conceal them
-  syn region rapidConcealableString start=/"/ end=/"/ contained contains=rapidCharCode conceal 
-  highlight default link rapidConcealableString String
-  syn region rapidStructVal matchgroup=rapidDelimiter start=/\[/ end=/\]/ contains=ALLBUT,rapidString keepend extend conceal cchar=* 
+" Function {{{
+  syn match rapidFunction contains=rapidBuildInFunction /\v\c%(<(proc|module)\s+)@10<![a-zA-Z_]\w+ *\(/me=e-1
+  highlight default link rapidFunction Function
+  " call by var: %"product"+NumToStr(nProductNumber)%;
+  " call by var: if bBool %stString%;
+  syn match rapidCallByVar /%\ze[^%]/
+  highlight default link rapidCallByVar Function
+" }}} Function
 
 " Error {{{
   if get(g:,'rapidShowError',1)
@@ -382,9 +382,9 @@ else
     highlight default link rapidError10 Error
   endif
 " }}} Error
-endif
 
 " Finish {{{
+endif
 let &cpo = s:keepcpo
 unlet s:keepcpo
 
