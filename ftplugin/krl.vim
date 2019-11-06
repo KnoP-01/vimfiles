@@ -122,12 +122,23 @@ if !exists("*s:KnopVerboseEcho()")
     " if bufname("%") =~ substitute(a:file,'[$/\\]','\\\1','g')
     "   return 
     " endif
-    if findfile(a:file,a:path)!=''
-      execute "setlocal complete+=k" . substitute(findfile(a:file,a:path),'\\','/','g')
+    echo " "
+    echo "attempt to add " a:file
+    if substitute(findfile(a:file,a:path),'\\','/','g')!=''
+      echo "findfile(a:file,a:path)!=''"
+      echo 'setlocal complete+=k' . s:KnopFnameescape4Path(substitute(findfile(a:file,a:path),'\\','/','g'))
+      execute 'setlocal complete+=k' . s:KnopFnameescape4Path(substitute(findfile(a:file,a:path),'\\','/','g'))
     elseif exists('a:1')
-      if findfile(a:1,'.')!=''
-        execute "setlocal complete+=k" . substitute(findfile(a:1,'.'),'\\','/','g')
+      echo "exists('a:1')"
+      if substitute(findfile(a:1,'.'),'\\','/','g')!=''
+        echo "findfile(a:1,'.')!=''"
+        echo 'setlocal complete+=k' . s:KnopFnameescape4Path(substitute(findfile(a:1,'.'),'\\','/','g'))
+        execute 'setlocal complete+=k' . s:KnopFnameescape4Path(substitute(findfile(a:1,'.'),'\\','/','g'))
+      else
+        echo "Not found"
       endif
+    else
+      echo "Not found"
     endif
   endfunction " s:KnopAddFileToCompleteOption()
 
@@ -1547,10 +1558,10 @@ endif " get(g:,'krlPath',1)
 " complete option
 " <filename>.dat
 if bufname("%") !~ '\.dat$'
-  call s:KnopAddFileToCompleteOption(substitute(bufname("%"),'\.src','.dat','g'),&path)
+  call s:KnopAddFileToCompleteOption(substitute(bufname("%"),'\c\v\.s(rc|ub)','.dat','g'),'.')
 endif
 " $config.dat
-call s:KnopAddFileToCompleteOption('system/$config.dat',&path,'$config.dat')
+call s:KnopAddFileToCompleteOption('System/$config.dat',&path,'$config.dat')
 " R1/Mada/$robcor.dat
 call s:KnopAddFileToCompleteOption('R1/Mada/$robcor.dat',&path,'$robcor.dat')
 " R1/Mada/$machine.dat
@@ -1703,25 +1714,25 @@ endif
 
 if get(g:,'krlMoveAroundKeyMap',1)
   " Move around functions
-  nnoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 'bs')<Bar>:unlet b:knopCount<CR>
-  onoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>.*\n\zs', 'bsW')<Bar>:unlet b:knopCount<CR>
-  xnoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 'bsW')<Bar>:unlet b:knopCount<CR>
-  nnoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 's')<Bar>:unlet b:knopCount<CR>
-  onoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 'sW')<Bar>:unlet b:knopCount<CR>
-  xnoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>.*\n', 'seWz')<Bar>:unlet b:knopCount<CR>
-  nnoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 'bs')<Bar>:unlet b:knopCount<CR>
-  onoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>\n^(.\|\n)', 'bseW')<Bar>:unlet b:knopCount<CR>
-  xnoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 'bsW')<Bar>:unlet b:knopCount<CR>
-  nnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 's')<Bar>:unlet b:knopCount<CR>
-  onoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\c\v\ze^\s*end(fct\|dat)?>', 'sW')<Bar>:unlet b:knopCount<CR>
-  xnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>(\n)?', 'seWz')<Bar>:unlet b:knopCount<CR>
+  nnoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 'bs')        <Bar>unlet b:knopCount<CR>:normal! zt<CR>
+  onoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>.*\n\zs', 'bsW')<Bar>unlet b:knopCount<CR>
+  xnoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"                                                                            <Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 'bsW')     <Bar>unlet b:knopCount<CR>
+  nnoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 's')         <Bar>unlet b:knopCount<CR>:normal! zt<CR>
+  onoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>', 'sW')        <Bar>unlet b:knopCount<CR>
+  xnoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"                                                                            <Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*(global\s+)?def(fct\|dat)?>.*\n', 'seWz')<Bar>unlet b:knopCount<CR>
+  nnoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 'bs')                    <Bar>unlet b:knopCount<CR>:normal! zb<CR>
+  onoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>\n^(.\|\n)', 'bseW')        <Bar>unlet b:knopCount<CR>
+  xnoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"                                                                            <Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 'bsW')                 <Bar>unlet b:knopCount<CR>
+  nnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>', 's')                     <Bar>unlet b:knopCount<CR>:normal! zb<CR>
+  onoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v\ze^\s*end(fct\|dat)?>', 'sW')                 <Bar>unlet b:knopCount<CR>
+  xnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"                                                                            <Bar>call <SID>KnopNTimesSearch(b:knopCount, '\c\v^\s*end(fct\|dat)?>(\n)?', 'seWz')           <Bar>unlet b:knopCount<CR>
   " Move around comments
-  nnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*;.*\n)@<!(^\s*;)', 'bs')<Bar>:unlet b:knopCount<cr>
-  onoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*;.*\n)@<!(^\s*;)', 'bsW')<Bar>:unlet b:knopCount<cr>
-  xnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*;.*\n)@<!(^\s*;)', 'bsW')<Bar>:unlet b:knopCount<cr>
-  nnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n\s*([^;\t ]\|$)', 's')<Bar>:unlet b:knopCount<cr>
-  onoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:                     call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n(\s*[^;\t ]\|$)', 'seW')<Bar>normal! ==<Bar>:unlet b:knopCount<cr>
-  xnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>:exe "normal! gv"<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n\ze\s*([^;\t ]\|$)', 'seW')<Bar>:unlet b:knopCount<cr>
+  nnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*;.*\n)@<!(^\s*;)', 'bs')    <Bar>unlet b:knopCount<cr>
+  onoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*;.*\n)@<!(^\s*;)', 'bsW')   <Bar>unlet b:knopCount<cr>
+  xnoremap <silent><buffer> [; :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"                                                            <Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v(^\s*;.*\n)@<!(^\s*;)', 'bsW')      <Bar>unlet b:knopCount<cr>
+  nnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n\s*([^;\t ]\|$)', 's')  <Bar>unlet b:knopCount<cr>
+  onoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n(\s*[^;\t ]\|$)', 'seW')<Bar>exec "normal! =="                                                              <Bar>unlet b:knopCount<cr>
+  xnoremap <silent><buffer> ]; :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"                                                            <Bar>call <SID>KnopNTimesSearch(b:knopCount, '\v^\s*;.*\n\ze\s*([^;\t ]\|$)', 'seW')<Bar>unlet b:knopCount<cr>
   " inner and around function text objects
   if get(g:,'krlFunctionTextObject',0)
         \|| mapcheck("aF","x")=="" && !hasmapto('<plug>KrlTxtObjAroundFuncInclCo','x')
