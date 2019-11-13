@@ -1,15 +1,6 @@
-nmap <silent><buffer> <leader>f <Plug>RapidListDef
-nmap <silent><buffer> <leader>u <Plug>RapidListUse
-nmap <silent><buffer> gd <Plug>RapidGoDef
 
-nmap <silent><buffer> <F2> <Plug>RapidConcealStructs
-nmap <silent><buffer> <F3> <Plug>RapidPartConcealStructs
-nmap <silent><buffer> <F4> <Plug>RapidShowStructs
-
-" center when moving to previews/next func
-" nmap [[ [[zt
-" nmap ]] ]]zt
-" nmap [] []zb
-" nmap ][ ][zb
-
+" setlocal softtabstop=4
+" setlocal shiftwidth=4
+" setlocal expandtab
+" setlocal shiftround
 

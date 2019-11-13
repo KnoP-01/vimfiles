@@ -12,3 +12,8 @@ setlocal shiftwidth=4
 " delete comment leader (") if J(oin) is used
 setlocal fo+=j fo-=r fo-=o
 
+setlocal iskeyword-=:
+setlocal iskeyword+=$
+setlocal iskeyword+=@-@
+setlocal iskeyword+=%
+setlocal iskeyword+=&

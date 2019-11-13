@@ -17,6 +17,10 @@ if !has("win32") " del c:\Program Files (x86)\Vim\vim81\lang\de\
 endif
 
 
+" set leader befor any plugin, so <leader>-mappings get the right leader 
+let mapleader       = " "
+let maplocalleader  = " "
+
 
 " Optional Packs:
 " matchit
@@ -29,12 +33,16 @@ endif
 command! MyPlugUpdate   :set statusline=%F%m%r%h%w <bar> PlugUpdate
 " PlugInstall
 command! MyPlugInstall  :set statusline=%F%m%r%h%w <bar> PlugInstall
+" don't forget PlugClean
 " Plugins
 call plug#begin('~/.vim/plugged')
 
   " Make sure you use single quotes
   " examples see :he plug-example
 
+  Plug 'gruvbox-community/gruvbox'
+  let g:gruvbox_bold=0
+  let g:gruvbox_italic=0
   Plug 'KnoP-01/tortus'
   Plug 'KnoP-01/vimbuddy'
 
@@ -71,8 +79,13 @@ call plug#begin('~/.vim/plugged')
   " let g:matchup_matchparen_deferred             = 1     " delay until display matching paren
   " let g:matchup_matchparen_deferred_show_delay  = 800   " delay until display matching paren
 
+  " Plug 'vim-scripts/RelOps'
+  " let g:relops_check_for_nu = 1
+  " let g:relops_mappings = ['gc']
   " Plug 'vim-scripts/increment.vim--Avadhanula'
   Plug 'mMontu/increment.vim--Avadhanula'
+
+  Plug 'rickhowe/diffchar.vim'
 
 " Initialize plugin system
 call plug#end()
@@ -261,8 +274,6 @@ augroup END
 
 
 " Mappings:
-let mapleader       = " "
-let maplocalleader  = " "
 
 " F Keys:
 " get rid of trailing white spaces and tabs; use two spaces instead of tab
@@ -423,13 +434,18 @@ nnoremap <leader>h :he<cr><c-w>L:help
 " edit .vimrc
 nnoremap <leader>e :edit $HOME/.vim/vimrc<cr>
 
+" my auto insert closing pair
+inoremap ' ''<esc>i
+inoremap " ""<esc>i
+inoremap ( ()<esc>i
+inoremap [ []<esc>i
+inoremap { {}<esc>i
 
 
 " KnoP Settings:
 " let g:knopLhsQuickfix=0
 let g:knopRhsQuickfix=1
-" let g:knopVerbose=0
-" let g:knopVerbose=1
+let g:knopVerbose=1
 " let g:knopNoVerbose=0
 " let g:knopShortenQFPath=0
 
@@ -443,7 +459,7 @@ let g:knopRhsQuickfix=1
 " let g:rapidCommentIndent=0
 " let g:rapidCommentTextObject=0
 " let g:rapidFormatComments=1
-let g:rapidAutoComment=0
+" let g:rapidAutoComment=0
 " let g:rapidAutoCorrCfgLineEnd=1
 " let g:rapidMoveAroundKeyMap=2
 " let g:rapidGoDefinitionKeyMap=1
@@ -451,14 +467,19 @@ let g:rapidAutoComment=0
 " let g:rapidListUsageKeyMap=1
 " let g:rapidConcealStructsKeyMap=1 " deprecated
 " let g:rapidConcealStructKeyMap=1
-let g:rapidConcealStructs=1
+" let g:rapidConcealStructs=2
 " let g:rapidAutoFormKeyMap=1
+let g:rapidCompleteAdditions = [
+      \'TASK1/SYSMOD/DAI_System_R1.sys', 
+      \'TASK1/SYSMOD/DAI_IntertaskDefinitions.sys', 
+      \'TASK1/PROGMOD/Unterprog_OP25_35_R1.mod']
 " let g:rapidPathToBodyFiles='d:\daten\scripts\vim_resource\rapid resource\'
 " let g:rapidNoHighLink=1
 " let g:rapidShowError=1
 " let g:rapidNoIndent=0
 " let g:rapidNoSpaceIndent=0
-" let g:rapidNoPath=0
+" let g:rapidNoPath=1
+" let g:rapidPath=0
 " let g:rapidNoVerbose=1 " siehe oben g:knop...
 " let g:rapidRhsQuickfix " siehe oben g:knop...
 " let g:rapidLhsQuickfix " siehe oben g:knop...
@@ -483,6 +504,11 @@ let g:krlAutoComment=0
 " nnoremap <leader>f gd
 " let g:krlListUsageKeyMap=1
 " let g:krlAutoFormKeyMap=1
+let g:krlCompleteAdditions = [
+      \'R1\Graeff TP\global_var.dat', 
+      \'R1\Graeff TP\mymessage.src', 
+      \'R1\Graeff TP\mymessage.dat', 
+      \'R1\Graeff TP\global_fct.src']
 " let g:krlPathToBodyFiles='d:\daten\scripts\vim_resource\krl resource\'
 " let g:krlAutoFormUpperCase=1
 " let g:krlGroupName=0
@@ -519,6 +545,13 @@ colorscheme tortusless
 " colorscheme flatlandia
 " colorscheme flattened_dark
 " colorscheme frictionless
+"
+" colorscheme gruvbox
+" highlight Cursor guifg=#00FF00 ctermfg=green
+" highlight Folded guifg=#8e9200 ctermfg=106
+" highlight link krlMovement   Folded
+" highlight link rapidMovement Folded
+"
 " colorscheme holokai
 " colorscheme jellybeans
 " colorscheme lizard
@@ -527,6 +560,16 @@ colorscheme tortusless
 " colorscheme neodark
 " colorscheme oceandeep
 " colorscheme petrel
+" colorscheme papercolor
+" let g:PaperColor_Theme_Options = {
+"   \   'theme': {
+"   \     'default': {
+"   \       'allow_bold': 0
+"   \      ,'allow_italic': 0
+"   \     }
+"   \   }
+"   \ }
+" highlight link Folded Statement
 " colorscheme rdark
 " colorscheme scheakur
 " colorscheme seti
@@ -549,8 +592,8 @@ colorscheme tortusless
 " GUI Font:
 if has("gui_running")
   " set guifont=Consolas:h14
-  " set guifont=terminus:h16
-  set guifont=Anonymous_Pro:h14
+  set guifont=terminus:h16
+  " set guifont=Anonymous_Pro:h14
   " testzeile: 1lI7 2Z 5S 6b 08B0 pgq oO0Q ODODCO ‰ˆ¸ƒ÷‹ '` ,. :; +-*/= `''"'""`
   if 0
     let g:loeschmich="testzeile: 1lI7 2Z 5S 6b 08B0 pgq oO0Q ODODCO ‰ˆ¸ƒ÷‹ '` ,. :; +-*/= `''\"'\"\"`"

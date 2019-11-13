@@ -1,8 +1,8 @@
 " ABB Rapid Command file type plugin for Vim
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 2.0.1
-" Last Change: 16.10.2019
+" Version: 2.1.1
+" Last Change: 13.11.2019
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -81,15 +81,16 @@ if !exists("*s:KnopVerboseEcho()")
   " Little Helper {{{
 
   if get(g:,'knopVerbose',0)
-    let g:knopVerboseMsgSet = 1
+    let g:knopCompleteMsg = 1
+    let g:knopVerboseMsg = 1
+  endif
+  if exists('g:knopVerboseMsg')
+    unlet g:knopVerboseMsg
+    echo "\nSwitch verbose messages off with \":let g:knopVerbose=0\" any time. You may put this in your .vimrc"
+    echo " "
   endif
   function s:KnopVerboseEcho(msg, ...)
     if get(g:,'knopVerbose',0)
-      if exists('g:knopVerboseMsgSet')
-        unlet g:knopVerboseMsgSet
-        echo "\nSwitch verbose messages off with \":let g:knopVerbose=0\" any time. You may put this in your .vimrc"
-        echo " "
-      endif
       echo a:msg
       if exists('a:1')
         " for some reason I don't understand this has to be present twice
@@ -98,21 +99,6 @@ if !exists("*s:KnopVerboseEcho()")
       endif
     endif
   endfunction " s:KnopVerboseEcho()
-
-  function s:KnopAddFileToCompleteOption(file,path,...)
-    " don't add a:file if it's the current buffer
-    " not so easy actualy
-    " if bufname("%") =~ substitute(a:file,'[$/\\]','\\\1','g')
-    "   return 
-    " endif
-    if findfile(a:file,a:path)!=''
-      execute "setlocal complete+=k" . substitute(findfile(a:file,a:path),'\\','/','g')
-    elseif exists('a:1')
-      if findfile(a:1,'.')!=''
-        execute "setlocal complete+=k" . substitute(findfile(a:1,'.'),'\\','/','g')
-      endif
-    endif
-  endfunction " s:KnopAddFileToCompleteOption()
 
   function s:KnopDirExists(in)
     if finddir( substitute(a:in,'\\','','g') )!=''
@@ -132,6 +118,65 @@ if !exists("*s:KnopVerboseEcho()")
     let l:out = substitute(l:out, ';', '\\\\;', "g")
     return l:out
   endfunction
+
+  function s:knopCompleteEnbMsg()
+    if exists("g:knopCompleteMsg")
+      unlet g:knopCompleteMsg
+      call s:KnopVerboseEcho("Add the following files to 'complete'.\n  Try <Ctrl-p> and <Ctrl-n> to complete words from there:")
+    endif
+  endfunction " s:knopCompleteMsg
+
+  function s:KnopSplitAndUnescapeCommaSeparatedPathStr(commaSeparatedPathStr)
+    let l:pathList = []
+    for l:pathItem in split(a:commaSeparatedPathStr,'\\\@1<!,')
+      if l:pathItem != ''
+        call add(l:pathList,substitute(l:pathItem,'\\','','g'))
+      endif
+    endfor
+    return l:pathList
+  endfunction
+
+  function s:KnopAddFileToCompleteOption(file,pathList,...)
+"    echo " "
+"    echo "  attempt to add \nl:file = >" . a:file . "< at"
+    let l:file=a:file
+    for l:path in a:pathList
+      let l:path = substitute(l:path,'[\\/]\*\*$','','')
+"      echo "l:path = >".l:path."<"
+      if l:path != ''
+        if filereadable(l:path.'/'.l:file)!=''
+          let l:f = s:KnopFnameescape4Path(l:path.'/'.l:file)
+"          echo "file readable"
+"          echo '  setlocal complete+=k'.l:f
+          call s:knopCompleteEnbMsg()
+          call s:KnopVerboseEcho(l:f)
+          execute 'setlocal complete+=k'.l:f
+          return
+        else
+"          echo "  Not found"
+        endif
+      else
+"        echo "  Ignored"
+      endif
+    endfor
+    if exists('a:1')
+      let l:f = a:1
+"      echo ""
+"      echo "search for file in same dir as current file"
+"      echo "try " l:f
+      if filereadable(l:f)!=''
+        let l:f = s:KnopFnameescape4Path(a:1)
+"        echo "file readable"
+"        echo '  setlocal complete+=k'.l:f
+        call s:knopCompleteEnbMsg()
+        call s:KnopVerboseEcho(l:f)
+        execute 'setlocal complete+=k'.l:f
+        return
+      else
+"        echo "  Not found"
+      endif
+    endif
+  endfunction " s:KnopAddFileToCompleteOption()
 
   function s:KnopSubStartToEnd(search,sub,start,end)
     execute 'silent '. a:start .','. a:end .' s/'. a:search .'/'. a:sub .'/ge'
@@ -622,7 +667,7 @@ if !exists("*s:KnopVerboseEcho()")
       "
     endif
     "
-    call s:KnopVerboseEcho("rapid go definition failed",1)
+    call s:KnopVerboseEcho("Nothing found.",1)
     return -1
   endfunction " s:RapidSearchUserDefined()
 
@@ -851,6 +896,7 @@ if !exists("*s:KnopVerboseEcho()")
     " indent
     if exists("b:did_indent")
       if l:start>0 && l:end>l:start
+        execute l:start.','.l:end."substitute/^/ /"
         execute "silent normal! " . (l:end-l:start+1) . "=="
       endif
     endif
@@ -889,6 +935,7 @@ if !exists("*s:KnopVerboseEcho()")
     let l:start = search(a:sType,'bW')
     if exists("b:did_indent")
       if l:start>0 && l:end>l:start
+        execute l:start.','.l:end."substitute/^/ /"
         execute "silent normal! " . (l:end-l:start+1) . "=="
       endif
     endif
@@ -940,9 +987,9 @@ if !exists("*s:KnopVerboseEcho()")
     "
   endfunction " <SID>RapidAutoForm()
 
-  " }}} Auto Form 
+  " }}} Auto Form
 
-  " List Def/Usage {{{ 
+  " List Def/Usage {{{
 
   function <SID>RapidListDefinition()
     " list defs in qf
@@ -1131,30 +1178,58 @@ if get(g:,'rapidPath',1)
 
   let s:rapidpath=&path.'./**,'
   let s:rapidpath=substitute(s:rapidpath,'\/usr\/include,','','g')
-  " if finddir('../PROGMOD')          !='' | let s:rapidpath.='../PROGMOD/**,'            | endif
-  " if finddir('../SYSMOD')           !='' | let s:rapidpath.='../SYSMOD/**,'             | endif
-  if finddir('../../../RAPID')      !='' | let s:rapidpath.='../../../RAPID/TASK*/**,'  | endif
+  if finddir('../../../RAPID')      !='' | let s:rapidpath.='../../../RAPID/**,'        | endif
   if finddir('../../../SYSPAR')     !='' | let s:rapidpath.='../../../SYSPAR/**,'       | endif
   if finddir('../../../HOME')       !='' | let s:rapidpath.='../../../HOME/**,'         | endif
   if finddir('../../../BACKINFO')   !='' | let s:rapidpath.='../../../BACKINFO/**,'     | endif
   if finddir('../../../CS')         !='' | let s:rapidpath.='../../../CS/**,'           | endif
-  if finddir('../RAPID')            !='' | let s:rapidpath.='../RAPID/TASK*/**,'        | endif
+  if finddir('../RAPID')            !='' | let s:rapidpath.='../RAPID/**,'              | endif
   if finddir('../SYSPAR')           !='' | let s:rapidpath.='../SYSPAR/**,'             | endif
   if finddir('../HOME')             !='' | let s:rapidpath.='../HOME/**,'               | endif
   if finddir('../BACKINFO')         !='' | let s:rapidpath.='../BACKINFO/**,'           | endif
   if finddir('../CS')               !='' | let s:rapidpath.='../CS/**,'                 | endif
-  " if finddir('./SYSPAR')            !='' | let s:rapidpath.='./SYSPAR/**,'              | endif
+  if finddir('./SYSPAR')            !='' | let s:rapidpath.='./SYSPAR/**,'              | endif " for .prg files
+
   execute "setlocal path=".s:rapidpath
   setlocal path-=/usr/include
-
   let b:undo_ftplugin = b:undo_ftplugin." pa<"
+
 endif " get(g:,'rapidPath',1)
 
 " complete option
-" EIO.cfg
-call s:KnopAddFileToCompleteOption('EIO.cfg',&path,'EIO.cfg')
-" syntax file
-call s:KnopAddFileToCompleteOption('syntax/rapid.vim',&rtp)
+if get(g:,'rapidComplete',1)
+  let s:pathList = s:KnopSplitAndUnescapeCommaSeparatedPathStr(&path)
+  let s:pathToCurrentFile = substitute(expand("%:p:h"),'\\','/','g')
+  " EIO.cfg
+  call s:KnopAddFileToCompleteOption('EIO.cfg',s:pathList,s:pathToCurrentFile.'/'.'EIO.cfg')
+  " TASK1/SYSMOD/user.sys
+  call s:KnopAddFileToCompleteOption('TASK1/SYSMOD/user.sys',s:pathList,s:pathToCurrentFile.'/'.'user.sys')
+  " TASK2/SYSMOD/user.sys
+  call s:KnopAddFileToCompleteOption('TASK2/SYSMOD/user.sys',s:pathList,s:pathToCurrentFile.'/'.'user.sys')
+  " TASK3/SYSMOD/user.sys
+  call s:KnopAddFileToCompleteOption('TASK3/SYSMOD/user.sys',s:pathList,s:pathToCurrentFile.'/'.'user.sys')
+  " TASK4/SYSMOD/user.sys
+  call s:KnopAddFileToCompleteOption('TASK4/SYSMOD/user.sys',s:pathList,s:pathToCurrentFile.'/'.'user.sys')
+  " TASK5/SYSMOD/user.sys
+  call s:KnopAddFileToCompleteOption('TASK5/SYSMOD/user.sys',s:pathList,s:pathToCurrentFile.'/'.'user.sys')
+  " TASK6/SYSMOD/user.sys
+  call s:KnopAddFileToCompleteOption('TASK6/SYSMOD/user.sys',s:pathList,s:pathToCurrentFile.'/'.'user.sys')
+  " TASK7/SYSMOD/user.sys
+  call s:KnopAddFileToCompleteOption('TASK7/SYSMOD/user.sys',s:pathList,s:pathToCurrentFile.'/'.'user.sys')
+  if exists('g:rapidCompleteAdditions')
+    for s:customCompleteAdditions in g:rapidCompleteAdditions
+"      echo "\n\n~~~ CUSTOM ~~~"
+"      echo "\n\ns:customCompleteAdditions >" . s:customCompleteAdditions . '<'
+      let s:file = substitute(s:customCompleteAdditions,'^.*[\\/]\(\w\+\.\)\(src\|sub\|dat\)$','\1\2','')
+"      echo 's:File >' . s:file . "<\n\n"
+      call s:KnopAddFileToCompleteOption(s:customCompleteAdditions,s:pathList,s:pathToCurrentFile.'/'.s:file,)
+"      echo "~~~ CUSTOM ~~~\n\n"
+    endfor
+  endif
+  " syntax file
+  call s:KnopAddFileToCompleteOption('syntax/rapid.vim',split(&rtp,'\\\@1<!,'))
+ let b:undo_ftplugin = b:undo_ftplugin." cpt<"
+endif " get(g:,'rapidComplete',1)
 
 " conceal structure values (for MoveJ * v2500,z100...)
 if get(g:,'rapidConcealStructs',1)
@@ -1163,22 +1238,27 @@ if get(g:,'rapidConcealStructs',1)
     function <SID>RapidConcealLevel(lvl)
       " g:rapidConcealStructs may be used as input for a:lvl
 
+
       if a:lvl == 2
         " conceal all structure values
         setlocal conceallevel=2 concealcursor=nc
         return
+
       elseif a:lvl == 1
         " conceal less structure values
         setlocal conceallevel=2 concealcursor=
         return
+
       endif
+
         " conceal no structure values
       setlocal conceallevel=0 concealcursor=
 
     endfunction " <SID>RapidConcealLevel(lvl)
+
   endif " !exists("*<SID>RapidConcealLevel")
 
-  call <SID>RapidConcealLevel(get(g:,'rapidConcealStructs',0))
+  call <SID>RapidConcealLevel(get(g:,'rapidConcealStructs',1))
 
   let b:undo_ftplugin = b:undo_ftplugin." cole< cocu<"
 
@@ -1189,7 +1269,7 @@ endif " get(g:,'rapidConcealStructs',1)
 " Match It {{{
 
 " matchit support
-if exists("loaded_matchit")
+if exists("loaded_matchit") " depends on matchit (or matchup)
   let b:match_words = '^\s*\<if\>[^!]\+\<then\>.*:^\s*\<elseif\>[^!]\+\<then\>.*:^\s*\<else\>.*:^\s*\<endif\>.*,'
          \.'^\s*\<for\>[^!]\+\<do\>.*:^\s*\<endfor\>.*,'
          \.'^\s*\<while\>[^!]\+\<do\>.*:^\s*\<endwhile\>.*,'
@@ -1353,19 +1433,19 @@ endif " g:rapidAutoFormKeyMap
 
 if get(g:,'rapidConcealStructKeyMap',0)
         \|| mapcheck("<F2>","n")=="" && mapcheck("<F3>","n")=="" && mapcheck("<F4>","n")==""
-        \&& !hasmapto('<plug>RapidConcealStructs','n') && !hasmapto('<plug>RapidPartConcealStructs','n') && !hasmapto('<plug>RapidShowStructs','n')
-        \&& !exists("g:rapidFoldKeyMap")
+        \&& !hasmapto('<plug>RapidConcealStructs','n') && !hasmapto('<plug>RapidShowStructsAtCursor','n') && !hasmapto('<plug>RapidShowStructs','n')
+        \&& !exists("g:rapidConcealStructsKeyMap")
   " conceal all structure values
   nmap <silent><buffer> <F4> <plug>RapidConcealStructs
   " conceal less structure values
-  nmap <silent><buffer> <F3> <plug>RapidPartConcealStructs
+  nmap <silent><buffer> <F3> <plug>RapidShowStructsAtCursor
   " conceal no structure values
   nmap <silent><buffer> <F2> <plug>RapidShowStructs
 elseif get(g:,'rapidConcealStructsKeyMap',0)
   " deprecated
   " compatiblity
-  nmap <silent><buffer> <F2> <plug>RapidConcealStructs
   nmap <silent><buffer> <F3> <plug>RapidShowStructs
+  nmap <silent><buffer> <F2> <plug>RapidConcealStructs
 endif
 
 " }}} Configurable mappings
@@ -1430,9 +1510,9 @@ if get(g:,'rapidMoveAroundKeyMap',1) " depends on move around key mappings
 endif
 
 " conceal all structure values
-nnoremap <silent><buffer> <plug>RapidConcealStructs     :call <SID>RapidConcealLevel(2)<CR>
-nnoremap <silent><buffer> <plug>RapidPartConcealStructs :call <SID>RapidConcealLevel(1)<CR>
-nnoremap <silent><buffer> <plug>RapidShowStructs        :call <SID>RapidConcealLevel(0)<CR>
+nnoremap <silent><buffer> <plug>RapidConcealStructs       :call <SID>RapidConcealLevel(2)<CR>
+nnoremap <silent><buffer> <plug>RapidShowStructsAtCursor  :call <SID>RapidConcealLevel(1)<CR>
+nnoremap <silent><buffer> <plug>RapidShowStructs          :call <SID>RapidConcealLevel(0)<CR>
 
 " }}} <plug> mappings
 

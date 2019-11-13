@@ -300,8 +300,8 @@ if has("gui_running") && 0 < s:mimic_font_style
 
   " set the bold only options, including the "bold & italics" groups.
   if 1 == s:mimic_font_style || 3 <= s:mimic_font_style
-    call s:MultiHi("gui=bold", "Directory", "StatusLine", "MoreMsg", "ModeMsg", "Title", "Constant", "Character", "Statement", "PreProc", "Identifier", "Function", "Special", "Tag", "Delimiter", "Todo")
-    call s:MultiHi("gui=underline,bold", "WildMenu", "TablineSel", "Type")
+    call s:MultiHi("gui=none", "Directory", "StatusLine", "MoreMsg", "ModeMsg", "Title", "Constant", "Character", "Statement", "PreProc", "Identifier", "Function", "Special", "Tag", "Delimiter", "Todo")
+    call s:MultiHi("gui=underline,none", "WildMenu", "TablineSel", "Type")
   endif
 
   " set the italic only options
@@ -311,7 +311,7 @@ if has("gui_running") && 0 < s:mimic_font_style
 
   " set the bold & italic options
   if 3 <= s:mimic_font_style
-    call s:MultiHi("gui=bold", "MoreMsg", "Title", "Identifier", "Function", "Todo")
+    call s:MultiHi("gui=none", "MoreMsg", "Title", "Identifier", "Function", "Todo")
   endif
 
   " cleanup

@@ -1,8 +1,8 @@
 " Kuka Robot Language syntax file for Vim
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 2.0.1
-" Last Change: 16.10.2019
+" Version: 2.0.2
+" Last Change: 13.11.2019
 " Credits: Thanks for contributions to this to Michael Jagusch
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -377,9 +377,9 @@ if get(g:,'krlShowError',1)
   " a == b + 1
   " a := b + 1
   "   ||
-  syn match krlError7 /\v%(^\s*%(return|wait\s+for|if|while|until|%(global\s+)?interrupt\s+decl)>[^;]+[^;])@1<!%(^\s*[_$a-zA-Z]+[_$a-zA-Z0-9.\[\]+\-*/]*\s*)@<=[:=]\=/
-  " the following catches also if bla == blubb then
-  " syn match krlError7 /\v\c%(^\s*%(decl\s+)?%(global\s+)?%(const\s+)?\w+\s+\w+\s*)@<=[:=]\=/
+  syn match krlError7 /\v%(^\s*%(return|wait\s+for|if|while|until|%(global\s+)?interrupt\s+decl)>[^;]+[^;])@1<!%(^\s*[_$a-zA-Z]+[_$a-zA-Z0-9.\[\],+\-*/]*\s*)@<=[:=]\=/
+  syn match krlError7 /\v\c%(^\s*%(decl\s+)%(global\s+)?%(const\s+)?\w+\s+\w+\s*)@<=[:=]\=/
+  syn match krlError7 /\v\c%(^\s*%(decl\s+)?%(global\s+)?%(const\s+)?%(bool\s+|int\s+|real\s+|char\s+)\w+\s*)@<=[:=]\=/
   "
   " this one is tricky. Make sure this does not match trigger instructions; OK, next try, now search for false positives
   " TODO optimize performance
