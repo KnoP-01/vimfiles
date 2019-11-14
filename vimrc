@@ -43,8 +43,16 @@ call plug#begin('~/.vim/plugged')
   Plug 'gruvbox-community/gruvbox'
   let g:gruvbox_bold=0
   let g:gruvbox_italic=0
+
   Plug 'KnoP-01/tortus'
   Plug 'KnoP-01/vimbuddy'
+  Plug 'KnoP-01/vim-tp'
+  Plug 'KnoP-01/vim-karel'
+  Plug 'KnoP-01/motoman-inform-vim-syntax'
+  Plug 'KnoP-01/DrChipsCecutil'
+  Plug 'KnoP-01/DrChipsAlign'
+  let g:loaded_AlignMapsPlugin=1  " AlignMaps.vim; get rid of maps from AlignMapsPlugin
+  Plug 'KnoP-01/DrChipsVis'
 
   " full screen mode for windows
   Plug 'xolox/vim-misc'
@@ -349,8 +357,8 @@ nnoremap [c [czz
 nnoremap ]c ]czz
 
 " my modification of zmappings
-nnoremap zl 16zl
-nnoremap zh 16zh
+nnoremap zl zL
+nnoremap zh zH
 
 " make use of the arrow keys
 nnoremap <LEFT>   :bp<CR>
@@ -469,7 +477,8 @@ let g:knopVerbose=1
 " let g:rapidConcealStructKeyMap=1
 " let g:rapidConcealStructs=2
 " let g:rapidAutoFormKeyMap=1
-let g:rapidCompleteAdditions = [
+" let g:rapidCompleteStd = 0
+let g:rapidCompleteCustom = [
       \'TASK1/SYSMOD/DAI_System_R1.sys', 
       \'TASK1/SYSMOD/DAI_IntertaskDefinitions.sys', 
       \'TASK1/PROGMOD/Unterprog_OP25_35_R1.mod']
@@ -504,11 +513,12 @@ let g:krlAutoComment=0
 " nnoremap <leader>f gd
 " let g:krlListUsageKeyMap=1
 " let g:krlAutoFormKeyMap=1
-let g:krlCompleteAdditions = [
-      \'R1\Graeff TP\global_var.dat', 
-      \'R1\Graeff TP\mymessage.src', 
-      \'R1\Graeff TP\mymessage.dat', 
-      \'R1\Graeff TP\global_fct.src']
+" let g:krlCompleteStd = 0
+let g:krlCompleteCustom = [
+      \'R1/Graeff TP/global_var.dat', 
+      \'R1/Graeff TP/mymessage.src', 
+      \'R1/Graeff TP/mymessage.dat', 
+      \'R1/Graeff TP/global_fct.src']
 " let g:krlPathToBodyFiles='d:\daten\scripts\vim_resource\krl resource\'
 " let g:krlAutoFormUpperCase=1
 " let g:krlGroupName=0
@@ -594,9 +604,9 @@ if has("gui_running")
   " set guifont=Consolas:h14
   set guifont=terminus:h16
   " set guifont=Anonymous_Pro:h14
-  " testzeile: 1lI7 2Z 5S 6b 08B0 pgq oO0Q ODODCO ‰ˆ¸ƒ÷‹ '` ,. :; +-*/= `''"'""`
+  " testzeile: 1||l!1lI7 2Z 5S 6b 08B0 pgq oO0Q ODODCO ‰ˆ¸ƒ÷‹ '` ,. :; +-*/= `''"'""`
   if 0
-    let g:loeschmich="testzeile: 1lI7 2Z 5S 6b 08B0 pgq oO0Q ODODCO ‰ˆ¸ƒ÷‹ '` ,. :; +-*/= `''\"'\"\"`"
+    let g:loeschmich="testzeile: 1|!|l!1lI7 2Z 5S 6b 08B0 pgq oO0Q ODODCO ‰ˆ¸ƒ÷‹ '` ,. :; +-*/= `''\"'\"\"`"
   endif
 endif
 
@@ -607,9 +617,6 @@ endif
 " netrw
 let g:netrw_winsize = 25        " sets the width to 25% of the page
 let g:netrw_browse_split = 0    " reuse current window
-
-" alignmaps
-let g:loaded_AlignMapsPlugin=1  " AlignMaps.vim; get rid of maps from AlignMapsPlugin
 
 
 " vim:sw=2 sts=2 et

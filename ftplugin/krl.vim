@@ -99,6 +99,7 @@ if !exists("*s:KnopVerboseEcho()")
 
   if get(g:,'knopVerbose',0)
     let g:knopCompleteMsg = 1
+    let g:knopCompleteMsg2 = 1
     let g:knopVerboseMsg = 1
   endif
   if exists('g:knopVerboseMsg')
@@ -141,7 +142,7 @@ if !exists("*s:KnopVerboseEcho()")
       unlet g:knopCompleteMsg
       call s:KnopVerboseEcho("Add the following files to 'complete'.\n  Try <Ctrl-p> and <Ctrl-n> to complete words from there:")
     endif
-  endfunction " s:knopCompleteMsg
+  endfunction " s:knopCompleteEnbMsg
 
   function s:KnopSplitAndUnescapeCommaSeparatedPathStr(commaSeparatedPathStr)
     let l:pathList = []
@@ -154,43 +155,30 @@ if !exists("*s:KnopVerboseEcho()")
   endfunction
 
   function s:KnopAddFileToCompleteOption(file,pathList,...)
-"    echo " "
-"    echo "  attempt to add \nl:file = >" . a:file . "< at"
     let l:file=a:file
     for l:path in a:pathList
       let l:path = substitute(l:path,'[\\/]\*\*$','','')
-"      echo "l:path = >".l:path."<"
       if l:path != ''
         if filereadable(l:path.'/'.l:file)!=''
           let l:f = s:KnopFnameescape4Path(l:path.'/'.l:file)
-"          echo "file readable"
-"          echo '  setlocal complete+=k'.l:f
           call s:knopCompleteEnbMsg()
-          call s:KnopVerboseEcho(l:f)
+          if exists("g:knopCompleteMsg2")|call s:KnopVerboseEcho(l:f)|endif
           execute 'setlocal complete+=k'.l:f
           return
         else
-"          echo "  Not found"
         endif
       else
-"        echo "  Ignored"
       endif
     endfor
     if exists('a:1')
       let l:f = a:1
-"      echo ""
-"      echo "search for file in same dir as current file"
-"      echo "try " l:f
       if filereadable(l:f)!=''
         let l:f = s:KnopFnameescape4Path(a:1)
-"        echo "file readable"
-"        echo '  setlocal complete+=k'.l:f
         call s:knopCompleteEnbMsg()
-        call s:KnopVerboseEcho(l:f)
+        if exists("g:knopCompleteMsg2")|call s:KnopVerboseEcho(l:f)|endif
         execute 'setlocal complete+=k'.l:f
         return
       else
-"        echo "  Not found"
       endif
     endif
   endfunction " s:KnopAddFileToCompleteOption()
@@ -359,6 +347,10 @@ if !exists("*s:KnopVerboseEcho()")
         execute "silent bwipeout! " . l:b["bufnr"]
       endif
     endfor
+    augroup KrlCleanBufferList
+      " work around where buffer list is not cleaned if knopVerbose is enabled
+      autocmd!
+    augroup END
   endfunction " <SID>KrlCleanBufferList()
 
   function <SID>KrlIsVkrc()
@@ -639,6 +631,11 @@ if !exists("*s:KnopVerboseEcho()")
   endfunction " s:KrlSearchProc()
 
   function <SID>KrlGoDefinition()
+    augroup KrlCleanBufferList
+      " work around where buffer list is not cleaned if knopVerbose is enabled
+      autocmd!
+      autocmd CursorMoved * call <SID>KrlCleanBufferList()
+    augroup END
     "
     let l:declPrefix = '\c\v^\s*((global\s+)?(const\s+)?(bool|int|real|char|frame|pos|axis|e6pos|e6axis|signal|channel)\s+[a-zA-Z0-9_,\[\] \t]*|(decl\s+)?(global\s+)?(struc|enum)\s+|decl\s+(global\s+)?(const\s+)?\w+\s+[a-zA-Z0-9_,\[\] \t]*)'
     "
@@ -1177,6 +1174,11 @@ if !exists("*s:KnopVerboseEcho()")
   " List Def/Usage {{{
 
   function <SID>KrlListDefinition()
+    augroup KrlCleanBufferList
+      " work around where buffer list is not cleaned if knopVerbose is enabled
+      autocmd!
+      autocmd CursorMoved * call <SID>KrlCleanBufferList()
+    augroup END
     " list defs in qf
     if s:KnopSearchPathForPatternNTimes('\v\c^\s*(global\s+)?def(fct)?>','%','','krl')==0
       if getqflist()==[] | return | endif
@@ -1210,6 +1212,11 @@ if !exists("*s:KnopVerboseEcho()")
   endfunction " <SID>KrlListDefinition()
 
   function <SID>KrlListUsage()
+    augroup KrlCleanBufferList
+      " work around where buffer list is not cleaned if knopVerbose is enabled
+      autocmd!
+      autocmd CursorMoved * call <SID>KrlCleanBufferList()
+    augroup END
     "
     if search('\w','cW',line("."))
       let l:currentWord = s:KrlCurrentWordIs()
@@ -1593,10 +1600,22 @@ if get(g:,'krlPath',1)
 
 endif " get(g:,'krlPath',1)
 
-" complete option
-if get(g:,'krlComplete',1)
-  let s:pathList = s:KnopSplitAndUnescapeCommaSeparatedPathStr(&path)
-  let s:pathToCurrentFile = substitute(expand("%:p:h"),'\\','/','g')
+" complete
+let s:pathList = s:KnopSplitAndUnescapeCommaSeparatedPathStr(&path)
+let s:pathToCurrentFile = substitute(expand("%:p:h"),'\\','/','g')
+"
+" complete custom files
+if exists('g:krlCompleteCustom')
+  for s:customCompleteAdditions in g:krlCompleteCustom
+    let s:file = substitute(s:customCompleteAdditions,'^.*[\\/]\(\w\+\.\)\(\w\+\)$','\1\2','')
+    call s:KnopAddFileToCompleteOption(s:customCompleteAdditions,s:pathList,s:pathToCurrentFile.'/'.s:file,)
+  endfor
+endif
+"
+" complete standard files
+if get(g:,'krlCompleteStd',1)
+  "
+  "
   " <filename>.dat
   if expand("%:p:t") !~ '\.dat$'
     call s:KnopAddFileToCompleteOption(substitute(expand("%:p:t"),'\.s\%(rc\|ub\)$','.dat',''),[s:pathToCurrentFile])
@@ -1619,21 +1638,19 @@ if get(g:,'krlComplete',1)
   call s:KnopAddFileToCompleteOption('Steu/Mada/$option.dat',s:pathList,s:pathToCurrentFile.'/'.'$option.dat')
   " TP/Signals.dat
   call s:KnopAddFileToCompleteOption('R1/TP/Signals.dat',s:pathList,s:pathToCurrentFile.'/'.'Signals.dat')
-  " custom files
-  if exists('g:krlCompleteAdditions')
-    for s:customCompleteAdditions in g:krlCompleteAdditions
-"      echo "\n\n~~~ CUSTOM ~~~"
-"      echo "\n\ns:customCompleteAdditions >" . s:customCompleteAdditions . '<'
-      let s:file = substitute(s:customCompleteAdditions,'^.*[\\/]\(\w\+\.\)\(src\|sub\|dat\)$','\1\2','')
-"      echo 's:File >' . s:file . "<\n\n"
-      call s:KnopAddFileToCompleteOption(s:customCompleteAdditions,s:pathList,s:pathToCurrentFile.'/'.s:file,)
-"      echo "~~~ CUSTOM ~~~\n\n"
-    endfor
-  endif
+  "
   " syntax file
-  call s:KnopAddFileToCompleteOption('syntax/krl.vim',split(&rtp,'\\\@1<!,'))
+  let s:pathList=[]
+  for s:i in split(&rtp,'\\\@1<!,')
+    call add(s:pathList,substitute(s:i,'\\','/','g')) 
+  endfor
+  call s:KnopAddFileToCompleteOption('syntax/krl.vim',s:pathList)
+  if exists("g:knopCompleteMsg2")|unlet g:knopCompleteMsg2|endif
+  "
   let b:undo_ftplugin = b:undo_ftplugin." cpt<"
-endif " get(g:,'krlComplete',1)
+endif " get(g:,'krlCompleteStd',1)
+unlet s:pathList
+unlet s:pathToCurrentFile
 
 " folding
 if <SID>KrlIsVkrc() && get(g:,'krlConcealFoldTail',1)
