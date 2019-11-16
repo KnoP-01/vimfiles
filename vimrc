@@ -48,11 +48,14 @@ call plug#begin('~/.vim/plugged')
   Plug 'KnoP-01/vimbuddy'
   Plug 'KnoP-01/vim-tp'
   Plug 'KnoP-01/vim-karel'
-  Plug 'KnoP-01/motoman-inform-vim-syntax'
   Plug 'KnoP-01/DrChipsCecutil'
   Plug 'KnoP-01/DrChipsAlign'
   let g:loaded_AlignMapsPlugin=1  " AlignMaps.vim; get rid of maps from AlignMapsPlugin
   Plug 'KnoP-01/DrChipsVis'
+
+  " motoman plugin"
+  " Plug 'matthijsk/motoman-inform-vim-syntax'
+  Plug 'KnoP-01/motoman-inform-vim-syntax'
 
   " full screen mode for windows
   Plug 'xolox/vim-misc'
@@ -547,6 +550,8 @@ let g:krlFoldLevel=2
 "
 " colorscheme tortus
 colorscheme tortusless
+" 
+" colorscheme ir_black
 "
 " colorscheme anokha
 " colorscheme BusyBee

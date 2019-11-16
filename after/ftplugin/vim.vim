@@ -10,3 +10,9 @@ vnoremap <silent>af :<C-U>silent normal [[V][<CR>
 vnoremap <silent>if :<C-U>silent normal [[jV][k<CR>
 omap <silent>af :normal Vaf<CR>
 omap <silent>if :normal Vif<CR>
+
+
+" highlight ! as operator
+syntax match vimOper /!/
+" highlight default link vimOper Operator
+
