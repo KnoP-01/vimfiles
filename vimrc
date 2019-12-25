@@ -3,12 +3,8 @@
 " don't copy this if you don't know what you are doing
 " and think about the poor pandas if you do!
 
-
-
 " Vim Rather Then Vi:
 set nocompatible
-
-
 
 " Language English:
 set langmenu=none
@@ -16,19 +12,19 @@ if !has("win32") " del c:\Program Files (x86)\Vim\vim81\lang\de\
   language en_US
 endif
 
-
-" set leader befor any plugin, so <leader>-mappings get the right leader 
+" set leader before any plugin, so <leader>-mappings get the right leader 
 let mapleader       = " "
 let maplocalleader  = " "
 
-
 " Optional Packs:
-" matchit
+" packadd ... {{{
 " packadd! matchit " use matchup instead of matchit see https://github.com/andymass/vim-matchup
+packadd! editexisting " find existing session if .swp-file exists
+packadd! shellmenu
+" }}}
 
-
-
-" Vim Plug: see :he vim-plug
+" Vim Plug:
+" vim plug: {{{ see :he vim-plug
 " PlugUpdate
 command! MyPlugUpdate   :set statusline=%F%m%r%h%w <bar> PlugUpdate
 " PlugInstall
@@ -39,6 +35,7 @@ call plug#begin('~/.vim/plugged')
 
   " Make sure you use single quotes
   " examples see :he plug-example
+  Plug 'vim/killersheep'
 
   Plug 'gruvbox-community/gruvbox'
   let g:gruvbox_bold=0
@@ -65,6 +62,7 @@ call plug#begin('~/.vim/plugged')
 
   " erweiterung fuer netrw
   Plug 'tpope/vim-vinegar'
+  nmap - <C-W>v<Plug>VinegarUp
   " ein- und auskommentieren
   Plug 'tpope/vim-commentary'
 
@@ -100,8 +98,7 @@ call plug#begin('~/.vim/plugged')
 
 " Initialize plugin system
 call plug#end()
-
-
+" }}}
 
 " Syntax And Filetype:
 syntax off                          " undo what plug#end() did to syntax
@@ -111,10 +108,8 @@ if &t_Co > 2 || has("gui_running")  " Switch syntax highlighting on, when the te
 endif
 filetype plugin indent on           " filetype on after syntax on for krl-for-vim
 
-
-
 " Auto Commands:
-augroup vimrcEx
+augroup vimrcEx " {{{
   au!
 
   " relativenumber and cursorline only in current window
@@ -136,11 +131,10 @@ augroup vimrcEx
         \ endif
 
 augroup END
-
-
+" }}}
 
 " Options:
-" statusline
+" Statusline: {{{
 function! MyStatusline()
   set statusline=%F                " Path to the file in the buffer, as typed or relative to current directory
   set statusline+=%m               " Modified flag       [+] ; [-] if 'modifiable' is off
@@ -165,7 +159,9 @@ function! MyStatusline()
   set statusline+=\ %{VimBuddy()}\ " fun
 endfunction
 call MyStatusline()
+" }}}
 
+" Other Options: {{{
 set wildchar=<Tab> wildcharm=<C-Z> wildmenu wildmode=full
 
 " set listchars=tab:ª∑,trail:∑,eol:$
@@ -237,10 +233,10 @@ set shiftround            " Round indent to multiple of 'shiftwidth'.
 set nojoinspaces          " ein statt 2 spaces nach "saetzen" (nach . ! ?)
 
 set winaltkeys=no         " disable menu with alt. necessary for <A-x> mappings
-
-
+" }}}
 
 " Rolodex:
+" Rolodex Functions: {{{
 "This function turns Rolodex Vim on or off for the current tab
 "If turning off, it sets all windows to equal height
 function! ToggleRolodexTab()
@@ -281,12 +277,10 @@ augroup vimrcEx
   autocmd TabEnter * call SetRolodexSettings()
   autocmd TabLeave * call ClearRolodexSettings()
 augroup END
- 
-
+" }}}
 
 " Mappings:
-
-" F Keys:
+" F Keys: {{{
 " get rid of trailing white spaces and tabs; use two spaces instead of tab
 nnoremap <F5> :%s/\s\+$//<CR>:%s/\t/  /g<CR>``
 " indent the whole file
@@ -303,8 +297,9 @@ nnoremap <silent> <F10> :Matrix<CR>
 nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline()<cr>
 " show buffers and start buffer command
 nnoremap <silent> <F12> :ls<cr>:buffer 
+" }}}
 
-" Clever Tab:
+" Clever Tab: {{{
 function! CleverTab()
   if strpart( getline('.'), 0, col('.')-1 ) =~ '\(^\s*\|\s\)$'
     return "\<Tab>"
@@ -312,8 +307,9 @@ function! CleverTab()
   return "\<C-P>"
 endfunction
 inoremap <Tab> <C-R>=CleverTab()<CR>
+" }}}
 
-" Indent Text Object:
+" Indent Text Object: {{{
 function! IndTxtObj(inner)
   let l:curline  = line(".")
   let l:lastline = line("$")
@@ -345,8 +341,9 @@ xnoremap <silent>ai :<C-u>call IndTxtObj(0)<CR>
 xnoremap <silent>ii :<C-u>call IndTxtObj(1)<CR>
 onoremap <silent>ai :<C-u>call IndTxtObj(0)<CR>
 onoremap <silent>ii :<C-u>call IndTxtObj(1)<CR>
+" }}}
 
-" Other Mappings:
+" Other Mappings: {{{
 " center when searching next/previous
 nnoremap n nzz
 nnoremap N Nzz
@@ -382,15 +379,16 @@ xnoremap ; y:<C-U>vimgrep /\V<c-r>=escape(@@,"/\\")<CR>/j <C-R>=join(split(&path
 " Increment visualy selected numbers; see :he increment
 xnoremap <c-a> :IncN<CR>
 
+" DON'T use this, use gu{motion}, gU{motion} and g~{motion}
 " change current word to upper/lower case in insert mode
-inoremap <c-u> <esc>viwUea
-inoremap <c-l> <esc>viwuea
+" inoremap <c-u> <esc>viwUea
+" inoremap <c-l> <esc>viwuea
 " change current word to upper/lower case in normal mode
-nnoremap <c-u> viwU
-nnoremap <c-l> viwu
+" nnoremap <c-u> viwU
+" nnoremap <c-l> viwu
 " change current visual selection to uppe/lower case since I cant remember u and U
-xnoremap <c-u> U
-xnoremap <c-l> u
+" xnoremap <c-u> U
+" xnoremap <c-l> u
 
 " move around windows
 nnoremap <silent> <A-h> <C-W>h
@@ -451,16 +449,18 @@ inoremap " ""<esc>i
 inoremap ( ()<esc>i
 inoremap [ []<esc>i
 inoremap { {}<esc>i
+" }}}
 
-
-" KnoP Settings:
+" My Plugin Settings:
+" KnoP Settings: {{{
 " let g:knopLhsQuickfix=0
 let g:knopRhsQuickfix=1
 let g:knopVerbose=1
 " let g:knopNoVerbose=0
 " let g:knopShortenQFPath=0
+" }}}
 
-" Rapid For VIM:
+" Rapid For VIM: {{{
 " look also into ~/vimfiles/after/ftplugin/rapid.vim
 " augroup RapidAutoForm
 "   au!
@@ -495,8 +495,9 @@ let g:rapidCompleteCustom = [
 " let g:rapidNoVerbose=1 " siehe oben g:knop...
 " let g:rapidRhsQuickfix " siehe oben g:knop...
 " let g:rapidLhsQuickfix " siehe oben g:knop...
+" }}}
 
-" Krl For Vim:
+" Krl For Vim: {{{
 " look also into ~/vimfiles/after/ftplugin/krl.vim
 " augroup KrlAutoForm
 "   au!
@@ -532,7 +533,7 @@ let g:krlCompleteCustom = [
 " let g:krlFoldingKeyMap=1
 " let g:krlCloseFolds=1
 let g:krlFoldLevel=2
-" let g:krlFoldMethodSyntax=1
+" let g:krlFoldMethodSyntax=0
 " let g:krlNoIndent=0
 " let g:krlNoSpaceIndent=0
 " let g:krlSpaceIndent=0
@@ -541,15 +542,17 @@ let g:krlFoldLevel=2
 " let g:krlNoVerbose=1 " siehe oben g:knop...
 " let g:krlRhsQuickfix " siehe oben g:knop...
 " let g:krlLhsQuickfix " siehe oben g:knop...
+" }}}
 
-
-
-" Colorschemes:
+" Colorscheme:
+" colorscheme: {{{
 " let g:rapidGroupName=0
 " let g:krlGroupName=0
 "
 " colorscheme tortus
 colorscheme tortusless
+" highlight Operator          guibg=black         guifg=#c84600
+highlight Operator          guibg=black         guifg=#f05400
 " 
 " colorscheme ir_black
 "
@@ -601,27 +604,12 @@ colorscheme tortusless
 " highlight Todo          guibg=#404040   guifg=white 
 " colorscheme zendnb
 " colorscheme znake
-
-
-
-" GUI Font:
-if has("gui_running")
-  " set guifont=Consolas:h14
-  set guifont=terminus:h16
-  " set guifont=Anonymous_Pro:h14
-  " testzeile: 1||l!1lI7 2Z 5S 6b 08B0 pgq oO0Q ODODCO ‰ˆ¸ƒ÷‹ '` ,. :; +-*/= `''"'""`
-  if 0
-    let g:loeschmich="testzeile: 1|!|l!1lI7 2Z 5S 6b 08B0 pgq oO0Q ODODCO ‰ˆ¸ƒ÷‹ '` ,. :; +-*/= `''\"'\"\"`"
-  endif
-endif
-
-
+" }}}
 
 " Other Plugin Settings:
-
-" netrw
+" Netrw: {{{
 let g:netrw_winsize = 25        " sets the width to 25% of the page
 let g:netrw_browse_split = 0    " reuse current window
+" }}}
 
-
-" vim:sw=2 sts=2 et
+" vim:sw=2 sts=2 et fdm=marker fmr={{{,}}}
