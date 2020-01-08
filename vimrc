@@ -455,7 +455,7 @@ inoremap { {}<esc>i
 " KnoP Settings: {{{
 " let g:knopLhsQuickfix=0
 let g:knopRhsQuickfix=1
-let g:knopVerbose=1
+" let g:knopVerbose=1
 " let g:knopNoVerbose=0
 " let g:knopShortenQFPath=0
 " }}}
@@ -552,7 +552,7 @@ let g:krlFoldLevel=2
 " colorscheme tortus
 colorscheme tortusless
 " highlight Operator          guibg=black         guifg=#c84600
-highlight Operator          guibg=black         guifg=#f05400
+" highlight Operator          guibg=black         guifg=#f05400
 " 
 " colorscheme ir_black
 "
