@@ -426,8 +426,6 @@ vmap <expr> <C-S-L> DVB_Drag('right')
 " short for :Align
 nnoremap <leader>a    :Align! =p1P1l: 
 xnoremap <leader>a    :Align! =p1P1l: 
-nnoremap <leader>abb  :Align! =p0P0rl ],[ \. ,<cr>
-xnoremap <leader>abb  :Align! =p0P0rl ],[ \. ,<cr>
 " scroll bind
 command! BindBoth     set   scrollbind   cursorbind | wincmd p | set   scrollbind   cursorbind | wincmd p
 command! BindBothOff  set noscrollbind nocursorbind | wincmd p | set noscrollbind nocursorbind | wincmd p

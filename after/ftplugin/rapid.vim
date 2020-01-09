@@ -4,6 +4,11 @@
 " setlocal expandtab
 " setlocal shiftround
 
+" align robtarget values for readability
+nnoremap <leader>abb  :Align! p0P0rl \. , \[ \]<cr>
+xnoremap <leader>abb  :Align! p0P0rl \. , \[ \]<cr>
+
+" align EIO.cfg for readability
 function AlignEio()
   %s/\\\s*\n\s\+/\\ /
   g/^\s*$/d
@@ -15,8 +20,8 @@ function AlignEio()
 endfunction
 command! EioAlign call AlignEio()
 
+" undo align EIO.cfg for readability
 function UnAlignEio()
-  " g/\n[^#]/s/\([^#:]\)$/\1\r/
   g/\n[^#]/s/\([^#]\)$/\1\r/
   g/\\\s*\S/s/\\/\\\r/g
   %s/\s\s\+-/ -/g
