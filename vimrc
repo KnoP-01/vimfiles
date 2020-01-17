@@ -143,20 +143,23 @@ function! MyStatusline()
   set statusline+=%w               " Preview window flag [Preview]
   set statusline+=%=               " align right from here on
   set statusline+=%#StatusLineNC#  " change coloring
-  set statusline+=[                " [
+  set statusline+=\                " a space
+  " set statusline+=[                " [
   set statusline+=%{&ff}           " file format
   set statusline+=\ %{&enc}        " encoding
   set statusline+=\ %{&ft}         " file type
-  set statusline+=]                " ]
+  " set statusline+=]                " ]
   set statusline+=%#ToDo#          " change coloring
-  set statusline+=[                " [
-  set statusline+=%p%%             " cursor position: percent of file
+  " set statusline+=[                " [
+  " set statusline+=%p%%             " cursor position: percent of file
   set statusline+=\ L%04l          " cursor position: 4 digits line   number
   set statusline+=\ C%03v          " cursor position: 3 digits column number
   set statusline+=\ #%02n          " cursor position: 2 digits buffer number
-  set statusline+=]                " ]
+  set statusline+=\                " a space
+  " set statusline+=]                " ]
   set statusline+=%#SpecialChar#   " change coloring
-  set statusline+=\ %{VimBuddy()}\ " fun
+  " set statusline+=\ %{VimBuddy()}\ " fun (with spaces)
+  set statusline+=%{VimBuddy()}    " fun
 endfunction
 call MyStatusline()
 " }}}
@@ -442,11 +445,11 @@ nnoremap <leader>h :he<cr><c-w>L:help
 nnoremap <leader>e :edit $HOME/.vim/vimrc<cr>
 
 " my auto insert closing pair
-inoremap ' ''<esc>i
-inoremap " ""<esc>i
-inoremap ( ()<esc>i
-inoremap [ []<esc>i
-inoremap { {}<esc>i
+inoremap ' ''<left>
+inoremap " ""<left>
+inoremap ( ()<left>
+inoremap [ []<left>
+inoremap { {}<left>
 " }}}
 
 " My Plugin Settings:
@@ -549,8 +552,7 @@ let g:krlFoldLevel=2
 "
 " colorscheme tortus
 colorscheme tortusless
-" highlight Operator          guibg=black         guifg=#c84600
-" highlight Operator          guibg=black         guifg=#f05400
+" colorscheme robotstudio
 " 
 " colorscheme ir_black
 "
@@ -608,6 +610,11 @@ colorscheme tortusless
 " Netrw: {{{
 let g:netrw_winsize = 25        " sets the width to 25% of the page
 let g:netrw_browse_split = 0    " reuse current window
+" }}}
+" Autodate: {{{
+" let g:plugin_autodate_disable = 1 " not present enables, any value disables
+let g:autodate_keyword_post   = '$'
+let b:autodate_format         = '%d. %3m %Y'
 " }}}
 
 " vim:sw=2 sts=2 et fdm=marker fmr={{{,}}}
