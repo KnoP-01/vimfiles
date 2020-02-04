@@ -17,11 +17,12 @@ set guifont=terminus:h16
 " set guifont=HE_TERMINAL:h16:cANSI:qDRAFT " 0(null) und O (Oh) sind fast absolut gleich
 
 " pixel fonts
+" set guifont=Dina:h12:cANSI:qDRAFT " sehr cool aber etwas klein :)
+" set guifont=Dina:h14:cANSI:qDRAFT " sehr cool aber sehr gross :)
 " set guifont=ProggyOpti:h16:cANSI:qDRAFT " sehr cool aber gross :)
 " set guifont=ProggyOpti:h9:cANSI:qDRAFT " cool aber sehr klein :(
 " set guifont=Fixedsys:h18:cANSI:qDRAFT " cool aber sehr gross :)
 " set guifont=Fixedsys:h9:cANSI:qDRAFT " cool aber sehr klein :(
-" set guifont=Dina:h14:cANSI:qDRAFT " ganz nett
 " set guifont=Crisp:h18:cANSI:qDRAFT " geht so
 " set guifont=Hack:h16:cANSI:qDRAFT " geht so
 

@@ -87,6 +87,7 @@ call plug#begin('~/.vim/plugged')
   let g:matchup_mouse_enabled               = 0         " don't map any mouse actions
   " let g:matchup_matchparen_deferred             = 1     " delay until display matching paren
   " let g:matchup_matchparen_deferred_show_delay  = 800   " delay until display matching paren
+  let g:matchup_matchparen_offscreen        = {'method':'popup'}
 
   " Plug 'vim-scripts/RelOps'
   " let g:relops_check_for_nu = 1
@@ -189,6 +190,9 @@ set guioptions-=r     " no right scroll bar
 set guioptions-=L     " no left scroll bar in case of vertical split
 " set guioptions+=l     " left scroll bar
 " set guioptions+=R     " right scroll bar in case of vertical split
+
+set guioptions-=m    " kein Menu per default. Siehe <S-F11> unten
+set guioptions-=T    " keine Toolbar per default. Siehe <S-F11> unten
 
 set nrformats-=octal  " don't use octal in case of leading 0
 
@@ -298,6 +302,7 @@ nnoremap <F9> :echo "hi<" .  synIDattr(            synID(line("."),col("."),1)  
 nnoremap <silent> <F10> :Matrix<CR>
 " fullscreen shell.vim; work around bug where the statusline disappears
 nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline()<cr>
+nnoremap <silent> <S-F11> :if &guioptions=~'\Cm'<bar>set guioptions-=m<bar>set guioptions-=T<bar>else<bar>set guioptions+=m<bar>set guioptions+=T<bar>endif<cr>
 " show buffers and start buffer command
 nnoremap <silent> <F12> :ls<cr>:buffer 
 " }}}
@@ -445,11 +450,11 @@ nnoremap <leader>h :he<cr><c-w>L:help
 nnoremap <leader>e :edit $HOME/.vim/vimrc<cr>
 
 " my auto insert closing pair
-inoremap ' ''<left>
-inoremap " ""<left>
-inoremap ( ()<left>
-inoremap [ []<left>
-inoremap { {}<left>
+inoremap ' ''<c-g>U<left>
+inoremap " ""<c-g>U<left>
+inoremap ( ()<c-g>U<left>
+inoremap [ []<c-g>U<left>
+inoremap { {}<c-g>U<left>
 " }}}
 
 " My Plugin Settings:
@@ -467,11 +472,12 @@ let g:knopRhsQuickfix=1
 "   au!
 "   au User RapidAutoFormPost exec "normal {"
 " augroup END
+" let g:rapidGroupName=0
 " let g:rapidNoCommentIndent=0 " undokumentiert
 " let g:rapidCommentIndent=0
 " let g:rapidCommentTextObject=0
 " let g:rapidFormatComments=1
-" let g:rapidAutoComment=0
+let g:rapidAutoComment=0
 " let g:rapidAutoCorrCfgLineEnd=1
 " let g:rapidMoveAroundKeyMap=2
 " let g:rapidGoDefinitionKeyMap=1
@@ -483,9 +489,8 @@ let g:knopRhsQuickfix=1
 " let g:rapidAutoFormKeyMap=1
 " let g:rapidCompleteStd = 0
 let g:rapidCompleteCustom = [
-      \'TASK1/SYSMOD/DAI_System_R1.sys', 
-      \'TASK1/SYSMOD/DAI_IntertaskDefinitions.sys', 
-      \'TASK1/PROGMOD/Unterprog_OP25_35_R1.mod']
+      \'TASK1/PROGMOD/Service.mod', 
+      \'TASK1/PROGMOD/MainRob1.mod']
 " let g:rapidPathToBodyFiles='d:\daten\scripts\vim_resource\rapid resource\'
 " let g:rapidNoHighLink=1
 " let g:rapidShowError=1
