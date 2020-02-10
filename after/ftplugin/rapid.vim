@@ -15,7 +15,7 @@ function AlignEio()
   normal gg
   call search('\<EIO_SIGNAL\>')
   normal j0
-  Align -SignalType -SignalLabel -UnitMap -Category
+  Align -SignalType -SignalLabel -UnitMap -Category -Unit
   normal zt
 endfunction
 command! EioAlign call AlignEio()

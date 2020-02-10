@@ -137,8 +137,8 @@ else
   " proc message( mystring msMessagePart1{},
   "               \ myvar msMsg4{})
   " TODO testing. Problem: does not highlight any type if it's part of an argument list
-  syn match rapidAnyType /\v^\s*(global\s+|task\s+|local\s+)?(alias|pers|var|const|func)\s+\w+>/ contains=rapidStorageClass,rapidType,rapidTypeDef
-  highlight default link rapidAnyType Type
+  " syn match rapidAnyType /\v^\s*(global\s+|task\s+|local\s+)?(alias|pers|var|const|func)\s+\w+>/ contains=rapidStorageClass,rapidType,rapidTypeDef
+  " highlight default link rapidAnyType Type
   syn keyword rapidType aiotrigg bool btnres busstate buttondata byte
   syn keyword rapidType cameradev cameratarget cfgdomain clock confdata corrdescr datapos dionum dir dnum
   syn keyword rapidType egmframetype egmident egm_minmax egmstate egmstopmode errdomain errnum errstr errtype event_type exec_level extjoint handler_type
@@ -361,7 +361,7 @@ else
   syn keyword rapidConstant STR_DIGIT STR_LOWER STR_UPPER STR_WHITE
   syn keyword rapidConstant flp1 diskhome diskram disktemp usbdisk1 usbdisk2 usbdisk3 usbdisk4 usbdisk5 usbdisk6 usbdisk7 usbdisk8 usbdisk9 usbdisk10
   " stoppoint
-  syn keyword rapidConstant InPos stoptime fllwtime
+  syn keyword rapidConstant inpos stoptime fllwtime
   " stoppointdata
   syn keyword rapidConstant inpos20 inpos50 inpos100
   syn keyword rapidConstant stoptime0_5 stoptime1_0 stoptime1_5

@@ -1,5 +1,5 @@
-set lines=40
-set columns=175
+set lines=100
+set columns=300
 
 " GUI Font:
 

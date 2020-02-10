@@ -365,8 +365,8 @@ nnoremap [c [czz
 nnoremap ]c ]czz
 
 " my modification of zmappings
-nnoremap zl zL
-nnoremap zh zH
+nnoremap zl 10zl
+nnoremap zh 10zh
 
 " make use of the arrow keys
 nnoremap <LEFT>   :bp<CR>
