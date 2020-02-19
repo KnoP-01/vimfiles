@@ -1,8 +1,8 @@
 
-" setlocal softtabstop=4
-" setlocal shiftwidth=4
-" setlocal expandtab
-" setlocal shiftround
+setlocal softtabstop=4
+setlocal shiftwidth=4
+setlocal expandtab
+setlocal shiftround
 
 " align robtarget values for readability
 nnoremap <leader>abb  :Align! p0P0rl \. , \[ \]<cr>

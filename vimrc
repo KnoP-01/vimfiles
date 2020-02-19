@@ -38,8 +38,11 @@ call plug#begin('~/.vim/plugged')
   Plug 'vim/killersheep'
 
   Plug 'gruvbox-community/gruvbox'
+  Plug 'lifepillar/vim-gruvbox8'
   let g:gruvbox_bold=0
   let g:gruvbox_italic=0
+  let g:gruvbox_italics=0
+
 
   Plug 'KnoP-01/tortus'
   Plug 'KnoP-01/vimbuddy'
@@ -71,6 +74,9 @@ call plug#begin('~/.vim/plugged')
   let g:qf_window_bottom         = 0
   let g:qf_loclist_window_bottom = 0
   let g:qf_mapping_ack_style     = 1
+
+  " novum
+  Plug 'dylnmc/novum.vim'
 
   " fun
   Plug 'uguu-org/vim-matrix-screensaver'
@@ -435,8 +441,8 @@ vmap <expr> <C-S-L> DVB_Drag('right')
 nnoremap <leader>a    :Align! =p1P1l: 
 xnoremap <leader>a    :Align! =p1P1l: 
 " scroll bind
-command! BindBoth     set   scrollbind   cursorbind | wincmd p | set   scrollbind   cursorbind | wincmd p
-command! BindBothOff  set noscrollbind nocursorbind | wincmd p | set noscrollbind nocursorbind | wincmd p
+command! BindBoth     set   scrollbind | wincmd p | set   scrollbind | wincmd p
+command! BindBothOff  set noscrollbind | wincmd p | set noscrollbind | wincmd p
 nnoremap <leader>bon :BindBoth<CR>
 nnoremap <leader>bof :BindBothOff<CR>
 
@@ -495,7 +501,8 @@ let g:rapidCompleteCustom = [
 " let g:rapidNoHighLink=1
 " let g:rapidShowError=1
 " let g:rapidNoIndent=0
-" let g:rapidNoSpaceIndent=0
+" let g:rapidNoSpaceIndent=1
+let g:rapidSpaceIndent=0
 " let g:rapidNoPath=1
 " let g:rapidPath=0
 " let g:rapidNoVerbose=1 " siehe oben g:knop...

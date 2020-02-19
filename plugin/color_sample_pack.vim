@@ -1,6 +1,6 @@
 " Maintainer: Robert Melton ( robert -at- robertmelton -dot- com)
 " 		Highly modified to my needs. KnoP
-" Last Change: 2012 Oct 28th
+" Last Change: 12. Feb 2020
 
 " default schemes
 amenu T&hemes.D&efault.Blue :colo blue<CR>
@@ -39,7 +39,7 @@ amenu T&hemes.M&y.SolarizedLike.Petrel :colo petrel<CR>
 amenu T&hemes.M&y.SolarizedLike.Stormpetrel :colo stormpetrel<CR>
 amenu T&hemes.M&y.SolarizedLike.Mythos :colo mythos<CR>
 amenu T&hemes.M&y.SolarizedLike.Oceandeep :colo oceandeep<CR>
-amenu T&hemes.M&y.Gray.GruvBox :colo gruvbox<CR>
+amenu T&hemes.M&y.Gray.GruvBox8 :colo gruvbox8_hard<CR>
 amenu T&hemes.M&y.Gray.BusyBee :colo BusyBee<CR>
 amenu T&hemes.M&y.Gray.Falcon :colo falcon<CR>
 amenu T&hemes.M&y.Gray.PaperColor :colo papercolor<CR>
@@ -48,9 +48,11 @@ amenu T&hemes.M&y.Gray.Edark :colo edark<CR>
 amenu T&hemes.M&y.Gray.Lizard :colo lizard<CR>
 amenu T&hemes.M&y.Gray.Wombat256mod :colo wombat256mod<CR>
 amenu T&hemes.M&y.Gray.Flatlandia :colo flatlandia<CR>
+amenu T&hemes.M&y.Gray.Novum :colo novum<CR>
 amenu T&hemes.M&y.Gray.Vitamins :colo vitamins<CR>
 amenu T&hemes.M&y.Black.Vividchalk :colo vividchalk<CR>
 amenu T&hemes.M&y.Black.Znake :colo znake<CR>
+amenu T&hemes.M&y.Black.Spacecamp :colo spacecamp<CR>
 amenu T&hemes.M&y.Black.Frictionless :colo frictionless<CR>
 amenu T&hemes.M&y.Black.Jellybeans :colo jellybeans<CR>
 amenu T&hemes.M&y.Black.Scheakur :colo scheakur<CR>

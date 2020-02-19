@@ -1,8 +1,8 @@
 " ABB Rapid Command indent file for Vim
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 2.0.0
-" Last Change: 04. Nov 2019
+" Version: 2.0.1
+" Last Change: 12. Feb 2020
 " Credits: Based on indent/vim.vim
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -112,24 +112,34 @@ function s:GetRapidIndentIntern()
             \|[^!]*<case>[^!]+:
             \|[^!]*<default>\s*:
         \)'
-    let l:ind = l:ind - &sw
+    let l:ind -= &sw
   endif
   if l:currentLine =~ '\c\v^\s*(backward|error|undo)\s*(!.*)?$'
-    let l:ind = l:ind - &sw
+    let l:ind -= &sw
   endif
 
   " first case after a test
   if l:currentLine =~ '\c\v^\s*case>' && l:preNoneBlankLine =~ '\c\v^\s*test>'
-    let l:ind = l:ind + &sw
+    let l:ind += &sw
   endif
 
   " continued lines with () or []
   let l:OpenSum  = s:RapidLoneParen(l:preNoneBlankLineNum,"(") + s:RapidLoneParen(l:preNoneBlankLineNum,"[")
   let l:CloseSum = s:RapidLoneParen(l:preNoneBlankLineNum,")") + s:RapidLoneParen(l:preNoneBlankLineNum,"]")
   if l:OpenSum > l:CloseSum
-    let l:ind = l:ind + (l:OpenSum * 4 * &sw)
+    let l:ind += (l:OpenSum * 4 * &sw)
   elseif l:OpenSum < l:CloseSum
-    let l:ind = l:ind - (l:CloseSum * 4 * &sw)
+    let l:ind -= (l:CloseSum * 4 * &sw)
+  endif
+
+  " continued lines without ';', 'endfoo', 'then' or 'do' etc
+  if 1
+        \&& l:currentLine !~ '\c\v[:;]\s*(!.*)?$'                                                     " : labels and ; line terminators
+        \&& l:currentLine !~ '\c\v^\s*end(module|record|proc|func|trap|if|for|while|test)\s*(!.*)?$'  " endfoo
+        \&& l:currentLine !~ '\c\v^(else|then|do)\s*!?.*$>'                                           " else, then, do
+        \&& l:currentLine !~ '\c\v^\s*(local\s+)?(proc|func)\s+[^!]+'
+        \&& l:currentLine !~ '\c\v^\s*test>'
+    " let l:ind += 2*&sw
   endif
 
   return l:ind
@@ -166,7 +176,8 @@ function s:RapidLoneParen(lnum,lchar)
     while s:i < s:len
       let s:i = stridx(s:line, "!", s:i)
       if s:i >= 0
-        if synIDattr(synID(a:lnum,s:i+1,0),"name") == "rapidString"
+        if        synIDattr(synID(a:lnum,s:i+1,0),"name") == "rapidString"
+              \|| synIDattr(synID(a:lnum,s:i+1,0),"name") == "rapidConcealableString"
           " ! is part of string
           let s:i += 1 " continue search for !
         else
@@ -194,7 +205,8 @@ function s:RapidLoneParen(lnum,lchar)
     let s:i = stridx(s:line, s:opnParChar, s:i)
     if s:i >= 0 && s:i <= s:len
       " brakets that are part of a strings or comment are ignored
-      if synIDattr(synID(a:lnum,s:i+1,0),"name") != "rapidString"
+      if        synIDattr(synID(a:lnum,s:i+1,0),"name") != "rapidString"
+            \&& synIDattr(synID(a:lnum,s:i+1,0),"name") != "rapidConcealableString"
             \&& synIDattr(synID(a:lnum,s:i+1,0),"name") != "rapidComment"
         let s:opnParen += 1
       endif
@@ -210,7 +222,8 @@ function s:RapidLoneParen(lnum,lchar)
     let s:i = stridx(s:line, s:clsParChar, s:i)
     if s:i >= 0 && s:i <= s:len
       " brakets that are part of a strings or comment are ignored
-      if synIDattr(synID(a:lnum,s:i+1,0),"name") != "rapidString"
+      if        synIDattr(synID(a:lnum,s:i+1,0),"name") != "rapidString"
+            \&& synIDattr(synID(a:lnum,s:i+1,0),"name") != "rapidConcealableString"
             \&& synIDattr(synID(a:lnum,s:i+1,0),"name") != "rapidComment"
         let s:clsParen += 1
       endif
