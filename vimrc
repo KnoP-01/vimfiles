@@ -68,6 +68,7 @@ call plug#begin('~/.vim/plugged')
   nmap - <C-W>v<Plug>VinegarUp
   " ein- und auskommentieren
   Plug 'tpope/vim-commentary'
+  Plug 'tpope/vim-endwise'
 
   " erweiterung fuer quickfix und loclist
   Plug 'romainl/vim-qf'
@@ -142,33 +143,41 @@ augroup END
 
 " Options:
 " Statusline: {{{
-function! MyStatusline()
-  set statusline=%F                " Path to the file in the buffer, as typed or relative to current directory
-  set statusline+=%m               " Modified flag       [+] ; [-] if 'modifiable' is off
-  set statusline+=%r               " Readonly flag       [RO]
-  set statusline+=%h               " Help buffer flag    [help]
-  set statusline+=%w               " Preview window flag [Preview]
-  set statusline+=%=               " align right from here on
-  set statusline+=%#StatusLineNC#  " change coloring
-  set statusline+=\                " a space
-  " set statusline+=[                " [
-  set statusline+=%{&ff}           " file format
-  set statusline+=\ %{&enc}        " encoding
-  set statusline+=\ %{&ft}         " file type
-  " set statusline+=]                " ]
-  set statusline+=%#ToDo#          " change coloring
-  " set statusline+=[                " [
-  " set statusline+=%p%%             " cursor position: percent of file
-  set statusline+=\ L%04l          " cursor position: 4 digits line   number
-  set statusline+=\ C%03v          " cursor position: 3 digits column number
-  set statusline+=\ #%02n          " cursor position: 2 digits buffer number
-  set statusline+=\                " a space
-  " set statusline+=]                " ]
-  set statusline+=%#SpecialChar#   " change coloring
-  " set statusline+=\ %{VimBuddy()}\ " fun (with spaces)
-  set statusline+=%{VimBuddy()}    " fun
+function! MyStatusline(full)
+  setlocal statusline=%F                " Path to the file in the buffer, as typed or relative to current directory
+  setlocal statusline+=%m               " Modified flag       [+] ; [-] if 'modifiable' is off
+  setlocal statusline+=%r               " Readonly flag       [RO]
+  setlocal statusline+=%h               " Help buffer flag    [help]
+  setlocal statusline+=%w               " Preview window flag [Preview]
+  setlocal statusline+=%=               " align right from here on
+  if a:full
+    setlocal statusline+=%#StatusLineNC#  " change coloring
+    setlocal statusline+=\                " a space
+    " setlocal statusline+=[                " [
+    setlocal statusline+=%{&ff}           " file format
+    setlocal statusline+=\ %{&enc}        " encoding
+    setlocal statusline+=\ %{&ft}         " file type
+    " setlocal statusline+=]                " ]
+    setlocal statusline+=%#ToDo#          " change coloring
+    " setlocal statusline+=[                " [
+    " setlocal statusline+=%p%%             " cursor position: percent of file
+    setlocal statusline+=\ L%04l          " cursor position: 4 digits line   number
+    setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
+    setlocal statusline+=\ %02p%%         " cursor position: percent of file
+    setlocal statusline+=\ #%02n          " cursor position: 2 digits buffer number
+    setlocal statusline+=\                " a space
+    " setlocal statusline+=]                " ]
+    setlocal statusline+=%#SpecialChar#   " change coloring
+    " setlocal statusline+=\ %{VimBuddy()}\ " fun (with spaces)
+    setlocal statusline+=%{VimBuddy()}    " fun
+    " setlocal statusline+=\                " a space
+  endif
 endfunction
-call MyStatusline()
+call MyStatusline(1)
+augroup myStatusline
+  autocmd WinEnter * :call MyStatusline(1)
+  autocmd WinLeave * :call MyStatusline(0)
+augroup end
 " }}}
 
 " Other Options: {{{
@@ -191,6 +200,7 @@ set shellquote="
 set guioptions+=!     " don't open cmd.exe-window on windows in case of :!
 
 set guioptions+=a     " put visually selected text into * register (gui only)
+set clipboard=autoselect  " same for terminals
 
 set guioptions-=r     " no right scroll bar
 set guioptions-=L     " no left scroll bar in case of vertical split
@@ -307,7 +317,7 @@ nnoremap <F9> :echo "hi<" .  synIDattr(            synID(line("."),col("."),1)  
 " fun
 nnoremap <silent> <F10> :Matrix<CR>
 " fullscreen shell.vim; work around bug where the statusline disappears
-nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline()<cr>
+nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline(1)<cr>
 nnoremap <silent> <S-F11> :if &guioptions=~'\Cm'<bar>set guioptions-=m<bar>set guioptions-=T<bar>else<bar>set guioptions+=m<bar>set guioptions+=T<bar>endif<cr>
 " show buffers and start buffer command
 nnoremap <silent> <F12> :ls<cr>:buffer 
@@ -315,12 +325,14 @@ nnoremap <silent> <F12> :ls<cr>:buffer
 
 " Clever Tab: {{{
 function! CleverTab()
-  if strpart( getline('.'), 0, col('.')-1 ) =~ '\(^\s*\|\s\)$'
-    return "\<Tab>"
+  " if strpart( getline('.'), 0, col('.')-1 ) !~ '\(^\s*\|\s\)$'
+  if getline('.')[col('.') - 2] =~ '\k'
+    return "\<C-P>"
   endif
-  return "\<C-P>"
+  return "\<Tab>"
 endfunction
 inoremap <Tab> <C-R>=CleverTab()<CR>
+inoremap <S-Tab> <C-N>
 " }}}
 
 " Indent Text Object: {{{
@@ -454,6 +466,10 @@ nnoremap <c-s> :w<cr>
 nnoremap <leader>h :he<cr><c-w>L:help 
 " edit .vimrc
 nnoremap <leader>e :edit $HOME/.vim/vimrc<cr>
+" <leader><leader> is more convenient than <C-^> or <C-6>
+nnoremap <leader><leader> <C-^>
+" Close all other splits
+nnoremap <leader>o :only<cr>
 
 " my auto insert closing pair
 inoremap ' ''<c-g>U<left>
@@ -478,6 +494,7 @@ let g:knopRhsQuickfix=1
 "   au!
 "   au User RapidAutoFormPost exec "normal {"
 " augroup END
+" let g:rapidEndwiseUpperCase=1
 " let g:rapidGroupName=0
 " let g:rapidNoCommentIndent=0 " undokumentiert
 " let g:rapidCommentIndent=0
@@ -496,7 +513,10 @@ let g:rapidAutoComment=0
 " let g:rapidCompleteStd = 0
 let g:rapidCompleteCustom = [
       \'TASK1/PROGMOD/Service.mod', 
-      \'TASK1/PROGMOD/MainRob1.mod']
+      \'TASK3/PROGMOD/CyclicProg.mod'
+      \'TASK1/PROGMOD/MainRob1.mod'
+      \'TASK1/PROGMOD/MainRob2.mod'
+      \'TASK1/PROGMOD/MainRob3.mod']
 " let g:rapidPathToBodyFiles='d:\daten\scripts\vim_resource\rapid resource\'
 " let g:rapidNoHighLink=1
 " let g:rapidShowError=1
@@ -516,6 +536,7 @@ let g:rapidSpaceIndent=0
 "   au!
 "   au User KrlAutoFormPost exec "normal {"
 " augroup END
+" let g:krlEndwiseUpperCase=1
 " let g:krlShortenQFPath=0
 " let g:krlNoCommentIndent=0
 " let g:krlCommentIndent=0

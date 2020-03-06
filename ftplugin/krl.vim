@@ -1,8 +1,8 @@
 " Kuka Robot Language file type plugin for Vim
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 2.1.2
-" Last Change: 10. Feb 2020
+" Version: 2.2.1
+" Last Change: 21. Feb 2020
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -1025,6 +1025,7 @@ if !exists("*s:KnopVerboseEcho()")
     if exists("b:did_indent")
       if l:start>0 && l:end>l:start
         execute l:start.','.l:end."substitute/^/ /"
+        call cursor(l:start,0)
         execute "silent normal! " . (l:end-l:start+1) . "=="
       endif
     endif
@@ -1044,8 +1045,8 @@ if !exists("*s:KnopVerboseEcho()")
     call setline('.',"enddat")
     call search('\s*defdat ','bW')
     if exists("b:did_indent")
-      execute ','.+2."substitute/^/ /"
-      silent normal! 3==
+      execute ",+2substitute/^/ /"
+      silent normal! 2k3==
     endif
     if get(g:,'krlAutoFormUpperCase',0)
       call s:KnopUpperCase(line('.'),search('\v\c^\s*enddat>','cnW'))
@@ -1063,8 +1064,8 @@ if !exists("*s:KnopVerboseEcho()")
     call setline('.',"end ; ".a:sName."()")
     call search('\v\c^\s*(global )?def ','bW')
     if exists("b:did_indent")
-      execute ','.+2."substitute/^/ /"
-      silent normal! 3==
+      execute ",+2substitute/^/ /"
+      silent normal! 2k3==
     endif
     if get(g:,'krlAutoFormUpperCase',0)
       call s:KnopUpperCase(line('.'),search('\v\c^\s*end>','cnW'))
@@ -1092,8 +1093,8 @@ if !exists("*s:KnopVerboseEcho()")
     call setline('.',"endfct ; ".a:sName."()")
     call search('\v\c^\s*(global )?deffct ','bW')
     if exists("b:did_indent")
-      execute ','.+4."substitute/^/ /"
-      silent normal! 5==
+      execute ",+4substitute/^/ /"
+      silent normal! 4k5==
     endif
     if get(g:,'krlAutoFormUpperCase',0)
       call s:KnopUpperCase(line('.'),search('\v\c^\s*endfct>','cnW'))
@@ -1759,6 +1760,22 @@ if has("folding") && get(g:,'krlFoldLevel',1)
 endif " has("folding") && get(g:,'krlFoldLevel',1)
 
 " }}} Vim Settings
+
+" Endwise (tpope) {{{
+
+" endwise support
+if exists("loaded_endwise")
+  if get(g:,'krlEndwiseUpperCase',0)
+    let b:endwise_addition  = '\=submatch(0)=~"DEF" ? "END" : submatch(0)=~"CASE" ? "ENDSWITCH" : submatch(0)=~"REPEAT" ? "UNTIL <condition>" : "END" . submatch(0)'
+  else
+    let b:endwise_addition  = '\=submatch(0)=~"def" ? "end" : submatch(0)=~"case" ? "endswitch" : submatch(0)=~"repeat" ? "until <condition>" : "end" . submatch(0)'
+  endif
+  let b:endwise_words     = 'def,deffct,defdat,then,while,for,repeat,case'
+  let b:endwise_pattern   = '^\s*\(\(global\s\+\)\?\zsdef\|\(global\s\+\)\?def\zs\(dat\|fct\)\|\zsif\|\zswhile\|\zsfor\|\zscase\|\zsrepeat\)\>\ze'
+  let b:endwise_syngroups = 'krlConditional,krlTypedef,krlRepeat'
+endif
+
+" }}} Endwise
 
 " Match It and Fold Text Object mapping {{{
 

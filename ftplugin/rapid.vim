@@ -1,8 +1,8 @@
 " ABB Rapid Command file type plugin for Vim
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 2.1.2
-" Last Change: 10. Feb 2020
+" Version: 2.2.1
+" Last Change: 21. Feb 2020
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -903,6 +903,7 @@ if !exists("*s:KnopVerboseEcho()")
     if exists("b:did_indent")
       if l:start>0 && l:end>l:start
         execute l:start.','.l:end."substitute/^/ /"
+        call cursor(l:start,0)
         execute "silent normal! " . (l:end-l:start+1) . "=="
       endif
     endif
@@ -1295,6 +1296,22 @@ if get(g:,'rapidConcealStructs',1)
 endif " get(g:,'rapidConcealStructs',1)
 
 " }}} Vim Settings
+
+" Endwise (tpope) {{{
+
+" endwise support
+if exists("loaded_endwise")
+  if get(g:,'rapidEndwiseUpperCase',0)
+    let b:endwise_addition  = '\=submatch(0)=~"CASE" ? "ENDTEST" : "END" . submatch(0)'
+  else
+    let b:endwise_addition  = '\=submatch(0)=~"case" ? "endtest" : "end" . submatch(0)'
+  endif
+  let b:endwise_words     = 'proc,func,trap,record,then,do,:'
+  let b:endwise_pattern   = '^\s*\(local\s\+\)\?\zs\(proc\|func\|trap\|record\|if\|while\|for\|case\)\>\ze'
+  let b:endwise_syngroups = 'rapidTypeDef,rapidRepeat,rapidConditional'
+endif
+
+" }}} Endwise
 
 " Match It {{{
 

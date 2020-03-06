@@ -1,4 +1,4 @@
-*rapid.txt*	Abb Rapid Command for Vim version 7.4	Last change: 14. Feb 2020
+*rapid.txt*	Abb Rapid Command for Vim version 7.4	Last change: 20. Feb 2020
 
 
 		  VIM REFERENCE MANUAL    by Patrick Meiser-Knosowski
@@ -70,8 +70,8 @@ It provides
 * syntax highlighting,
 * indenting,
 * concealing of structure values (e.g. MoveJ \* v2500...),
-* support for commentary [vimscript #3695], matchit [vimscript #39] and
-  matchup [vimscript #5624],
+* support for commentary [vimscript #3695], matchit [vimscript #39],
+  matchup [vimscript #5624] and endwise [vimscript #2386],
 * mappings and settings to navigate through code in a backup folder structure,
 * text objects for functions and
 * completion of words from known or custom global files like EIO.cfg,
@@ -243,6 +243,9 @@ Also see these options for alternative <Plug> mappings.
 *rapid-complete-options*
 |g:rapidCompleteStd|        Disable standard 'complete' setting
 |g:rapidCompleteCustom|     Enable custom 'complete' setting
+
+*rapid-endwise-options*
+|g:rapidEndwiseUpperCase|   Use upper case for `vim-endwise`
 
 *rapid-auto-correct-cfg*
 |g:rapidAutoCorrCfgLineEnd| Auto correct mixed unix/dos line endings in *.cfg
@@ -658,10 +661,21 @@ If omitted or set to 0 no custom files get added to complete.
 
 Index: |rapid-index|
 ==============================================================================
+                        *g:rapidEndwiseUpperCase*
+g:rapidEndwiseUpperCase:
+------------------------
+
+Insert upper case `ENDIF` etc. instead of lower case when `vim-endwise`
+triggers: >
+    let g:rapidEndwiseUpperCase = 1
+
+
+Index: |rapid-index|
+==============================================================================
                         *rapid-debug*  
                         *g:rapidVerbose*
-g:rapidVerbose:
----------------
+g:knopVerbose:
+--------------
 
 Note: `g:rapidVerbose` is synonym for `g:knopVerbose`. Use the g:knop* variable!
 

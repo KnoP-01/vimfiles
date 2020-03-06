@@ -44,6 +44,7 @@ g:krlCommentTextObject	krl.txt	/*g:krlCommentTextObject*
 g:krlCompleteCustom	krl.txt	/*g:krlCompleteCustom*
 g:krlCompleteStd	krl.txt	/*g:krlCompleteStd*
 g:krlConcealFoldTail	krl.txt	/*g:krlConcealFoldTail*
+g:krlEndwiseUpperCase	krl.txt	/*g:krlEndwiseUpperCase*
 g:krlFoldLevel	krl.txt	/*g:krlFoldLevel*
 g:krlFoldMethodSyntax	krl.txt	/*g:krlFoldMethodSyntax*
 g:krlFoldTextObject	krl.txt	/*g:krlFoldTextObject*
@@ -80,6 +81,7 @@ g:rapidCompleteCustom	rapid.txt	/*g:rapidCompleteCustom*
 g:rapidCompleteStd	rapid.txt	/*g:rapidCompleteStd*
 g:rapidConcealStructKeyMap	rapid.txt	/*g:rapidConcealStructKeyMap*
 g:rapidConcealStructs	rapid.txt	/*g:rapidConcealStructs*
+g:rapidEndwiseUpperCase	rapid.txt	/*g:rapidEndwiseUpperCase*
 g:rapidFormatComments	rapid.txt	/*g:rapidFormatComments*
 g:rapidFunctionTextObject	rapid.txt	/*g:rapidFunctionTextObject*
 g:rapidGoDefinitionKeyMap	rapid.txt	/*g:rapidGoDefinitionKeyMap*
@@ -105,6 +107,7 @@ krl-complete	krl.txt	/*krl-complete*
 krl-complete-options	krl.txt	/*krl-complete-options*
 krl-debug	krl.txt	/*krl-debug*
 krl-debug-options	krl.txt	/*krl-debug-options*
+krl-endwise-options	krl.txt	/*krl-endwise-options*
 krl-folding	krl.txt	/*krl-folding*
 krl-folding-options	krl.txt	/*krl-folding-options*
 krl-for-vim	krl.txt	/*krl-for-vim*
@@ -238,6 +241,7 @@ rapid-concealing	rapid.txt	/*rapid-concealing*
 rapid-concealing-options	rapid.txt	/*rapid-concealing-options*
 rapid-debug	rapid.txt	/*rapid-debug*
 rapid-debug-options	rapid.txt	/*rapid-debug-options*
+rapid-endwise-options	rapid.txt	/*rapid-endwise-options*
 rapid-for-vim	rapid.txt	/*rapid-for-vim*
 rapid-formatting-comments	rapid.txt	/*rapid-formatting-comments*
 rapid-highlight-options	rapid.txt	/*rapid-highlight-options*

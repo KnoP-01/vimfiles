@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.0.1
-" Last Change: 12. Feb 2020
+" Last Change: 24. Feb 2020
 " Credits: Based on indent/vim.vim
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -134,11 +134,12 @@ function s:GetRapidIndentIntern()
 
   " continued lines without ';', 'endfoo', 'then' or 'do' etc
   if 1
-        \&& l:currentLine !~ '\c\v[:;]\s*(!.*)?$'                                                     " : labels and ; line terminators
-        \&& l:currentLine !~ '\c\v^\s*end(module|record|proc|func|trap|if|for|while|test)\s*(!.*)?$'  " endfoo
-        \&& l:currentLine !~ '\c\v^(else|then|do)\s*!?.*$>'                                           " else, then, do
-        \&& l:currentLine !~ '\c\v^\s*(local\s+)?(proc|func)\s+[^!]+'
-        \&& l:currentLine !~ '\c\v^\s*test>'
+        \&& l:currentLine !~ '\c\v[:;]\s*(!.*)?$'                                                  " : labels and ; line terminators
+        \&& l:currentLine !~ '\c\v<end(module|record|proc|func|trap|if|for|while|test)\s*(!.*)?$'  " endfoo
+        \&& l:currentLine !~ '\c\v^\s*(error|undo|backward|else|then|do)\s*(!.*)?$>'                  " error, undo, backward, else, then or do
+        \&& l:currentLine !~ '\c\v^\s*(local\s+)?(proc|func)\s+[^!]+\)\s*(!.*)?$'                  " proc|func bla(...)
+        \&& l:currentLine !~ '\c\v^\s*(module|trap|record)\s+\w+\s*(!.*)?$'
+        \&& l:currentLine !~ '\c\v<test>\s*(!.*)?$>'
     " let l:ind += 2*&sw
   endif
 

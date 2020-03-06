@@ -5,8 +5,8 @@ setlocal expandtab
 setlocal shiftround
 
 " align robtarget values for readability
-nnoremap <leader>abb  :Align! p0P0rl \. , \[ \]<cr>
-xnoremap <leader>abb  :Align! p0P0rl \. , \[ \]<cr>
+nnoremap <leader>abb  :Align! p0P0llrlrlrlrlrlrlrllllrlrlrlrlrlrl \. , \[ \]<cr>
+xnoremap <leader>abb  :Align! p0P0llrlrlrlrlrlrlrllllrlrlrlrlrlrl \. , \[ \]<cr>
 
 " align EIO.cfg for readability
 function AlignEio()
