@@ -142,44 +142,6 @@ augroup END
 " }}}
 
 " Options:
-" Statusline: {{{
-function! MyStatusline(full)
-  setlocal statusline=%F                " Path to the file in the buffer, as typed or relative to current directory
-  setlocal statusline+=%m               " Modified flag       [+] ; [-] if 'modifiable' is off
-  setlocal statusline+=%r               " Readonly flag       [RO]
-  setlocal statusline+=%h               " Help buffer flag    [help]
-  setlocal statusline+=%w               " Preview window flag [Preview]
-  setlocal statusline+=%=               " align right from here on
-  if a:full
-    setlocal statusline+=%#StatusLineNC#  " change coloring
-    setlocal statusline+=\                " a space
-    " setlocal statusline+=[                " [
-    setlocal statusline+=%{&ff}           " file format
-    setlocal statusline+=\ %{&enc}        " encoding
-    setlocal statusline+=\ %{&ft}         " file type
-    " setlocal statusline+=]                " ]
-    setlocal statusline+=%#ToDo#          " change coloring
-    " setlocal statusline+=[                " [
-    " setlocal statusline+=%p%%             " cursor position: percent of file
-    setlocal statusline+=\ L%04l          " cursor position: 4 digits line   number
-    setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
-    setlocal statusline+=\ %02p%%         " cursor position: percent of file
-    setlocal statusline+=\ #%02n          " cursor position: 2 digits buffer number
-    setlocal statusline+=\                " a space
-    " setlocal statusline+=]                " ]
-    setlocal statusline+=%#SpecialChar#   " change coloring
-    " setlocal statusline+=\ %{VimBuddy()}\ " fun (with spaces)
-    setlocal statusline+=%{VimBuddy()}    " fun
-    " setlocal statusline+=\                " a space
-  endif
-endfunction
-call MyStatusline(1)
-augroup myStatusline
-  autocmd WinEnter * :call MyStatusline(1)
-  autocmd WinLeave * :call MyStatusline(0)
-augroup end
-" }}}
-
 " Other Options: {{{
 set wildchar=<Tab> wildcharm=<C-Z> wildmenu wildmode=full
 
@@ -195,8 +157,7 @@ set backup            " write a backup.file~
 
 set shell=c:/apps/gitforwin/bin/bash.exe " use git for windows bash
 set shellcmdflag=-c
-set shellquote="
-" set shellslash
+set shellslash
 set guioptions+=!     " don't open cmd.exe-window on windows in case of :!
 
 set guioptions+=a     " put visually selected text into * register (gui only)
@@ -256,6 +217,65 @@ set shiftround            " Round indent to multiple of 'shiftwidth'.
 set nojoinspaces          " ein statt 2 spaces nach "saetzen" (nach . ! ?)
 
 set winaltkeys=no         " disable menu with alt. necessary for <A-x> mappings
+" }}}
+
+" Statusline: {{{
+
+function! MyStatusline(full)
+  setlocal statusline=%F                " Path to the file in the buffer, as typed or relative to current directory
+  setlocal statusline+=%m               " Modified flag       [+] ; [-] if 'modifiable' is off
+  setlocal statusline+=%r               " Readonly flag       [RO]
+  setlocal statusline+=%h               " Help buffer flag    [help]
+  setlocal statusline+=%w               " Preview window flag [Preview]
+  if a:full
+    setlocal statusline+=%=               " align right from here on
+    setlocal statusline+=\                " a space
+    setlocal statusline+=%#Error#         " change coloring
+    setlocal statusline+=%{b:gitbranch}
+    setlocal statusline+=%#StatusLineNC#  " change coloring
+    setlocal statusline+=\                " a space
+    " setlocal statusline+=[                " [
+    setlocal statusline+=%{&ff}           " file format
+    setlocal statusline+=\ %{&enc}        " encoding
+    setlocal statusline+=\ %{&ft}         " file type
+    " setlocal statusline+=]                " ]
+    setlocal statusline+=%#ToDo#          " change coloring
+    " setlocal statusline+=[                " [
+    " setlocal statusline+=%p%%             " cursor position: percent of file
+    setlocal statusline+=\ L%04l          " cursor position: 4 digits line   number
+    setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
+    setlocal statusline+=\ %02p%%         " cursor position: percent of file
+    setlocal statusline+=\ #%02n          " cursor position: 2 digits buffer number
+    setlocal statusline+=\                " a space
+    " setlocal statusline+=]                " ]
+    setlocal statusline+=%#SpecialChar#   " change coloring
+    " setlocal statusline+=\ %{VimBuddy()}\ " fun (with spaces)
+    setlocal statusline+=%{VimBuddy()}    " fun
+    " setlocal statusline+=\                " a space
+  endif
+endfunction
+
+function! StatuslineGitBranch()
+  let b:gitbranch=""
+  if &modifiable
+    try
+      let l:gitrevparse = system("git -C ".substitute(expand('%:p:h:S'),'\(\a\):','/\1','')." rev-parse --abbrev-ref HEAD")
+      " let l:gitrevparse = system('git -C /d/daten/scripts/git/knop-01/rapid-for-vim rev-parse --abbrev-ref HEAD')
+      if !v:shell_error
+        let b:gitbranch = " " . substitute(l:gitrevparse, '\( \|\n\)', '', 'g') . " "
+      endif
+    catch
+    endtry
+  endif
+endfunction
+
+call MyStatusline(1)
+augroup myStatusline
+  autocmd!
+  autocmd BufEnter,WinEnter * :call MyStatusline(1)
+  autocmd BufLeave,WinLeave * :call MyStatusline(0)
+  autocmd VimEnter,WinEnter,BufEnter * call StatuslineGitBranch()
+augroup end
 " }}}
 
 " Rolodex:
