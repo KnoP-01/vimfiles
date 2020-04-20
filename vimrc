@@ -27,9 +27,9 @@ packadd! cfilter
 " Vim Plug:
 " vim plug: {{{ see :he vim-plug
 " PlugUpdate
-command! MyPlugUpdate   :set statusline=%F%m%r%h%w <bar> PlugUpdate
+command! MyPlugUpdate   :set statusline=%F%m%r%h%w <bar> noau PlugUpdate
 " PlugInstall
-command! MyPlugInstall  :set statusline=%F%m%r%h%w <bar> PlugInstall
+command! MyPlugInstall  :set statusline=%F%m%r%h%w <bar> noau PlugInstall
 " don't forget PlugClean
 " Plugins
 call plug#begin('~/.vim/plugged')
