@@ -4,6 +4,10 @@ nnoremap <F1> :if expand('%')=~'\.dat$'
 			\<bar> e %:s?\.src$?.dat? 
 			\<bar> endif<CR>
 
+" global substitute
+nmap <leader>gs :set hidden<cr>*N u:cdo s///g<left><left>
+
+" indention settings
 " setlocal softtabstop=4
 " setlocal shiftwidth=4
 " setlocal expandtab

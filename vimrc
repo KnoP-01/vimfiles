@@ -8,9 +8,9 @@ set nocompatible
 
 " Language English:
 set langmenu=none
-if !has("win32") " del c:\Program Files (x86)\Vim\vim81\lang\de\
+" if !has("win32") " del c:\Program Files (x86)\Vim\vim81\lang\de\
   language en_US
-endif
+" endif
 
 " set leader before any plugin, so <leader>-mappings get the right leader 
 let mapleader       = " "
@@ -21,6 +21,7 @@ let maplocalleader  = " "
 " packadd! matchit " use matchup instead of matchit see https://github.com/andymass/vim-matchup
 packadd! editexisting " find existing session if .swp-file exists
 packadd! shellmenu
+packadd! cfilter
 " }}}
 
 " Vim Plug:
@@ -157,6 +158,8 @@ set backup            " write a backup.file~
 
 set shell=c:/apps/gitforwin/bin/bash.exe " use git for windows bash
 set shellcmdflag=-c
+" set shellquote="\""
+" set shellxquote="\""
 set shellslash
 set guioptions+=!     " don't open cmd.exe-window on windows in case of :!
 
@@ -229,29 +232,21 @@ function! MyStatusline(full)
   setlocal statusline+=%w               " Preview window flag [Preview]
   if a:full
     setlocal statusline+=%=               " align right from here on
-    setlocal statusline+=\                " a space
     setlocal statusline+=%#Error#         " change coloring
     setlocal statusline+=%{b:gitbranch}
     setlocal statusline+=%#StatusLineNC#  " change coloring
     setlocal statusline+=\                " a space
-    " setlocal statusline+=[                " [
-    setlocal statusline+=%{&ff}           " file format
+    setlocal statusline+=%{substitute(&ff\,'\\(.\\).\\+'\,'\\1'\,'')}           " file format
     setlocal statusline+=\ %{&enc}        " encoding
     setlocal statusline+=\ %{&ft}         " file type
-    " setlocal statusline+=]                " ]
     setlocal statusline+=%#ToDo#          " change coloring
-    " setlocal statusline+=[                " [
-    " setlocal statusline+=%p%%             " cursor position: percent of file
     setlocal statusline+=\ L%04l          " cursor position: 4 digits line   number
     setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
     setlocal statusline+=\ %02p%%         " cursor position: percent of file
     setlocal statusline+=\ #%02n          " cursor position: 2 digits buffer number
     setlocal statusline+=\                " a space
-    " setlocal statusline+=]                " ]
     setlocal statusline+=%#SpecialChar#   " change coloring
-    " setlocal statusline+=\ %{VimBuddy()}\ " fun (with spaces)
     setlocal statusline+=%{VimBuddy()}    " fun
-    " setlocal statusline+=\                " a space
   endif
 endfunction
 
@@ -528,7 +523,7 @@ let g:rapidAutoComment=0
 " let g:rapidListUsageKeyMap=1
 " let g:rapidConcealStructsKeyMap=1 " deprecated
 " let g:rapidConcealStructKeyMap=1
-" let g:rapidConcealStructs=2
+let g:rapidConcealStructs=2
 " let g:rapidAutoFormKeyMap=1
 " let g:rapidCompleteStd = 0
 let g:rapidCompleteCustom = [
@@ -573,6 +568,7 @@ let g:krlAutoComment=0
 " let g:krlAutoFormKeyMap=1
 " let g:krlCompleteStd = 0
 let g:krlCompleteCustom = [
+      \'R1/Program/sonstiges/acol.src', 
       \'R1/Graeff TP/global_var.dat', 
       \'R1/Graeff TP/mymessage.src', 
       \'R1/Graeff TP/mymessage.dat', 

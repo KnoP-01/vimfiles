@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.0
-" Last Change: 21. Feb 2020
+" Last Change: 06. Apr 2020
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -107,8 +107,6 @@ else
 " highlighting for *.mod, *.sys and *.prg
 
 " Comment {{{ 
-"
-  " Comment
   " TODO Comment
   syn match rapidTodoComment contained /\<TODO\>\|\<FIXME\>\|\<XXX\>/
   highlight default link rapidTodoComment Todo
@@ -126,10 +124,12 @@ else
 " }}} Header
 
 " Operator {{{
-" Boolean operator
+  " Boolean operator
   syn keyword rapidOperator and or xor not div mod
-" Arithmetic and compare operator
+  " Arithmetic and compare operator
   syn match rapidOperator /[-+*/<>:=]/
+  " conditional argument
+  syn match rapidOperator /?/
   highlight default link rapidOperator Operator
 " }}} Operator
 
@@ -187,8 +187,6 @@ else
 " Delimiter {{{
   syn match rapidDelimiter /[\\(){},;|\[\]]/
   highlight default link rapidDelimiter Delimiter
-  " ? (conditional argument) gets a special color
-  syn match rapidLabel /?/
 " }}} Delimiter
 
 " Constant values {{{
@@ -411,6 +409,8 @@ else
   syn keyword rapidConstant ERR_UISHOW_FATAL ERR_UISHOW_FULL ERR_UI_INITVALUE ERR_UI_MAXMIN ERR_UI_NOTINT
   syn keyword rapidConstant ERR_UNIT_PAR ERR_UNKINO ERR_UNKPROC ERR_UNLOAD ERR_USE_PROF
   syn keyword rapidConstant ERR_WAITSYNCTASK ERR_WAIT_MAX ERR_WAIT_MAXTIME ERR_WHL_SEARCH ERR_WHLSEARCH ERR_WOBJ_MOVING
+  " error codes starting with CORR_
+  syn keyword rapidConstant CORR_NOFREE CORR_NOOBJECT CORR_NOTCONN
   " error codes starting with SEN_
   syn keyword rapidConstant SEN_BUSY SEN_CAALARM SEN_CAMCHECK SEN_EXALARM SEN_GENERRO SEN_NO_MEAS SEN_NOREADY SEN_TEMP SEN_TIMEOUT SEN_UNKNOWN SEN_VALUE
   " error codes starting with SYS_
