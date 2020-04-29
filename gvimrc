@@ -1,10 +1,14 @@
-set lines=100
-set columns=300
+set lines=48
+set columns=138
 
 " GUI Font:
 
 " bewaehrt
-set guifont=terminus:h16
+if has("win32")
+    set guifont=terminus:h14
+else
+    set guifont=Terminus\ 14
+endif
 
 " tests
 " set guifont=Tamsyn10x20:h16:cANSI:qDRAFT " gut

@@ -156,12 +156,14 @@ set diffopt=filler,icase,iwhite   " settings for diff mode: keep window lines sy
 set backup            " write a backup.file~
 " set directory-=.      " redirect .swp files to C:\Users\<user>\AppData\Local\Temp
 
-set shell=c:/apps/gitforwin/bin/bash.exe " use git for windows bash
-set shellcmdflag=-c
-" set shellquote="\""
-" set shellxquote="\""
-set shellslash
-set guioptions+=!     " don't open cmd.exe-window on windows in case of :!
+if has("win32")
+  set shell=c:/apps/gitforwin/bin/bash.exe " use git for windows bash
+  set shellcmdflag=-c
+  " set shellquote="\""
+  " set shellxquote="\""
+  set shellslash
+  set guioptions+=!     " don't open cmd.exe-window on windows in case of :!
+endif
 
 set guioptions+=a     " put visually selected text into * register (gui only)
 set clipboard=autoselect  " same for terminals
