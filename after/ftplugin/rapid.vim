@@ -1,6 +1,11 @@
 
 " global substitute
 nmap <leader>gs :set hidden<cr>*N u:cdo s///g<left><left>
+if has("win32")
+  let g:rapidPathToSumatraPDF='c:\apps\SumatraPDF\SumatraPDF.exe'
+  let g:rapidPathToRefGuide='d:\daten\doku\abb\refguide_rw6.04\abb_referenz_inst_func_dat.pdf'
+  nnoremap <buffer> <silent> K :let rapidCmd="! start '" . g:rapidPathToSumatraPDF . "' -named-dest \\\"" . expand("<cword>") . " -\\\" '" . g:rapidPathToRefGuide . "'"<cr><bar>:silent execute rapidCmd<cr>
+endif
 
 " indention settings
 setlocal softtabstop=4
