@@ -1,6 +1,8 @@
 set lines=48
 set columns=138
 
+set guicursor=n-v-c:block-Cursor/lCursor-blinkwait10-blinkoff500-blinkon500,ve:ver35-Cursor-blinkwait10-blinkoff500-blinkon500,o:hor50-Cursor-blinkwait10-blinkoff500-blinkon500,i-ci:ver25-Cursor/lCursor-blinkwait10-blinkoff500-blinkon500,r-cr:hor20-Cursor/lCursor-blinkwait10-blinkoff500-blinkon500,sm:block-Cursor-blinkwait10-blinkoff500-blinkon500
+
 " GUI Font:
 
 " bewaehrt
