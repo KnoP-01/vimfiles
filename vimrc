@@ -168,7 +168,7 @@ endif
 set guioptions+=a     " put visually selected text into * register (gui only)
 set clipboard=autoselect  " same for terminals
 
-set guioptions-=r     " no right scroll bar
+set guioptions-=r     " no right scroll bar. Siehe <S-F11> unten
 set guioptions-=L     " no left scroll bar in case of vertical split
 " set guioptions+=l     " left scroll bar
 " set guioptions+=R     " right scroll bar in case of vertical split
@@ -335,7 +335,7 @@ nnoremap <F9> :echo "hi<" .  synIDattr(            synID(line("."),col("."),1)  
 nnoremap <silent> <F10> :Matrix<CR>
 " fullscreen shell.vim; work around bug where the statusline disappears
 nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline(1)<cr>
-nnoremap <silent> <S-F11> :if &guioptions=~'\Cm'<bar>set guioptions-=m<bar>set guioptions-=T<bar>else<bar>set guioptions+=m<bar>set guioptions+=T<bar>endif<cr>
+nnoremap <silent> <S-F11> :if &guioptions=~'\Cm'<bar>set guioptions-=m<bar>set guioptions-=T<bar>set guioptions-=r<bar>else<bar>set guioptions+=m<bar>set guioptions+=T<bar>set guioptions+=r<bar>endif<cr>
 " show buffers and start buffer command
 nnoremap <silent> <F12> :ls<cr>:buffer 
 " }}}
