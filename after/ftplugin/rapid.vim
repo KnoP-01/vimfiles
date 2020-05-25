@@ -1,10 +1,20 @@
 
 " global substitute
 nmap <leader>gs :set hidden<cr>*N u:cdo s///g<left><left>
+
+" keyword lookup with K
 if has("win32")
   let g:rapidPathToSumatraPDF='c:\apps\SumatraPDF\SumatraPDF.exe'
   let g:rapidPathToRefGuide='d:\daten\doku\abb\refguide_rw6.04\abb_referenz_inst_func_dat.pdf'
-  nnoremap <buffer> <silent> K :let rapidCmd="! start '" . g:rapidPathToSumatraPDF . "' -named-dest \\\"" . expand("<cword>") . " -\\\" '" . g:rapidPathToRefGuide . "'"<cr><bar>:silent execute rapidCmd<cr>
+  nnoremap <buffer> <silent> K :let rapidCmd=
+        \"! start '" . 
+        \g:rapidPathToSumatraPDF . 
+        \"' -named-dest \\\"" . 
+        \expand("<cword>") . 
+        \" -\\\" '" . 
+        \g:rapidPathToRefGuide . 
+        \"'"<bar>
+        \silent execute rapidCmd<cr>
 endif
 
 " indention settings
