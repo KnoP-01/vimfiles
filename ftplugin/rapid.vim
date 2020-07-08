@@ -10,6 +10,7 @@
 "
 " TODO: - set buftype=nofile bufhidden=delete instead of temp file for altered
 "         quick fix
+"       - proper altering of quickfix: see :help quickfix-window then /filled
 "
 " ToDo's {{{
 " TODO  - make file search case insensitive

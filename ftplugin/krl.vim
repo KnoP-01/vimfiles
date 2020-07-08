@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 06. Jul 2020
+" Last Change: 08. Jul 2020
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -11,6 +11,7 @@
 " TODO: - endwise add skip, ptp_spline, TIME_BLOCK and CONST_VEL
 "       - set buftype=nofile bufhidden=delete instead of temp file for altered
 "         quick fix
+"       - proper altering of quickfix: see :help quickfix-window then /filled
 "
 " ToDo's {{{
 " BUG:  - matchit fold, text object fold doesn't work

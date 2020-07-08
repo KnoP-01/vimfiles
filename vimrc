@@ -341,7 +341,7 @@ nnoremap <silent> <F10> :noautocmd Matrix<CR>
 nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline(1)<cr>
 nnoremap <silent> <S-F11> :if &guioptions=~'\Cm'<bar>set guioptions-=m<bar>set guioptions-=T<bar>set guioptions-=r<bar>else<bar>set guioptions+=m<bar>set guioptions+=T<bar>set guioptions+=r<bar>endif<cr>
 " show buffers and start buffer command
-nnoremap <silent> <F12> :ls<cr>:buffer 
+nnoremap <F12> :ls<cr>:buffer 
 " }}}
 
 " Clever Tab: {{{
