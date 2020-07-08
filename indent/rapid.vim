@@ -1,8 +1,8 @@
 " ABB Rapid Command indent file for Vim
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 2.0.1
-" Last Change: 24. Feb 2020
+" Version: 2.2.2
+" Last Change: 30. Jun 2020
 " Credits: Based on indent/vim.vim
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -89,10 +89,10 @@ function s:GetRapidIndentIntern()
               \|func\s+\w
               \|trap\s+\w
             \)
-          \|[^!]*<then>\s*(!.*)?$
-          \|else\s*(!.*)?$
-          \|[^!]*<do>\s*(!.*)?$
-          \|[^!]*<case>[^!]+:
+          \|[^!"]*<then>\s*(!.*)?$
+          \|[^!"]*<else>\s*(!.*)?$
+          \|[^!"]*<do>\s*(!.*)?$
+          \|[^!"]*<case>[^!]+:
           \|[^!"]*<default>\s*:
           \)'
         \)
@@ -106,11 +106,13 @@ function s:GetRapidIndentIntern()
 
   " Subtract a 'shiftwidth'
   if l:currentLine =~ '\c\v^\s*
-            \(end(module|record|proc|func|trap|if|for|while|test)\s*(!.*)?$
-            \|[^!]*else\s*(!.*)?$
-            \|[^!]*elseif>(\W|$)
-            \|[^!]*<case>[^!]+:
-            \|[^!]*<default>\s*:
+        \(
+            \end(module|record|proc|func|trap)\s*(!.*)?$
+            \|[^!"]*end(if|for|while|test)\s*(!.*)?$
+            \|[^!"]*<else>\s*(!.*)?$
+            \|[^!"]*<elseif>(\W|$)
+            \|[^!"]*<case>[^!]+:
+            \|[^!"]*<default>\s*:
         \)'
     let l:ind -= &sw
   endif
@@ -130,17 +132,6 @@ function s:GetRapidIndentIntern()
     let l:ind += (l:OpenSum * 4 * &sw)
   elseif l:OpenSum < l:CloseSum
     let l:ind -= (l:CloseSum * 4 * &sw)
-  endif
-
-  " continued lines without ';', 'endfoo', 'then' or 'do' etc
-  if 1
-        \&& l:currentLine !~ '\c\v[:;]\s*(!.*)?$'                                                  " : labels and ; line terminators
-        \&& l:currentLine !~ '\c\v<end(module|record|proc|func|trap|if|for|while|test)\s*(!.*)?$'  " endfoo
-        \&& l:currentLine !~ '\c\v^\s*(error|undo|backward|else|then|do)\s*(!.*)?$>'                  " error, undo, backward, else, then or do
-        \&& l:currentLine !~ '\c\v^\s*(local\s+)?(proc|func)\s+[^!]+\)\s*(!.*)?$'                  " proc|func bla(...)
-        \&& l:currentLine !~ '\c\v^\s*(module|trap|record)\s+\w+\s*(!.*)?$'
-        \&& l:currentLine !~ '\c\v<test>\s*(!.*)?$>'
-    " let l:ind += 2*&sw
   endif
 
   return l:ind

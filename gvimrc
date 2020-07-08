@@ -1,5 +1,5 @@
-set lines=48
-set columns=138
+set lines=56
+set columns=189
 
 set guicursor=n-v-c:block-Cursor/lCursor-blinkoff500-blinkon500,
 			\ve:ver35-Cursor-blinkoff500-blinkon500,

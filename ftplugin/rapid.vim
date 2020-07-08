@@ -8,6 +8,9 @@
 "
 " Suggestions of improvement are very welcome. Please email me!
 "
+" TODO: - set buftype=nofile bufhidden=delete instead of temp file for altered
+"         quick fix
+"
 " ToDo's {{{
 " TODO  - make file search case insensitive
 "       - make [[, [], ][ and ]] text objects

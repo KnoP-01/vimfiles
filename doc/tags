@@ -53,6 +53,7 @@ g:krlFormatComments	krl.txt	/*g:krlFormatComments*
 g:krlFunctionTextObject	krl.txt	/*g:krlFunctionTextObject*
 g:krlGoDefinitionKeyMap	krl.txt	/*g:krlGoDefinitionKeyMap*
 g:krlGroupName	krl.txt	/*g:krlGroupName*
+g:krlIndentBetweenDef	krl.txt	/*g:krlIndentBetweenDef*
 g:krlKeyWord	krl.txt	/*g:krlKeyWord*
 g:krlLhsQuickfix	krl.txt	/*g:krlLhsQuickfix*
 g:krlListDefKeyMap	krl.txt	/*g:krlListDefKeyMap*

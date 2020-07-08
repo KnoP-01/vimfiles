@@ -36,14 +36,11 @@ call plug#begin('~/.vim/plugged')
 
   " Make sure you use single quotes
   " examples see :he plug-example
+
   Plug 'vim/killersheep'
 
-  Plug 'gruvbox-community/gruvbox'
-  Plug 'lifepillar/vim-gruvbox8'
-  let g:gruvbox_bold=0
-  let g:gruvbox_italic=0
-  let g:gruvbox_italics=0
-
+  " vim script test framework
+  Plug 'junegunn/vader.vim'
 
   Plug 'KnoP-01/tortus'
   Plug 'KnoP-01/vimbuddy'
@@ -69,6 +66,7 @@ call plug#begin('~/.vim/plugged')
   nmap - <C-W>v<Plug>VinegarUp
   " ein- und auskommentieren
   Plug 'tpope/vim-commentary'
+  " auto-endif et al
   Plug 'tpope/vim-endwise'
 
   " erweiterung fuer quickfix und loclist
@@ -76,9 +74,6 @@ call plug#begin('~/.vim/plugged')
   let g:qf_window_bottom         = 0
   let g:qf_loclist_window_bottom = 0
   let g:qf_mapping_ack_style     = 1
-
-  " novum
-  Plug 'dylnmc/novum.vim'
 
   " fun
   Plug 'uguu-org/vim-matrix-screensaver'
@@ -103,6 +98,7 @@ call plug#begin('~/.vim/plugged')
   " Plug 'vim-scripts/increment.vim--Avadhanula'
   Plug 'mMontu/increment.vim--Avadhanula'
 
+  " compare character wise with vimdiff
   Plug 'rickhowe/diffchar.vim'
 
 " Initialize plugin system
@@ -122,8 +118,8 @@ augroup vimrcEx " {{{
   au!
 
   " relativenumber and cursorline only in current window
-  autocmd BufEnter,WinEnter *                           setlocal    cursorline
-  autocmd BufLeave,WinLeave *                           setlocal  nocursorline
+  " autocmd BufEnter,WinEnter *                           setlocal    cursorline
+  " autocmd BufLeave,WinLeave *                           setlocal  nocursorline
   autocmd BufEnter,WinEnter * if &filetype !=# 'help' | setlocal    relativenumber | endif
   autocmd BufLeave,WinLeave * if &filetype !=# 'help' | setlocal  norelativenumber | endif
 
@@ -144,6 +140,11 @@ augroup END
 
 " Options:
 " Other Options: {{{
+
+if has("patch-8.1.0360")
+    set diffopt+=internal,algorithm:patience
+endif
+
 set wildchar=<Tab> wildcharm=<C-Z> wildmenu wildmode=full
 
 " set listchars=tab:»·,trail:·,eol:$
@@ -178,7 +179,7 @@ set guioptions-=T    " keine Toolbar per default. Siehe <S-F11> unten
 
 set nrformats-=octal  " don't use octal in case of leading 0
 
-set scrolloff=0       " no scroll offset at top or bottom
+set scrolloff=3       " scroll offset at top or bottom
 set sidescrolloff=5   " scroll offset at left or right
 
 set history=50        " keep 50 lines of command line history
@@ -241,14 +242,17 @@ function! MyStatusline(full)
     setlocal statusline+=%{substitute(&ff\,'\\(.\\).\\+'\,'\\1'\,'')}           " file format
     setlocal statusline+=\ %{&enc}        " encoding
     setlocal statusline+=\ %{&ft}         " file type
-    setlocal statusline+=%#ToDo#          " change coloring
+    setlocal statusline+=\                " a space
+    setlocal statusline+=%#StatusLine#   " change coloring
+    " setlocal statusline+=%#ToDo#          " change coloring
     setlocal statusline+=\ L%04l          " cursor position: 4 digits line   number
     setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
     setlocal statusline+=\ %02p%%         " cursor position: percent of file
     setlocal statusline+=\ #%02n          " cursor position: 2 digits buffer number
     setlocal statusline+=\                " a space
-    setlocal statusline+=%#SpecialChar#   " change coloring
+    " setlocal statusline+=%#SpecialChar#   " change coloring
     setlocal statusline+=%{VimBuddy()}    " fun
+    setlocal statusline+=\                " a space
   endif
 endfunction
 
@@ -266,7 +270,7 @@ function! StatuslineGitBranch()
   endif
 endfunction
 
-call MyStatusline(1)
+" call MyStatusline(1)
 augroup myStatusline
   autocmd!
   autocmd BufEnter,WinEnter * :call MyStatusline(1)
@@ -332,7 +336,7 @@ nnoremap <F9> :echo "hi<" .  synIDattr(            synID(line("."),col("."),1)  
            \ .               synIDattr(            synID(line("."),col("."),0)  ,"name") . "> lo<"
            \ .               synIDattr(synIDtrans( synID(line("."),col("."),1) ),"name") . ">"<CR>
 " fun
-nnoremap <silent> <F10> :Matrix<CR>
+nnoremap <silent> <F10> :noautocmd Matrix<CR>
 " fullscreen shell.vim; work around bug where the statusline disappears
 nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline(1)<cr>
 nnoremap <silent> <S-F11> :if &guioptions=~'\Cm'<bar>set guioptions-=m<bar>set guioptions-=T<bar>set guioptions-=r<bar>else<bar>set guioptions+=m<bar>set guioptions+=T<bar>set guioptions+=r<bar>endif<cr>
@@ -387,6 +391,8 @@ onoremap <silent>ii :<C-u>call IndTxtObj(1)<CR>
 " }}}
 
 " Other Mappings: {{{
+" similar to C, and Y is already yy
+nnoremap Y y$
 " center when searching next/previous
 nnoremap n nzz
 nnoremap N Nzz
@@ -478,7 +484,7 @@ nnoremap <leader>bof :BindBothOff<CR>
 " also go to last column, not only line on ''
 nnoremap ' `
 " save with ctrl+s
-nnoremap <c-s> :w<cr>
+nnoremap <c-s> :update<cr>
 " help
 nnoremap <leader>h :he<cr><c-w>L:help 
 " edit .vimrc
@@ -500,7 +506,7 @@ inoremap { {}<c-g>U<left>
 " KnoP Settings: {{{
 " let g:knopLhsQuickfix=0
 let g:knopRhsQuickfix=1
-" let g:knopVerbose=1
+let g:knopVerbose=0
 " let g:knopNoVerbose=0
 " let g:knopShortenQFPath=0
 " }}}
@@ -517,7 +523,7 @@ let g:knopRhsQuickfix=1
 " let g:rapidCommentIndent=0
 " let g:rapidCommentTextObject=0
 " let g:rapidFormatComments=1
-let g:rapidAutoComment=0
+" let g:rapidAutoComment=0
 " let g:rapidAutoCorrCfgLineEnd=1
 " let g:rapidMoveAroundKeyMap=2
 " let g:rapidGoDefinitionKeyMap=1
@@ -556,10 +562,11 @@ let g:rapidSpaceIndent=0
 " let g:krlEndwiseUpperCase=1
 " let g:krlShortenQFPath=0
 " let g:krlNoCommentIndent=0
-" let g:krlCommentIndent=0
+" let g:krlIndentBetweenDef = 0
+let g:krlCommentIndent=1
 " let g:krlCommentTextObject=0
 " let g:krlFormatComments=0
-let g:krlAutoComment=0
+" let g:krlAutoComment=0
 " let g:krlMoveAroundKeyMap=0
 " let g:krlGoDefinitionKeyMap=1
 " nnoremap gd gd
@@ -607,6 +614,7 @@ colorscheme tortusless
 " 
 " colorscheme ir_black
 "
+" colorscheme mustang
 " colorscheme anokha
 " colorscheme BusyBee
 " colorscheme edark

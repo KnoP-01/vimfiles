@@ -1,12 +1,16 @@
 " Kuka Robot Language file type plugin for Vim
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
-" Version: 2.2.1
-" Last Change: 21. Feb 2020
+" Version: 2.2.2
+" Last Change: 06. Jul 2020
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
+"
+" TODO: - endwise add skip, ptp_spline, TIME_BLOCK and CONST_VEL
+"       - set buftype=nofile bufhidden=delete instead of temp file for altered
+"         quick fix
 "
 " ToDo's {{{
 " BUG:  - matchit fold, text object fold doesn't work
@@ -1787,7 +1791,10 @@ if exists("loaded_matchit") " depends on matchit (or matchup)
         \.'^\s*\<switch\>.*:^\s*\<case\>.*:^\s*\<default\>.*:^\s*\<endswitch\>.*,'
         \.'^\s*\(global\s\+\)\?\<def\(fct\)\?\>.*:^\s*\<resume\>.*:^\s*\<return\>.*:^\s*\<end\(fct\)\?\>.*,'
         \.'^\s*\<defdat\>.*:^\s*\<enddat\>.*,'
-        \.'^\s*\<spline\>.*:^\s*\<endspline\>.*,'
+        \.'^\s*\<\(ptp_\)\?spline\>.*:^\s*\<endspline\>.*,'
+        \.'^\s*\<skip\>.*:^\s*\<endskip\>.*,'
+        \.'^\s*\<time_block\s\+start\>.*:^\s*\<time_block\s\+part\>.*:^\s*\<time_block\s\+end\>.*,'
+        \.'^\s*\<const_vel\s\+start\>.*:^\s*\<const_vel\s\+end\>.*,'
         \.'\<fold\>:\<endfold\>'
         " \.'^\s*;\s*\<fold\>.*:^\s*;\s*\<endfold\>.*'    " doesn't work because of syntax item krlFoldComment
   let b:match_ignorecase = 1 " KRL does ignore case
