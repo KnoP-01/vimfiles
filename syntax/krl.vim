@@ -2,13 +2,14 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 03. Jul 2020
+" Last Change: 08. Jul 2020
 " Credits: Thanks for contributions to this to Michael Jagusch
 "          Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
 "
-" TODO: see and use :h :syn-iskeyword
+" TODO: - see and use :h :syn-iskeyword
+"       - give errors meaningful names
 "
 " Note to self:
 " for testing perfomance
