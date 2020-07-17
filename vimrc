@@ -520,7 +520,7 @@ let g:knopVerbose=0
 " let g:rapidEndwiseUpperCase=1
 " let g:rapidGroupName=0
 " let g:rapidNoCommentIndent=0 " undokumentiert
-" let g:rapidCommentIndent=0
+let g:rapidCommentIndent=0
 " let g:rapidCommentTextObject=0
 " let g:rapidFormatComments=1
 " let g:rapidAutoComment=0
@@ -542,7 +542,7 @@ let g:rapidCompleteCustom = [
       \'TASK1/PROGMOD/MainRob3.mod']
 " let g:rapidPathToBodyFiles='d:\daten\scripts\vim_resource\rapid resource\'
 " let g:rapidNoHighLink=1
-" let g:rapidShowError=1
+let g:rapidShowError=0
 " let g:rapidNoIndent=0
 " let g:rapidNoSpaceIndent=1
 let g:rapidSpaceIndent=0
@@ -622,6 +622,9 @@ colorscheme tortusless
 " colorscheme flatlandia
 " colorscheme flattened_dark
 " colorscheme frictionless
+"
+" colorscheme seoul256
+" let g:seoul256_background = 233
 "
 " colorscheme gruvbox
 " highlight Cursor guifg=#00FF00 ctermfg=green

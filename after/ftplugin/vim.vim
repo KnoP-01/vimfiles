@@ -1,5 +1,7 @@
 " delete comment leader (") if J(oin) is used
-setlocal fo+=j fo-=ro
+setlocal fo+=j
+" dont insert comment leader on i_<CR> or o or O
+" setlocal fo-=ro
 
 " the following is done by a modeline
 " set softtabstop=2

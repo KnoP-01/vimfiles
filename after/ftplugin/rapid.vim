@@ -48,4 +48,6 @@ function UnAlignEio()
 endfunction
 command! EioUnAlign call UnAlignEio()
 
+" nnoremap <F6> :syntax on<bar>normal mzgg=G`z<cr>:syntax off<cr>
+
 " vim:sw=2 sts=2 et fdm=marker fmr={{{,}}}
