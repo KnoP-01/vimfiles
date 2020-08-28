@@ -536,9 +536,9 @@ let g:rapidConcealStructs=2
 " let g:rapidCompleteStd = 0
 let g:rapidCompleteCustom = [
       \'TASK1/PROGMOD/Service.mod', 
-      \'TASK3/PROGMOD/CyclicProg.mod'
-      \'TASK1/PROGMOD/MainRob1.mod'
-      \'TASK1/PROGMOD/MainRob2.mod'
+      \'TASK3/PROGMOD/CyclicProg.mod',
+      \'TASK1/PROGMOD/MainRob1.mod',
+      \'TASK1/PROGMOD/MainRob2.mod',
       \'TASK1/PROGMOD/MainRob3.mod']
 " let g:rapidPathToBodyFiles='d:\daten\scripts\vim_resource\rapid resource\'
 " let g:rapidNoHighLink=1
@@ -610,7 +610,9 @@ let g:krlFoldLevel=2
 "
 " colorscheme tortus
 colorscheme tortusless
+" colorscheme highlight
 " colorscheme robotstudio
+" colorscheme vulpo
 " 
 " colorscheme ir_black
 "

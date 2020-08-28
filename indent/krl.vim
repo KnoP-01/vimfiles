@@ -83,11 +83,11 @@ function s:GetKrlIndentIntern() abort
     let l:addShiftwidthPattern .=           '(global\s+)?def(fct|dat)?\s+\w'
     let l:addShiftwidthPattern .=           '|'
   endif
-  let   l:addShiftwidthPattern .=           'if|while|for|loop>'
+  let   l:addShiftwidthPattern .=           'if>|while>|for>|loop>'
   let   l:addShiftwidthPattern .=           '|else>'
   let   l:addShiftwidthPattern .=           '|case>|default>'
   let   l:addShiftwidthPattern .=           '|repeat>'
-  let   l:addShiftwidthPattern .=           '|skip|(ptp_)?spline>'
+  let   l:addShiftwidthPattern .=           '|skip>|(ptp_)?spline>'
   let   l:addShiftwidthPattern .=           '|time_block\s+(start|part)>'
   let   l:addShiftwidthPattern .=           '|const_vel\s+start>'
   let   l:addShiftwidthPattern .=         ')'

@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 13. Jul 2020
+" Last Change: 14. Aug 2020
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -226,7 +226,7 @@ else
   highlight default link rapidRepeat Repeat
   " Label
   syn keyword rapidLabel goto
-  syn match rapidLabel /\c\v^\s*\a\w*\:\ze%([^=]|$)/ contains=rapidConditional,rapidOperator
+  syn match rapidLabel /\c\v^\s*\a\k*\:\ze%([^=]|$)/ contains=rapidConditional,rapidOperator
   highlight default link rapidLabel Label
   " Keyword
   syn keyword rapidKeyword AccSet ActEventBuffer ActUnit Add AliasCamera AliasIO AliasIOReset BitClear BitSet BookErrNo BrakeCheck
@@ -359,7 +359,7 @@ else
   " }}}
 
   " Function {{{
-  syn match rapidFunction contains=rapidBuildInFunction /\v\c%(<(proc|module)\s+)@10<![a-zA-Z_]\w+ *\(/me=e-1
+  syn match rapidFunction contains=rapidBuildInFunction /\v\c%(<(proc|module)\s+)@10<!<[a-zA-Z_]\k+ *\(/me=e-1
   highlight default link rapidFunction Function
   syn match rapidCallByVar /%\ze[^%]/
   highlight default link rapidCallByVar Function
@@ -534,11 +534,11 @@ else
   if get(g:,'rapidShowError',1)
     "
     " vars or funcs >32 chars are not possible in rapid. a234567890123456789012345
-    syn match rapidErrorIdentifierNameTooLong /\w\{33,}/ containedin=rapidFunction,rapidNames,rapidLabel
+    syn match rapidErrorIdentifierNameTooLong /\k\{33,}/ containedin=rapidFunction,rapidNames,rapidLabel
     highlight default link rapidErrorIdentifierNameTooLong Error
     "
     " a == b + 1
-    syn match rapidErrorShouldBeColonEqual /\c\v%(^\s*%(%(global\s+|task\s+|local\s+)?%(var|pers|const)\s+\w+\s+)?\w+%(\w|\{|,|\}|\+|\-|\*|\/|\.)*\s*)@<=\=/
+    syn match rapidErrorShouldBeColonEqual /\c\v%(^\s*%(%(global\s+|task\s+|local\s+)?%(var|pers|const)\s+\k+\s+)?\k+%(\k|\{|,|\}|\+|\-|\*|\/|\.)*\s*)@<=\=/
     highlight default link rapidErrorShouldBeColonEqual Error
     "
     " WaitUntil a==b
@@ -559,7 +559,7 @@ else
     highlight default link rapidErrorMissingOperator Error
     "
     " "for" missing "from"
-    syn match rapidErrorMissingFrom /\c\v^\s*for\s+%(\w[0-9a-zA-Z_.{},*/+-]*\s+from)@!\S+\s+\S+/
+    syn match rapidErrorMissingFrom /\c\v^\s*for\s+%(\k[0-9a-zA-Z_.{},*/+-]*\s+from)@!\S+\s+\S+/
     highlight default link rapidErrorMissingFrom Error
     "
     "
