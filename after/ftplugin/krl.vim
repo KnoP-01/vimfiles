@@ -5,7 +5,7 @@ nnoremap <F1> :if expand('%')=~'\.dat$'
 			\<bar> endif<CR>
 
 " global substitute
-nmap <leader>gs :set hidden<cr>*N u:cdo s///g<left><left>
+nmap <leader>gs :set hidden<cr>*N<leader>u:cdo s///g<left><left>
 
 " indention settings
 " setlocal softtabstop=4

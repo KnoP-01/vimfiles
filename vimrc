@@ -141,10 +141,12 @@ augroup END
 " Options:
 " Other Options: {{{
 
+" better diff
 if has("patch-8.1.0360")
     set diffopt+=internal,algorithm:patience
 endif
 
+" 'wildmenu'
 set wildchar=<Tab> wildcharm=<C-Z> wildmenu wildmode=full
 
 " set listchars=tab:»·,trail:·,eol:$
@@ -166,7 +168,7 @@ if has("win32")
   set guioptions+=!     " don't open cmd.exe-window on windows in case of :!
 endif
 
-set guioptions+=a     " put visually selected text into * register (gui only)
+set guioptions+=a         " put visually selected text into * register (gui only)
 set clipboard=autoselect  " same for terminals
 
 set guioptions-=r     " no right scroll bar. Siehe <S-F11> unten
@@ -206,7 +208,8 @@ set display+=lastline " show more of the line in case of wrap
 set noeb                  " no error bell
 set novb                  " no visual bell
 
-set browsedir=buffer      " start browsing at dir of current buffer
+" I don't use browse
+" set browsedir=buffer      " start browsing at dir of current buffer
 
 set mouse=a               " enable mouse in normal, visual, insert and commnd-line mode
 set mousemodel=extend     " exend selection on right click
@@ -223,6 +226,8 @@ set shiftround            " Round indent to multiple of 'shiftwidth'.
 set nojoinspaces          " ein statt 2 spaces nach "saetzen" (nach . ! ?)
 
 set winaltkeys=no         " disable menu with alt. necessary for <A-x> mappings
+
+set splitright            " vertival split opens new window to the right
 " }}}
 
 " Statusline: {{{
@@ -391,9 +396,17 @@ onoremap <silent>ii :<C-u>call IndTxtObj(1)<CR>
 " }}}
 
 " Other Mappings: {{{
-" similar to C, and Y is already yy
+" don't break undo and repeat with left/right arrow in insert mode
+inoremap <left> <c-g>U<left>
+inoremap <right> <c-g>U<right>
+" make Y similar to C, and D. Original Y is already yy
 nnoremap Y y$
+" make use of ctrl-q
+nnoremap <c-q> :qa<cr>
+
 " center when searching next/previous
+nnoremap * *zz
+nnoremap # #zz
 nnoremap n nzz
 nnoremap N Nzz
 " center when going to line #
@@ -458,18 +471,18 @@ nnoremap <silent> <A-C-Right>  10<C-W>>
 " Swap v and CTRL-V, because Block mode is more useful that Visual mode
 nnoremap    v   <C-V>
 nnoremap <C-V>     v
-vnoremap    v   <C-V>
-vnoremap <C-V>     v
+xnoremap    v   <C-V>
+xnoremap <C-V>     v
 
 " dragvisuals.vim
-vmap <expr> <Left>  DVB_Drag('left')
-vmap <expr> <C-S-H> DVB_Drag('left')
-vmap <expr> <Down>  DVB_Drag('down')
-vmap <expr> <C-S-J> DVB_Drag('down')
-vmap <expr> <Up>    DVB_Drag('up')
-vmap <expr> <C-S-K> DVB_Drag('up')
-vmap <expr> <Right> DVB_Drag('right')
-vmap <expr> <C-S-L> DVB_Drag('right')
+xmap <expr> <Left>  DVB_Drag('left')
+xmap <expr> <C-S-H> DVB_Drag('left')
+xmap <expr> <Down>  DVB_Drag('down')
+xmap <expr> <C-S-J> DVB_Drag('down')
+xmap <expr> <Up>    DVB_Drag('up')
+xmap <expr> <C-S-K> DVB_Drag('up')
+xmap <expr> <Right> DVB_Drag('right')
+xmap <expr> <C-S-L> DVB_Drag('right')
 " vmap  <expr>  D DVB_Duplicate() " default
 
 " short for :Align
@@ -542,7 +555,7 @@ let g:rapidCompleteCustom = [
       \'TASK1/PROGMOD/MainRob3.mod']
 " let g:rapidPathToBodyFiles='d:\daten\scripts\vim_resource\rapid resource\'
 " let g:rapidNoHighLink=1
-let g:rapidShowError=0
+" let g:rapidShowError=0
 " let g:rapidNoIndent=0
 " let g:rapidNoSpaceIndent=1
 let g:rapidSpaceIndent=0

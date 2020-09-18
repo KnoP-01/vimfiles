@@ -16,3 +16,4 @@ setlocal softtabstop=4
 setlocal expandtab
 setlocal shiftwidth=4
 
+setlocal conceallevel=2

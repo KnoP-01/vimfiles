@@ -1,6 +1,6 @@
 
 " global substitute
-nmap <leader>gs :set hidden<cr>*N u:cdo s///g<left><left>
+nmap <leader>gs :set hidden<cr>*N<leader>u:cdo s///g<left><left>
 
 " keyword lookup with K
 if has("win32")

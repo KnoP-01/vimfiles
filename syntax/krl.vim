@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 14. Aug 2020
+" Last Change: 07. Sep 2020
 " Credits: Thanks for contributions to this to Michael Jagusch
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -113,7 +113,7 @@ highlight default link krlGeomOperator Operator
 " Type, StorageClass and Typedef {{{
 " any type (preceded by 'decl')
 " TODO optimize performance
-syn match krlAnyType /\v%(%(DECL\s+|STRUC\s+|ENUM\s+)|%(GLOBAL\s+)|%(CONST\s+)|%(DEFFCT\s+))+\w+>/ contains=krlStorageClass,krlType,krlTypedef
+syn match krlAnyType /\v%(%(DECL\s+|STRUC\s+|ENUM\s+)|%(GLOBAL\s+)|%(CONST\s+)|%(DEFFCT\s+))+\k+>/ contains=krlStorageClass,krlType,krlTypedef
 highlight default link krlAnyType Type
 " Simple data types
 syn keyword krlType bool char real int containedin=krlAnyType
@@ -136,7 +136,7 @@ syn match krlParamdef /[:]\s*out\>/
 highlight default link krlParamdef StorageClass
 " Not a typedef but I like to have those highlighted
 " different then types, structures or strorage classes
-syn match krlTypedef /\c\v<DEFFCT>(\s+\w+(\[\d+(,\d+){,2}\])?\s+\w+\s*\()@=/
+syn match krlTypedef /\c\v<DEFFCT>(\s+\k+(\[\d+(,\d+){,2}\])?\s+\k+\s*\()@=/
 " syn keyword krlTypedef DEFFCT
 syn keyword krlTypedef DEF ENDFCT DEFDAT ENDDAT
 syn match krlTypedef /^\s*END\>/
@@ -173,7 +173,7 @@ highlight default link krlSpecialChar SpecialChar
 " syn region krlSingleQuoteString start=/'/ end=/'/ oneline contained
 " highlight default link krlSingleQuoteString String
 " Enum
-syn match krlEnumVal /#\s*\a\w*/ containedin=krlStructVal
+syn match krlEnumVal /#\s*\a\k*/ containedin=krlStructVal
 highlight default link krlEnumVal Constant
 " }}} Constant values
 
@@ -284,7 +284,7 @@ syn keyword krlRepeat for to step endfor while endwhile repeat until loop endloo
 highlight default link krlRepeat Repeat
 " Label
 syn keyword krlLabel goto
-syn match krlLabel /^\s*\w\+:\ze\s*\%(;.*\)\?$/
+syn match krlLabel /^\s*\k\+:\ze\s*\%(;.*\)\?$/
 highlight default link krlLabel Label
 " Keyword
 syn keyword krlKeyword anin anout digin
@@ -387,7 +387,7 @@ endif
 " }}} BuildInFunction
 
 " Function {{{
-syn match krlFunction /[a-zA-Z_]\w* *(/me=e-1 contains=krlBuildInFunction
+syn match krlFunction /[a-zA-Z_]\k* *(/me=e-1 contains=krlBuildInFunction
 highlight default link krlFunction Function
 " }}} Function
 
@@ -396,7 +396,7 @@ if get(g:,'krlShowError',1)
   " some more or less common typos
   "
   " vars or funcs >24 chars are not possible in krl. a234567890123456789012345
-  syn match krlError0 /\w\{25,}/ containedin=krlFunction,krlNames,krlLabel,krlAnyType,krlEnumVal,krlSysvars
+  syn match krlError0 /\k\{25,}/ containedin=krlFunction,krlNames,krlLabel,krlAnyType,krlEnumVal,krlSysvars
   "
   " should be interrupt (on|off) \w+
   syn match krlError1 /\vinterrupt[ \t(]+[_$a-zA-Z0-9]+[_$a-zA-Z0-9.\[\]()+\-*/]*[ \t)]+o%(n|ff)>/
@@ -423,8 +423,8 @@ if get(g:,'krlShowError',1)
   " a := b + 1
   "   ||
   syn match krlError7 /\v%(^\s*%(return|wait\s+for|if|while|until|%(global\s+)?interrupt\s+decl)>[^;]+[^;])@1<!%(^\s*[_$a-zA-Z]+[_$a-zA-Z0-9.\[\],+\-*/]*\s*)@<=[:=]\=/
-  syn match krlError7 /\v\c%(^\s*%(decl\s+)%(global\s+)?%(const\s+)?\w+\s+\w+\s*)@<=[:=]\=/
-  syn match krlError7 /\v\c%(^\s*%(decl\s+)?%(global\s+)?%(const\s+)?%(bool\s+|int\s+|real\s+|char\s+)\w+\s*)@<=[:=]\=/
+  syn match krlError7 /\v\c%(^\s*%(decl\s+)%(global\s+)?%(const\s+)?\k+\s+\k+\s*)@<=[:=]\=/
+  syn match krlError7 /\v\c%(^\s*%(decl\s+)?%(global\s+)?%(const\s+)?%(bool\s+|int\s+|real\s+|char\s+)\k+\s*)@<=[:=]\=/
   "
   " this one is tricky. Make sure this does not match trigger instructions; OK, next try, now search for false positives
   " TODO optimize performance
