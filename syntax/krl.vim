@@ -113,7 +113,7 @@ highlight default link krlGeomOperator Operator
 " Type, StorageClass and Typedef {{{
 " any type (preceded by 'decl')
 " TODO optimize performance
-syn match krlAnyType /\v%(%(DECL\s+|STRUC\s+|ENUM\s+)|%(GLOBAL\s+)|%(CONST\s+)|%(DEFFCT\s+))+\k+>/ contains=krlStorageClass,krlType,krlTypedef
+syn match krlAnyType /\v%(%(DECL\s+|STRUC\s+|ENUM\s+)|%(GLOBAL\s+)|%(CONST\s+)|%(DEFFCT\s+))+\w+>/ contains=krlStorageClass,krlType,krlTypedef
 highlight default link krlAnyType Type
 " Simple data types
 syn keyword krlType bool char real int containedin=krlAnyType
@@ -136,7 +136,7 @@ syn match krlParamdef /[:]\s*out\>/
 highlight default link krlParamdef StorageClass
 " Not a typedef but I like to have those highlighted
 " different then types, structures or strorage classes
-syn match krlTypedef /\c\v<DEFFCT>(\s+\k+(\[\d+(,\d+){,2}\])?\s+\k+\s*\()@=/
+syn match krlTypedef /\c\v<DEFFCT>(\s+\w+(\[\d+(,\d+){,2}\])?\s+\w+\s*\()@=/
 " syn keyword krlTypedef DEFFCT
 syn keyword krlTypedef DEF ENDFCT DEFDAT ENDDAT
 syn match krlTypedef /^\s*END\>/
@@ -173,7 +173,7 @@ highlight default link krlSpecialChar SpecialChar
 " syn region krlSingleQuoteString start=/'/ end=/'/ oneline contained
 " highlight default link krlSingleQuoteString String
 " Enum
-syn match krlEnumVal /#\s*\a\k*/ containedin=krlStructVal
+syn match krlEnumVal /#\s*\a\w*/ containedin=krlStructVal
 highlight default link krlEnumVal Constant
 " }}} Constant values
 
@@ -284,7 +284,7 @@ syn keyword krlRepeat for to step endfor while endwhile repeat until loop endloo
 highlight default link krlRepeat Repeat
 " Label
 syn keyword krlLabel goto
-syn match krlLabel /^\s*\k\+:\ze\s*\%(;.*\)\?$/
+syn match krlLabel /^\s*\w\+:\ze\s*\%(;.*\)\?$/
 highlight default link krlLabel Label
 " Keyword
 syn keyword krlKeyword anin anout digin

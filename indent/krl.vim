@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 12. Jul 2020
+" Last Change: 20. Sep 2020
 " Credits: Based on indent/vim.vim
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -80,8 +80,8 @@ function s:GetKrlIndentIntern() abort
   " Define add 'shiftwidth' pattern
   let   l:addShiftwidthPattern  = '\c\v^\s*('
   if get(g:,'krlIndentBetweenDef',1)
-    let l:addShiftwidthPattern .=           '(global\s+)?def(fct|dat)?\s+\w'
-    let l:addShiftwidthPattern .=           '|'
+    let l:addShiftwidthPattern .=           '(global\s+)?def(fct|dat)?\s+\$?\w'
+    let l:addShiftwidthPattern .=           '|<'
   endif
   let   l:addShiftwidthPattern .=           'if>|while>|for>|loop>'
   let   l:addShiftwidthPattern .=           '|else>'
@@ -96,7 +96,7 @@ function s:GetKrlIndentIntern() abort
   let   l:subtractShiftwidthPattern  = '\c\v^\s*('
   if get(g:,'krlIndentBetweenDef',1)
     let l:subtractShiftwidthPattern .=           'end(fct|dat)?>'
-    let l:subtractShiftwidthPattern .=           '|'
+    let l:subtractShiftwidthPattern .=           '|<'
   endif
   let   l:subtractShiftwidthPattern .=           'end(if|while|for|loop)>'
   let   l:subtractShiftwidthPattern .=           '|else>'

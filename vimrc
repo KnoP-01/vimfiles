@@ -101,6 +101,15 @@ call plug#begin('~/.vim/plugged')
   " compare character wise with vimdiff
   Plug 'rickhowe/diffchar.vim'
 
+  " markdown
+  Plug 'godlygeek/tabular'
+  let g:vim_markdown_folding_disabled = 1
+  Plug 'plasticboy/vim-markdown'
+  " let g:instant_markdown_browser = "firefox --new-window"
+  " let g:instant_markdown_python = 1
+  " let g:instant_markdown_logfile = '.\instant_markdown.log'
+  " Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
+
 " Initialize plugin system
 call plug#end()
 " }}}
@@ -502,6 +511,8 @@ nnoremap <c-s> :update<cr>
 nnoremap <leader>h :he<cr><c-w>L:help 
 " edit .vimrc
 nnoremap <leader>e :edit $HOME/.vim/vimrc<cr>
+" edit mylearnvim.txt
+nnoremap <leader>l :edit $HOME/.vim/mylearnvim.md<cr>
 " <leader><leader> is more convenient than <C-^> or <C-6>
 nnoremap <leader><leader> <C-^>
 " Close all other splits

@@ -1,6 +1,7 @@
 set textwidth=78
 call matchadd('colorcolumn','\%81v')
 
+hi link mkdLineBreak    String
 if (get(g:,'colors_name'," ")=="tortus" || get(g:,'colors_name'," ")=="tortusless") 
 	" hi link helpExample    Operator
 	" hi link helpCommand    Operator
