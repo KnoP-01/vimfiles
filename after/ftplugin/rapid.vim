@@ -7,12 +7,12 @@ if has("win32")
   let g:rapidPathToSumatraPDF='c:\apps\SumatraPDF\SumatraPDF.exe'
   let g:rapidPathToRefGuide='d:\daten\doku\abb\RefGuide_RW6.10\abb_reference_inst_func_dat.pdf'
   nnoremap <buffer> <silent> K :let rapidCmd=
-        \"! start '" . 
-        \g:rapidPathToSumatraPDF . 
-        \"' -named-dest \\\"" . 
-        \expand("<cword>") . 
-        \" -\\\" '" . 
-        \g:rapidPathToRefGuide . 
+        \"! start '" .
+        \g:rapidPathToSumatraPDF .
+        \"' -named-dest \\\"" .
+        \expand("<cword>") .
+        \" -\\\" '" .
+        \g:rapidPathToRefGuide .
         \"'"<bar>
         \silent execute rapidCmd<cr>
 endif
@@ -28,7 +28,7 @@ nnoremap <leader>abb  :Align! p0P0llrlrlrlrlrlrlrllllrlrlrlrlrlrl \. , \[ \]<cr>
 xnoremap <leader>abb  :Align! p0P0llrlrlrlrlrlrlrllllrlrlrlrlrlrl \. , \[ \]<cr>
 
 " align EIO.cfg for readability
-function AlignEio()
+function AlignEio() abort
   %s/\\\s*\n\s\+/\\ /
   g/^\s*$/d
   normal gg
@@ -40,7 +40,7 @@ endfunction
 command! EioAlign call AlignEio()
 
 " undo align EIO.cfg for readability
-function UnAlignEio()
+function UnAlignEio() abort
   g/\n[^#]/s/\([^#]\)$/\1\r/
   g/\\\s*\S/s/\\/\\\r/g
   %s/\s\s\+-/ -/g
@@ -48,361 +48,498 @@ function UnAlignEio()
 endfunction
 command! EioUnAlign call UnAlignEio()
 
+if exists('g:loaded_switch')
 
-let b:rapidSwitchFwd =
-      \ [
-      \   {
-      \     '\c\<inpos20\>'     : 'inpos50',
-      \     '\c\<inpos50\>'     : 'inpos100',
-      \     '\c\<inpos100\>'    : 'stoptime0_5',
-      \     '\c\<stoptime0_5\>' : 'stoptime1_0',
-      \     '\c\<stoptime1_0\>' : 'stoptime1_5',
-      \     '\c\<stoptime1_5\>' : 'fllwtime0_5',
-      \     '\c\<fllwtime0_5\>' : 'fllwtime1_0',
-      \     '\c\<fllwtime1_0\>' : 'fllwtime1_5',
-      \     '\c\<fllwtime1_5\>' : 'inpos20',
-      \   },
-      \   {
-      \     '\c\<fine\>'  : 'z10',
-      \     '\c\<z10\>'   : 'z50',
-      \     '\c\<z50\>'   : 'z100',
-      \     '\c\<z100\>'  : 'z200',
-      \     '\c\<z200\>'  : 'fine',
-      \   },
-      \   {
-      \     '\c\<z\d\+\>' : 'z100',
-      \   },
-      \   {
-      \     '\c\<v20\>'   : 'v50',
-      \     '\c\<v50\>'   : 'v100',
-      \     '\c\<v100\>'  : 'v200',
-      \     '\c\<v200\>'  : 'v500',
-      \     '\c\<v500\>'  : 'v1500',
-      \     '\c\<v1500\>' : 'v2500',
-      \     '\c\<v2500\>' : 'v5000',
-      \     '\c\<v5000\>' : 'v7000',
-      \     '\c\<v7000\>' : 'vmax',
-      \     '\c\<vmax\>'  : 'v20',
-      \   },
-      \   {
-      \     '\c\<v\d\+\>' : 'v1500',
-      \   },
-      \   {
-      \     '\c\<vrot1\>'   : 'vrot2',
-      \     '\c\<vrot2\>'   : 'vrot5',
-      \     '\c\<vrot5\>'   : 'vrot10',
-      \     '\c\<vrot10\>'  : 'vrot20',
-      \     '\c\<vrot20\>'  : 'vrot50',
-      \     '\c\<vrot50\>'  : 'vrot1',
-      \   },
-      \   {
-      \     '\c\<vlin10\>'  : 'vlin20',
-      \     '\c\<vlin20\>'  : 'vlin50',
-      \     '\c\<vlin50\>'  : 'vlin100',
-      \     '\c\<vlin100\>' : 'vlin200',
-      \     '\c\<vlin200\>' : 'vlin500',
-      \     '\c\<vlin500\>' : 'vlin10',
-      \   },
-      \ ]
-let b:rapidSwitchBwd =
-      \ [
-      \   {
-      \     '\c\<fllwtime1_5\>' : 'fllwtime1_0' , 
-      \     '\c\<fllwtime1_0\>' : 'fllwtime0_5' , 
-      \     '\c\<fllwtime0_5\>' : 'stoptime1_5' , 
-      \     '\c\<stoptime1_5\>' : 'stoptime1_0' , 
-      \     '\c\<stoptime1_0\>' : 'stoptime0_5' , 
-      \     '\c\<stoptime0_5\>' : 'inpos100'    , 
-      \     '\c\<inpos100\>'    : 'inpos50'     , 
-      \     '\c\<inpos50\>'     : 'inpos20'     , 
-      \     '\c\<inpos20\>'     : 'fllwtime1_5' , 
-      \   },
-      \   {
-      \     '\c\<z200\>'  : 'z100', 
-      \     '\c\<z100\>'  : 'z50',  
-      \     '\c\<z50\>'   : 'z10',  
-      \     '\c\<z10\>'   : 'fine', 
-      \     '\c\<fine\>'  : 'z200', 
-      \   },
-      \   {
-      \     '\c\<z\d\+\>' : 'z100',
-      \   },
-      \   {
-      \     '\c\<vmax\>'  : 'v7000',
-      \     '\c\<v7000\>' : 'v5000',
-      \     '\c\<v5000\>' : 'v2500',
-      \     '\c\<v2500\>' : 'v1500',
-      \     '\c\<v1500\>' : 'v500', 
-      \     '\c\<v500\>'  : 'v200', 
-      \     '\c\<v200\>'  : 'v100', 
-      \     '\c\<v100\>'  : 'v50',  
-      \     '\c\<v50\>'   : 'v20',  
-      \     '\c\<v20\>'   : 'vmax', 
-      \   },
-      \   {
-      \     '\c\<v\d\+\>' : 'v1500',
-      \   },
-      \   {
-      \     '\c\<vrot50\>'  : 'vrot20',
-      \     '\c\<vrot20\>'  : 'vrot10',
-      \     '\c\<vrot10\>'  : 'vrot5', 
-      \     '\c\<vrot5\>'   : 'vrot2', 
-      \     '\c\<vrot2\>'   : 'vrot1', 
-      \     '\c\<vrot1\>'   : 'vrot50',
-      \   },
-      \   {
-      \     '\c\<vlin500\>' : 'vlin200',
-      \     '\c\<vlin200\>' : 'vlin100',
-      \     '\c\<vlin100\>' : 'vlin50', 
-      \     '\c\<vlin50\>'  : 'vlin20', 
-      \     '\c\<vlin20\>'  : 'vlin10', 
-      \     '\c\<vlin10\>'  : 'vlin500',
-      \   },
-      \ ]
+  if !exists('s:RapidUseCustomDictForSwitch')
+    function s:RapidUseCustomDictForSwitch(in) abort
+      return    a:in =~ '\c\v^(inpos|stoptime\d_|fllwtime\d_)\d+$'
+            \|| a:in =~ '\c\v^(fine|z\d+|v\d+|vmax|vrot\d+|vlin\d+)$'
+    endfunction
 
-function! RapidUseCustomDictForSwitch(in)
-  return    a:in =~ '\c\v^(inpos|stoptime\d_|fllwtime\d_)\d+$'
-        \|| a:in =~ '\c\v^(fine|z\d+|v\d+|vmax|vrot\d+|vlin\d+)$'
-endfunction
+    function s:RapidSwitch() abort
+      if s:RapidUseCustomDictForSwitch(expand('<cword>'))
+        silent call switch#Switch({'definitions': b:rapidSwitchFwd})
+        silent! call repeat#set(":RapidSwitch\<cr>")
+      else
+        silent call switch#Switch()
+        silent! call repeat#set(":Switch\<cr>")
+      endif
+    endfunction
 
-command! RapidSwitch call RapidSwitch()
-function! RapidSwitch()
-  if RapidUseCustomDictForSwitch(expand('<cword>'))
-    silent call switch#Switch({'definitions': b:rapidSwitchFwd})
-    silent! call repeat#set(":RapidSwitch\<cr>")
-  else
-    silent call switch#Switch()
-    silent! call repeat#set(":Switch\<cr>")
+    function s:RapidSwitchReverse() abort
+      if s:RapidUseCustomDictForSwitch(expand('<cword>'))
+        silent call switch#Switch({'definitions': b:rapidSwitchBwd})
+        silent! call repeat#set(":RapidSwitchReverse\<cr>")
+      else
+        silent call switch#Switch({'reverse': 1})
+        silent! call repeat#set(":SwitchReverse\<cr>")
+      endif
+    endfunction
+    command RapidSwitch call s:RapidSwitch()
+    command RapidSwitchReverse call s:RapidSwitchReverse()
   endif
-endfunction
 
-command! RapidSwitchReverse call RapidSwitchReverse()
-function! RapidSwitchReverse()
-  if RapidUseCustomDictForSwitch(expand('<cword>'))
-    silent call switch#Switch({'definitions': b:rapidSwitchBwd})
-    silent! call repeat#set(":RapidSwitchReverse\<cr>")
-  else
-    silent call switch#Switch({'reverse': 1})
-    silent! call repeat#set(":SwitchReverse\<cr>")
-  endif
-endfunction
+  nnoremap <buffer> <silent> <Plug>RapidSwitchFwd :RapidSwitch<cr>
+  nnoremap <buffer> <silent> <Plug>RapidSwitchBwd :RapidSwitchReverse<cr>
+  nmap gs <Plug>RapidSwitchFwd
+  nmap ga <Plug>RapidSwitchBwd
 
-nnoremap <silent> <Plug>RapidSwitchFwd :RapidSwitch<cr>
-nnoremap <silent> <Plug>RapidSwitchBwd :RapidSwitchReverse<cr>
-nmap gs <Plug>RapidSwitchFwd
-nmap ga <Plug>RapidSwitchBwd
+  let b:rapidSwitchFwd =
+        \ [
+        \   {
+        \     '\c\<inpos20\>'     : 'inpos50',
+        \     '\c\<inpos50\>'     : 'inpos100',
+        \     '\c\<inpos100\>'    : 'stoptime0_5',
+        \     '\c\<stoptime0_5\>' : 'stoptime1_0',
+        \     '\c\<stoptime1_0\>' : 'stoptime1_5',
+        \     '\c\<stoptime1_5\>' : 'fllwtime0_5',
+        \     '\c\<fllwtime0_5\>' : 'fllwtime1_0',
+        \     '\c\<fllwtime1_0\>' : 'fllwtime1_5',
+        \     '\c\<fllwtime1_5\>' : 'inpos20',
+        \   },
+        \   {
+        \     '\c\<fine\>'  : 'z5',
+        \     '\c\<z5\>'    : 'z10',
+        \     '\c\<z10\>'   : 'z30',
+        \     '\c\<z30\>'   : 'z50',
+        \     '\c\<z50\>'   : 'z100',
+        \     '\c\<z100\>'  : 'z200',
+        \     '\c\<z200\>'  : 'fine',
+        \   },
+        \   {
+        \     '\c\<z\d\+\>' : 'z100',
+        \   },
+        \   {
+        \     '\c\<v5\>'    : 'v10',
+        \     '\c\<v10\>'   : 'v20',
+        \     '\c\<v20\>'   : 'v50',
+        \     '\c\<v50\>'   : 'v100',
+        \     '\c\<v100\>'  : 'v200',
+        \     '\c\<v200\>'  : 'v500',
+        \     '\c\<v500\>'  : 'v1000',
+        \     '\c\<v1000\>' : 'v2000',
+        \     '\c\<v2000\>' : 'v3000',
+        \     '\c\<v3000\>' : 'v5000',
+        \     '\c\<v5000\>' : 'v7000',
+        \     '\c\<v7000\>' : 'vmax',
+        \     '\c\<vmax\>'  : 'v5',
+        \   },
+        \   {
+        \     '\c\<v\d\+\>' : 'v1500',
+        \   },
+        \   {
+        \     '\c\<vrot1\>'   : 'vrot2',
+        \     '\c\<vrot2\>'   : 'vrot5',
+        \     '\c\<vrot5\>'   : 'vrot10',
+        \     '\c\<vrot10\>'  : 'vrot20',
+        \     '\c\<vrot20\>'  : 'vrot50',
+        \     '\c\<vrot50\>'  : 'vrot1',
+        \   },
+        \   {
+        \     '\c\<vlin10\>'  : 'vlin20',
+        \     '\c\<vlin20\>'  : 'vlin50',
+        \     '\c\<vlin50\>'  : 'vlin100',
+        \     '\c\<vlin100\>' : 'vlin200',
+        \     '\c\<vlin200\>' : 'vlin500',
+        \     '\c\<vlin500\>' : 'vlin10',
+        \   },
+        \ ]
 
-let b:switch_custom_definitions =
-      \ [
-      \   {
-      \     '\c\<true\>'  : 'FALSE',
-      \     '\c\<false\>' : 'TRUE',
-      \   },
-      \   {
-      \     '\c\<high\>' : 'low',
-      \     '\c\<low\>'  : 'high',
-      \   },
-      \   {
-      \     '\c\(not\)\@3<! (' : ' not (',
-      \     '\c not ('         : ' (',
-      \   },
-      \   {
-      \     '\c\<and\>' : 'or',
-      \     '\c\<or\>'  : 'xor',
-      \     '\c\<xor\>' : 'and',
-      \   },
-      \   {
-      \     '='  : '>=',
-      \     '>=' : '<=',
-      \     '<=' : '<>',
-      \     '<>' : '=',
-      \   },
-      \   {
-      \     '\c\<div\>' : 'MOD',
-      \     '\c\<mod\>' : 'DIV',
-      \   },
-      \   {
-      \     '\c\v^(\s*)<elseif>\s*$'        : '\1else',
-      \     '\c\v^(\s*)<else>\s*$'        : '\1elseif ',
-      \     '\c\v^(\s*)<elseif>([^!]+)'        : '\1else !\2%',
-      \     '\c\v^(\s*)<else>\s?(\s*)!?(.*)\%'  : '\1elseif\2\3',
-      \   },
-      \   {
-      \     '\c\v^(\s*)<case>([^!]*):'            : '\1default: !\2%',
-      \     '\c\v^(\s*)<default>\s*:(\s*!.*\%)?'  : '\1endtest\2',
-      \     '\c\v^(\s*)<endtest>\s?(\s*)!(.*)\%'  : '\1case\2\3:',
-      \   },
-      \   {
-      \     '\c\<local\>' : 'TASK',
-      \     '\c\<task\>'  : 'LOCAL',
-      \   },
-      \   {
-      \     '\c\<var\>'   : 'PERS',
-      \     '\c\<pers\>'  : 'CONST',
-      \     '\c\<const\>' : 'VAR',
-      \   },
-      \   {
-      \     '\c\v^(\s*Move)J>'                               : '\1AbsJ',
-      \     '\c\v^(\s*Move)AbsJ>'                            : '\1L',
-      \     '\c\v^(\s*Move|\s*Trigg)J(IOs|AO|DO|GO|Sync)?>'  : '\1L\2',
-      \     '\c\v^(\s*Move|\s*Trigg)L(IOs|AO|DO|GO|Sync)?>'  : '\1C\2',
-      \     '\c\v^(\s*Move|\s*Trigg)C(IOs|AO|DO|GO|Sync)?>'  : '\1J\2',
-      \   },
-      \   {
-      \     '\c\v^(\s*Arc)(Adapt|Calc)?([CL])([12])?Start>' : '\1\2\3\4',
-      \     '\c\v^(\s*Arc)(Adapt|Calc)?([CL])([12])?>'      : '\1\2\3\4End',
-      \     '\c\v^(\s*Arc)(Adapt|Calc)?([CL])([12])?End>'   : '\1\2\3\4Start',
-      \   },
-      \   {
-      \     '\c\v^(\s*)(Nut|SpotM?|Calib|DaProcM)L' : '\1\2J',
-      \     '\c\v^(\s*)(Nut|SpotM?|Calib|DaProcM)J' : '\1\2L',
-      \   },
-      \   {
-      \     '\c\v^(\s*)(Cap|Disp|EGMMove|Paint|Search)L' : '\1\2C',
-      \     '\c\v^(\s*)(Cap|Disp|EGMMove|Paint|Search)C' : '\1\2L',
-      \   },
-      \   {
-      \     '\c\<IndAMove\>'  : 'IndCMove',
-      \     '\c\<IndCMove\>'  : 'IndDMove',
-      \     '\c\<IndDMove\>'  : 'IndRMove',
-      \     '\c\<IndRMove\>'  : 'IndAMove',
-      \   },
-      \   {
-      \     '\c\v^(\s*SMove|\s*STrigg)J(DO|GO|Sync)?' : '\1L\2',
-      \     '\c\v^(\s*SMove|\s*STrigg)L(DO|GO|Sync)?' : '\1J\2',
-      \   },
-      \   {
-      \     '\c\<PathRecMoveBwd\>' : 'PathRecMoveFwd',
-      \     '\c\<PathRecMoveFwd\>' : 'PathRecMoveBwd',
-      \   },
-      \   {
-      \     '\c\<StartMove\>'       : 'StartMoveRetry',
-      \     '\c\<StartMoveRetry\>'  : 'StopMove',
-      \     '\c\<StopMove\>'        : 'StopMoveReset',
-      \     '\c\<StopMoveReset\>'   : 'StartMove',
-      \   },
-      \   {
-      \     '\c\<STR_DIGIT\>'  : 'STR_LOWER',
-      \     '\c\<STR_LOWER\>'  : 'STR_UPPER',
-      \     '\c\<STR_UPPER\>'  : 'STR_WHITE',
-      \     '\c\<STR_WHITE\>'  : 'STR_DIGIT',
-      \   },
-      \   {
-      \     '\c\<USINT\>' : 'UINT',
-      \     '\c\<UINT\>'  : 'UDINT',
-      \     '\c\<UDINT\>' : 'ULINT',
-      \     '\c\<ULINT\>' : 'SINT',
-      \     '\c\<SINT\>'  : 'INT',
-      \     '\c\<INT\>'   : 'DINT',
-      \     '\c\<DINT\>'  : 'LINT',
-      \     '\c\<LINT\>'  : 'USINT',
-      \   },
-      \   {
-      \     '\c\<OpAdd\>'  : 'OpSub',
-      \     '\c\<OpSub\>'  : 'OpMult',
-      \     '\c\<OpMult\>' : 'OpDiv',
-      \     '\c\<OpDiv\>'  : 'OpMod',
-      \     '\c\<OpMod\>'  : 'OpAdd',
-      \   },
-      \   {
-      \     '\c\<TRIGG_MODE1\>' : 'TRIGG_MODE2',
-      \     '\c\<TRIGG_MODE2\>' : 'TRIGG_MODE3',
-      \     '\c\<TRIGG_MODE3\>' : 'TRIGG_MODE1',
-      \   },
-      \   {
-      \     '\c\<OP_NO_ROBOT\>'   : 'OP_SERVICE',
-      \     '\c\<OP_SERVICE\>'    : 'OP_PRODUCTION',
-      \     '\c\<OP_PRODUCTION\>' : 'OP_NO_ROBOT',
-      \   },
-      \   {
-      \     '\c\<CT_CONTINUOUS\>'       : 'CT_COUNT_CYCLES',
-      \     '\c\<CT_COUNT_CYCLES\>'     : 'CT_COUNT_CYC_ACTION',
-      \     '\c\<CT_COUNT_CYC_ACTION\>' : 'CT_PERIODICAL',
-      \     '\c\<CT_PERIODICAL\>'       : 'CT_CONTINUOUS',
-      \   },
-      \   {
-      \     '\c\<TP_LATEST\>'       : 'TP_PROGRAM',
-      \     '\c\<TP_PROGRAM\>'      : 'TP_SCREENVIEWER',
-      \     '\c\<TP_SCREENVIEWER\>' : 'TP_LATEST',
-      \   },
-      \   {
-      \     '\c\<STATE_ERROR\>'     : 'STATE_UNDEFINED',
-      \     '\c\<STATE_UNDEFINED\>' : 'STATE_CONNECTED',
-      \     '\c\<STATE_CONNECTED\>' : 'STATE_OPERATING',
-      \     '\c\<STATE_OPERATING\>' : 'STATE_CLOSED',
-      \     '\c\<STATE_CLOSED\>'    : 'STATE_ERROR',
-      \   },
-      \   {
-      \     '\c\<SIGORIG_NONE\>'  : 'SIGORIG_CFG',
-      \     '\c\<SIGORIG_CFG\>'   : 'SIGORIG_ALIAS',
-      \     '\c\<SIGORIG_ALIAS\>' : 'SIGORIG_NONE',
-      \   },
-      \   {
-      \     '\c\<AIO_ABOVE_HIGH\>' : 'AIO_BELOW_HIGH',
-      \     '\c\<AIO_BELOW_HIGH\>' : 'AIO_ABOVE_LOW',
-      \     '\c\<AIO_ABOVE_LOW\>'  : 'AIO_BELOW_LOW',
-      \     '\c\<AIO_BELOW_LOW\>'  : 'AIO_BETWEEN',
-      \     '\c\<AIO_BETWEEN\>'    : 'AIO_OUTSIDE',
-      \     '\c\<AIO_OUTSIDE\>'    : 'AIO_ALWAYS',
-      \     '\c\<AIO_ALWAYS\>'     : 'AIO_ABOVE_HIGH',
-      \   },
-      \   {
-      \     '\c\<SOCKET_CREATED\>'   : 'SOCKET_CONNECTED',
-      \     '\c\<SOCKET_CONNECTED\>' : 'SOCKET_BOUND',
-      \     '\c\<SOCKET_BOUND\>'     : 'SOCKET_LISTENING',
-      \     '\c\<SOCKET_LISTENING\>' : 'SOCKET_CLOSED',
-      \     '\c\<SOCKET_CLOSED\>'    : 'SOCKET_CREATED',
-      \   },
-      \   {
-      \     '\c\<OP_UNDEF\>'    : 'OP_AUTO',
-      \     '\c\<OP_AUTO\>'     : 'OP_MAN_PROG',
-      \     '\c\<OP_MAN_PROG\>' : 'OP_MAN_TEST',
-      \     '\c\<OP_MAN_TEST\>' : 'OP_UNDEF',
-      \   },
-      \   {
-      \     '\c\<RUN_UNDEF\>'      : 'RUN_SIM',
-      \     '\c\<RUN_SIM\>'        : 'RUN_CONT_CYCLE',
-      \     '\c\<RUN_CONT_CYCLE\>' : 'RUN_STEP_MOVE',
-      \     '\c\<RUN_STEP_MOVE\>'  : 'RUN_INSTR_FWD',
-      \     '\c\<RUN_INSTR_FWD\>'  : 'RUN_INSTR_BWD',
-      \     '\c\<RUN_INSTR_BWD\>'  : 'RUN_UNDEF',
-      \   },
-      \   {
-      \     '\c\<EVENT_NONE\>'    : 'EVENT_POWERON',
-      \     '\c\<EVENT_POWERON\>' : 'EVENT_START',
-      \     '\c\<EVENT_START\>'   : 'EVENT_STOP',
-      \     '\c\<EVENT_STOP\>'    : 'EVENT_QSTOP',
-      \     '\c\<EVENT_QSTOP\>'   : 'EVENT_RESTART',
-      \     '\c\<EVENT_RESTART\>' : 'EVENT_RESET',
-      \     '\c\<EVENT_RESET\>'   : 'EVENT_STEP',
-      \     '\c\<EVENT_STEP\>'    : 'EVENT_NONE',
-      \   },
-      \   {
-      \     '\c\<HANDLER_NONE\>' : 'HANDLER_BWD',
-      \     '\c\<HANDLER_BWD\>'  : 'HANDLER_ERR',
-      \     '\c\<HANDLER_ERR\>'  : 'HANDLER_UNDO',
-      \     '\c\<HANDLER_UNDO\>' : 'HANDLER_NONE',
-      \   },
-      \   {
-      \     '\c\<LEVEL_NORMAL\>'  : 'LEVEL_TRAP',
-      \     '\c\<LEVEL_TRAP\>'    : 'LEVEL_SERVICE',
-      \     '\c\<LEVEL_SERVICE\>' : 'LEVEL_NORMAL',
-      \   },
-      \   {
-      \     '\c\<SIGORIG_NONE\>'  : 'SIGORIG_CFG',
-      \     '\c\<SIGORIG_CFG\>'   : 'SIGORIG_ALIAS',
-      \     '\c\<SIGORIG_ALIAS\>' : 'SIGORIG_NONE',
-      \   },
-      \   {
-      \     '\c\<LT\>'    : 'LTEQ',
-      \     '\c\<LTEQ\>'  : 'EQ',
-      \     '\c\<EQ\>'    : 'NOTEQ',
-      \     '\c\<NOTEQ\>' : 'GTEQ',
-      \     '\c\<GTEQ\>'  : 'GT',
-      \     '\c\<GT\>'    : 'LT',
-      \   },
-      \ ]
+  let b:rapidSwitchBwd =
+        \ [
+        \   {
+        \     '\c\<fllwtime1_5\>' : 'fllwtime1_0',
+        \     '\c\<fllwtime1_0\>' : 'fllwtime0_5',
+        \     '\c\<fllwtime0_5\>' : 'stoptime1_5',
+        \     '\c\<stoptime1_5\>' : 'stoptime1_0',
+        \     '\c\<stoptime1_0\>' : 'stoptime0_5',
+        \     '\c\<stoptime0_5\>' : 'inpos100',
+        \     '\c\<inpos100\>'    : 'inpos50',
+        \     '\c\<inpos50\>'     : 'inpos20',
+        \     '\c\<inpos20\>'     : 'fllwtime1_5',
+        \   },
+        \   {
+        \     '\c\<z200\>'  : 'z100',
+        \     '\c\<z100\>'  : 'z50',
+        \     '\c\<z50\>'   : 'z30',
+        \     '\c\<z30\>'   : 'z10',
+        \     '\c\<z10\>'   : 'z5',
+        \     '\c\<z5\>'    : 'fine',
+        \     '\c\<fine\>'  : 'z200',
+        \   },
+        \   {
+        \     '\c\<z\d\+\>' : 'z100',
+        \   },
+        \   {
+        \     '\c\<vmax\>'  : 'v7000',
+        \     '\c\<v7000\>' : 'v5000',
+        \     '\c\<v5000\>' : 'v3000',
+        \     '\c\<v3000\>' : 'v2000',
+        \     '\c\<v2000\>' : 'v1000',
+        \     '\c\<v1000\>' : 'v500',
+        \     '\c\<v500\>'  : 'v200',
+        \     '\c\<v200\>'  : 'v100',
+        \     '\c\<v100\>'  : 'v50',
+        \     '\c\<v50\>'   : 'v20',
+        \     '\c\<v20\>'   : 'v10',
+        \     '\c\<v10\>'   : 'v5',
+        \     '\c\<v5\>'    : 'vmax',
+        \   },
+        \   {
+        \     '\c\<v\d\+\>' : 'v2000',
+        \   },
+        \   {
+        \     '\c\<vrot50\>'  : 'vrot20',
+        \     '\c\<vrot20\>'  : 'vrot10',
+        \     '\c\<vrot10\>'  : 'vrot5',
+        \     '\c\<vrot5\>'   : 'vrot2',
+        \     '\c\<vrot2\>'   : 'vrot1',
+        \     '\c\<vrot1\>'   : 'vrot50',
+        \   },
+        \   {
+        \     '\c\<vlin500\>' : 'vlin200',
+        \     '\c\<vlin200\>' : 'vlin100',
+        \     '\c\<vlin100\>' : 'vlin50',
+        \     '\c\<vlin50\>'  : 'vlin20',
+        \     '\c\<vlin20\>'  : 'vlin10',
+        \     '\c\<vlin10\>'  : 'vlin500',
+        \   },
+        \ ]
 
+  let b:switch_custom_definitions =
+        \ [
+        \   {
+        \     '\c\<true\>'  : 'FALSE',
+        \     '\c\<false\>' : 'TRUE',
+        \   },
+        \   {
+        \     '\c\<high\>' : 'low',
+        \     '\c\<low\>'  : 'high',
+        \   },
+        \   {
+        \     '\c\(not\)\@3<! (' : ' not (',
+        \     '\c not ('         : ' (',
+        \   },
+        \   {
+        \     '\c\<and\>' : 'or',
+        \     '\c\<or\>'  : 'xor',
+        \     '\c\<xor\>' : 'and',
+        \   },
+        \   {
+        \     '='  : '>=',
+        \     '>=' : '<=',
+        \     '<=' : '<>',
+        \     '<>' : '=',
+        \   },
+        \   {
+        \     '\c\<div\>' : 'MOD',
+        \     '\c\<mod\>' : 'DIV',
+        \   },
+        \   {
+        \     '\c\v^(\s*)<elseif>\s*$'            :  '\1else',
+        \     '\c\v^(\s*)<else>\s*$'              :  '\1elseif ',
+        \     '\c\v^(\s*)<elseif>([^!]+)'         :  '\1else !\2%',
+        \     '\c\v^(\s*)<else>\s?(\s*)!?(.*)\%'  :  '\1elseif\2\3',
+        \   },
+        \   {
+        \     '\c\v^(\s*)<case>([^!]*):'            : '\1default: !\2%',
+        \     '\c\v^(\s*)<default>\s*:(\s*!.*\%)?'  : '\1endtest\2',
+        \     '\c\v^(\s*)<endtest>\s?(\s*)!(.*)\%'  : '\1case\2\3:',
+        \   },
+        \   {
+        \     '\c\<local\>' : 'TASK',
+        \     '\c\<task\>'  : 'LOCAL',
+        \   },
+        \   {
+        \     '\c\<var\>'   : 'PERS',
+        \     '\c\<pers\>'  : 'CONST',
+        \     '\c\<const\>' : 'VAR',
+        \   },
+        \   {
+        \     '\c\v^(\s*Move)J>'                               : '\1AbsJ',
+        \     '\c\v^(\s*Move)AbsJ>'                            : '\1L',
+        \     '\c\v^(\s*Move|\s*Trigg)J(IOs|AO|DO|GO|Sync)?>'  : '\1L\2',
+        \     '\c\v^(\s*Move|\s*Trigg)L(IOs|AO|DO|GO|Sync)?>'  : '\1C\2',
+        \     '\c\v^(\s*Move|\s*Trigg)C(IOs|AO|DO|GO|Sync)?>'  : '\1J\2',
+        \   },
+        \   {
+        \     '\c\v^(\s*Arc)(Adapt|Calc)?([CL])([12])?Start>' : '\1\2\3\4',
+        \     '\c\v^(\s*Arc)(Adapt|Calc)?([CL])([12])?>'      : '\1\2\3\4End',
+        \     '\c\v^(\s*Arc)(Adapt|Calc)?([CL])([12])?End>'   : '\1\2\3\4Start',
+        \   },
+        \   {
+        \     '\c\v^(\s*)(Nut|SpotM?|Calib|DaProcM)L' : '\1\2J',
+        \     '\c\v^(\s*)(Nut|SpotM?|Calib|DaProcM)J' : '\1\2L',
+        \   },
+        \   {
+        \     '\c\v^(\s*)(Cap|Disp|EGMMove|Paint|Search)L' : '\1\2C',
+        \     '\c\v^(\s*)(Cap|Disp|EGMMove|Paint|Search)C' : '\1\2L',
+        \   },
+        \   {
+        \     '\c\<IndAMove\>'  : 'IndCMove',
+        \     '\c\<IndCMove\>'  : 'IndDMove',
+        \     '\c\<IndDMove\>'  : 'IndRMove',
+        \     '\c\<IndRMove\>'  : 'IndAMove',
+        \   },
+        \   {
+        \     '\c\v^(\s*SMove|\s*STrigg)J(DO|GO|Sync)?' : '\1L\2',
+        \     '\c\v^(\s*SMove|\s*STrigg)L(DO|GO|Sync)?' : '\1J\2',
+        \   },
+        \   {
+        \     '\c\<StartMove\>'       : 'StartMoveRetry',
+        \     '\c\<StartMoveRetry\>'  : 'StopMove',
+        \     '\c\<StopMove\>'        : 'StopMoveReset',
+        \     '\c\<StopMoveReset\>'   : 'StartMove',
+        \   },
+        \   {
+        \     '\c\<STR_DIGIT\>'  : 'STR_LOWER',
+        \     '\c\<STR_LOWER\>'  : 'STR_UPPER',
+        \     '\c\<STR_UPPER\>'  : 'STR_WHITE',
+        \     '\c\<STR_WHITE\>'  : 'STR_DIGIT',
+        \   },
+        \   {
+        \     '\c\<USINT\>' : 'UINT',
+        \     '\c\<UINT\>'  : 'UDINT',
+        \     '\c\<UDINT\>' : 'ULINT',
+        \     '\c\<ULINT\>' : 'SINT',
+        \     '\c\<SINT\>'  : 'INT',
+        \     '\c\<INT\>'   : 'DINT',
+        \     '\c\<DINT\>'  : 'LINT',
+        \     '\c\<LINT\>'  : 'USINT',
+        \   },
+        \   {
+        \     '\c\<OpAdd\>'  : 'OpSub',
+        \     '\c\<OpSub\>'  : 'OpMult',
+        \     '\c\<OpMult\>' : 'OpDiv',
+        \     '\c\<OpDiv\>'  : 'OpMod',
+        \     '\c\<OpMod\>'  : 'OpAdd',
+        \   },
+        \   {
+        \     '\c\<TRIGG_MODE1\>' : 'TRIGG_MODE2',
+        \     '\c\<TRIGG_MODE2\>' : 'TRIGG_MODE3',
+        \     '\c\<TRIGG_MODE3\>' : 'TRIGG_MODE1',
+        \   },
+        \   {
+        \     '\c\<OP_NO_ROBOT\>'   : 'OP_SERVICE',
+        \     '\c\<OP_SERVICE\>'    : 'OP_PRODUCTION',
+        \     '\c\<OP_PRODUCTION\>' : 'OP_NO_ROBOT',
+        \   },
+        \   {
+        \     '\c\<CT_CONTINUOUS\>'       : 'CT_COUNT_CYCLES',
+        \     '\c\<CT_COUNT_CYCLES\>'     : 'CT_COUNT_CYC_ACTION',
+        \     '\c\<CT_COUNT_CYC_ACTION\>' : 'CT_PERIODICAL',
+        \     '\c\<CT_PERIODICAL\>'       : 'CT_CONTINUOUS',
+        \   },
+        \   {
+        \     '\c\<TP_LATEST\>'       : 'TP_PROGRAM',
+        \     '\c\<TP_PROGRAM\>'      : 'TP_SCREENVIEWER',
+        \     '\c\<TP_SCREENVIEWER\>' : 'TP_LATEST',
+        \   },
+        \   {
+        \     '\c\<STATE_ERROR\>'     : 'STATE_UNDEFINED',
+        \     '\c\<STATE_UNDEFINED\>' : 'STATE_CONNECTED',
+        \     '\c\<STATE_CONNECTED\>' : 'STATE_OPERATING',
+        \     '\c\<STATE_OPERATING\>' : 'STATE_CLOSED',
+        \     '\c\<STATE_CLOSED\>'    : 'STATE_ERROR',
+        \   },
+        \   {
+        \     '\c\<SIGORIG_NONE\>'  : 'SIGORIG_CFG',
+        \     '\c\<SIGORIG_CFG\>'   : 'SIGORIG_ALIAS',
+        \     '\c\<SIGORIG_ALIAS\>' : 'SIGORIG_NONE',
+        \   },
+        \   {
+        \     '\c\<AIO_ABOVE_HIGH\>' : 'AIO_BELOW_HIGH',
+        \     '\c\<AIO_BELOW_HIGH\>' : 'AIO_ABOVE_LOW',
+        \     '\c\<AIO_ABOVE_LOW\>'  : 'AIO_BELOW_LOW',
+        \     '\c\<AIO_BELOW_LOW\>'  : 'AIO_BETWEEN',
+        \     '\c\<AIO_BETWEEN\>'    : 'AIO_OUTSIDE',
+        \     '\c\<AIO_OUTSIDE\>'    : 'AIO_ALWAYS',
+        \     '\c\<AIO_ALWAYS\>'     : 'AIO_ABOVE_HIGH',
+        \   },
+        \   {
+        \     '\c\<SOCKET_CREATED\>'   : 'SOCKET_CONNECTED',
+        \     '\c\<SOCKET_CONNECTED\>' : 'SOCKET_BOUND',
+        \     '\c\<SOCKET_BOUND\>'     : 'SOCKET_LISTENING',
+        \     '\c\<SOCKET_LISTENING\>' : 'SOCKET_CLOSED',
+        \     '\c\<SOCKET_CLOSED\>'    : 'SOCKET_CREATED',
+        \   },
+        \   {
+        \     '\c\<OP_UNDEF\>'    : 'OP_AUTO',
+        \     '\c\<OP_AUTO\>'     : 'OP_MAN_PROG',
+        \     '\c\<OP_MAN_PROG\>' : 'OP_MAN_TEST',
+        \     '\c\<OP_MAN_TEST\>' : 'OP_UNDEF',
+        \   },
+        \   {
+        \     '\c\<RUN_UNDEF\>'      : 'RUN_SIM',
+        \     '\c\<RUN_SIM\>'        : 'RUN_CONT_CYCLE',
+        \     '\c\<RUN_CONT_CYCLE\>' : 'RUN_STEP_MOVE',
+        \     '\c\<RUN_STEP_MOVE\>'  : 'RUN_INSTR_FWD',
+        \     '\c\<RUN_INSTR_FWD\>'  : 'RUN_INSTR_BWD',
+        \     '\c\<RUN_INSTR_BWD\>'  : 'RUN_UNDEF',
+        \   },
+        \   {
+        \     '\c\<EVENT_NONE\>'    : 'EVENT_POWERON',
+        \     '\c\<EVENT_POWERON\>' : 'EVENT_START',
+        \     '\c\<EVENT_START\>'   : 'EVENT_STOP',
+        \     '\c\<EVENT_STOP\>'    : 'EVENT_QSTOP',
+        \     '\c\<EVENT_QSTOP\>'   : 'EVENT_RESTART',
+        \     '\c\<EVENT_RESTART\>' : 'EVENT_RESET',
+        \     '\c\<EVENT_RESET\>'   : 'EVENT_STEP',
+        \     '\c\<EVENT_STEP\>'    : 'EVENT_NONE',
+        \   },
+        \   {
+        \     '\c\<HANDLER_NONE\>' : 'HANDLER_BWD',
+        \     '\c\<HANDLER_BWD\>'  : 'HANDLER_ERR',
+        \     '\c\<HANDLER_ERR\>'  : 'HANDLER_UNDO',
+        \     '\c\<HANDLER_UNDO\>' : 'HANDLER_NONE',
+        \   },
+        \   {
+        \     '\c\<LEVEL_NORMAL\>'  : 'LEVEL_TRAP',
+        \     '\c\<LEVEL_TRAP\>'    : 'LEVEL_SERVICE',
+        \     '\c\<LEVEL_SERVICE\>' : 'LEVEL_NORMAL',
+        \   },
+        \   {
+        \     '\c\<SIGORIG_NONE\>'  : 'SIGORIG_CFG',
+        \     '\c\<SIGORIG_CFG\>'   : 'SIGORIG_ALIAS',
+        \     '\c\<SIGORIG_ALIAS\>' : 'SIGORIG_NONE',
+        \   },
+        \   {
+        \     '\c\<LT\>'    : 'LTEQ',
+        \     '\c\<LTEQ\>'  : 'EQ',
+        \     '\c\<EQ\>'    : 'NOTEQ',
+        \     '\c\<NOTEQ\>' : 'GTEQ',
+        \     '\c\<GTEQ\>'  : 'GT',
+        \     '\c\<GT\>'    : 'LT',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<Set\>'   : '\1Reset',
+        \     '\c\v(\s*)\<Reset\>' : '\1Set',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<Open\>'  : '\1Write',
+        \     '\c\v(\s*)\<Write\>' : '\1Close',
+        \     '\c\v(\s*)\<Close\>' : '\1Open',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<OpenDir\>'  : '\1CloseDir',
+        \     '\c\v(\s*)\<CloseDir\>' : '\1OpenDir',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<DeactUnit\>'  : '\1ActUnit',
+        \     '\c\v(\s*)\<ActUnit\>'    : '\1DeactUnit',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<DropWObj\>' : '\1WaitWObj',
+        \     '\c\v(\s*)\<WaitWObj\>' : '\1DropWObj',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<ConfJ\>' : '\1ConfL',
+        \     '\c\v(\s*)\<ConfL\>' : '\1ConfJ',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<EOffsOff\>'  : '\1EOffsOn',
+        \     '\c\v(\s*)\<EOffsOn\>'  : '\1EOffsSet',
+        \     '\c\v(\s*)\<EOffsSet\>' : '\1EOffsOff',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<Incr\>'  : '\1Decr',
+        \     '\c\v(\s*)\<Decr\>'  : '\1Clear',
+        \     '\c\v(\s*)\<Clear\>' : '\1Incr',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<ClkReset\>' : '\1ClkStart',
+        \     '\c\v(\s*)\<ClkStart\>' : '\1ClkStop',
+        \     '\c\v(\s*)\<ClkStop\>'  : '\1ClkReset',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<IWatch\>'   : '\1ISleep',
+        \     '\c\v(\s*)\<ISleep\>'   : '\1IDelete',
+        \     '\c\v(\s*)\<IDelete\>'  : '\1IEnable',
+        \     '\c\v(\s*)\<IEnable\>'  : '\1IDisable',
+        \     '\c\v(\s*)\<IDisable\>' : '\1IWatch',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<ISignalAI\>' : '\1ISignalAO',
+        \     '\c\v(\s*)\<ISignalAO\>' : '\1ISignalAI',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<ISignalDI\>' : '\1ISignalDO',
+        \     '\c\v(\s*)\<ISignalDO\>' : '\1ISignalDI',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<ISignalGI\>' : '\1ISignalGO',
+        \     '\c\v(\s*)\<ISignalGO\>' : '\1ISignalGI',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<Load\>'   : '\1Save',
+        \     '\c\v(\s*)\<Save\>'   : '\1UnLoad',
+        \     '\c\v(\s*)\<UnLoad\>' : '\1Load',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<MakeDir\>'   : '\1RemoveDir',
+        \     '\c\v(\s*)\<RemoveDir\>' : '\1MakeDir',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<PathRecStart\>' : '\1PathRecStop',
+        \     '\c\v(\s*)\<PathRecStop\>'  : '\1PathRecStart',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<PathRecMoveBwd\>' : '\1PathRecMoveFwd',
+        \     '\c\v(\s*)\<PathRecMoveFwd\>' : '\1PathRecMoveBwd',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<RenameFile\>' : '\1RemoveFile',
+        \     '\c\v(\s*)\<RemoveFile\>' : '\1RenameFile',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<Retry\>'   : '\1TryNext',
+        \     '\c\v(\s*)\<TryNext\>' : '\1Retry',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<SetDO\>' : '\1SetGO',
+        \     '\c\v(\s*)\<SetGO\>' : '\1SetAO',
+        \     '\c\v(\s*)\<SetAO\>' : '\1SetDO',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<SocketCreate\>'      : '\1SocketListen',
+        \     '\c\v(\s*)\<SocketListen\>'      : '\1SocketBind',
+        \     '\c\v(\s*)\<SocketBind\>'        : '\1SocketConnect',
+        \     '\c\v(\s*)\<SocketConnect\>'     : '\1SocketAccept',
+        \     '\c\v(\s*)\<SocketAccept\>'      : '\1SocketReceive',
+        \     '\c\v(\s*)\<SocketReceive\>'     : '\1SocketReceiveFrom',
+        \     '\c\v(\s*)\<SocketReceiveFrom\>' : '\1SocketSend',
+        \     '\c\v(\s*)\<SocketSend\>'        : '\1SocketSendTo',
+        \     '\c\v(\s*)\<SocketSendTo\>'      : '\1SocketClose',
+        \     '\c\v(\s*)\<SocketClose\>'       : '\1SocketCreate',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<SoftAct\>'   : '\1SoftDeact',
+        \     '\c\v(\s*)\<SoftDeact\>' : '\1SoftAct',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<SyncMoveOn\>'  : '\1SyncMoveOff',
+        \     '\c\v(\s*)\<SyncMoveOff\>' : '\1SyncMoveOn',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<SyncMoveSuspend\>' : '\1SyncMoveResume',
+        \     '\c\v(\s*)\<SyncMoveResume\>'  : '\1SyncMoveSuspend',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<WaitAI\>' : '\1WaitAO',
+        \     '\c\v(\s*)\<WaitAO\>' : '\1WaitDI',
+        \     '\c\v(\s*)\<WaitDI\>' : '\1WaitDO',
+        \     '\c\v(\s*)\<WaitDO\>' : '\1WaitGI',
+        \     '\c\v(\s*)\<WaitGO\>' : '\1WaitAI',
+        \   },
+        \   {
+        \     '\c\v(\s*)\<WZBoxDef\>'       : '\1WZCylDef',
+        \     '\c\v(\s*)\<WZCylDef\>'       : '\1WZSphDef',
+        \     '\c\v(\s*)\<WZSphDef\>'       : '\1WZHomeJointDef',
+        \     '\c\v(\s*)\<WZHomeJointDef\>' : '\1WZLimJointDef',
+        \     '\c\v(\s*)\<WZLimJointDef\>'  : '\1WZBoxDef',
+        \   },
+        \ ]
+endif
 " nnoremap <F6> :syntax on<bar>normal mzgg=G`z<cr>:syntax off<cr>
 
 " vim:sw=2 sts=2 et fdm=marker fmr={{{,}}}
