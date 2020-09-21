@@ -11,6 +11,7 @@
 " TODO: - endwise add skip, ptp_spline, TIME_BLOCK and CONST_VEL
 "       - set buftype=nofile bufhidden=delete instead of temp file for altered
 "         quick fix
+"       - test compatiblity with quickfix-reflector
 "       - proper altering of quickfix: see :help quickfix-window then /filled
 "       - use /\%( where possible
 "

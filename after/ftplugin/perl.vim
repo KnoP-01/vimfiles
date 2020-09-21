@@ -1,7 +1,15 @@
 " my perl modifications
 
 " compile perl script for syntax check
-nnoremap <buffer> <F4> :!perl -c %<CR>
+nnoremap <buffer> <F4> :!perl -wc %<CR>
+
+" setlocal shell=cmd.exe
+" setlocal shellcmdflag=-c
+" setlocal noshellslash
+" setlocal guioptions-=!     " don't open cmd.exe-window on windows in case of :!
+
+setlocal makeprg=c:/apps/bin/vim_tools/efm_perl.pl\ -c\ %\ $*
+setlocal errorformat=%f:%l:%m
 
 " tabs
 setlocal softtabstop=4

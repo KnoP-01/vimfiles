@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.1
-" Last Change: 17. Sep 2020
+" Last Change: 20. Sep 2020
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -11,6 +11,8 @@
 " TODO: - set buftype=nofile bufhidden=delete instead of temp file for altered
 "         quick fix
 "       - proper altering of quickfix: see :help quickfix-window then /filled
+"       - [[,]]... mappings for jumping from section to section in .cfg files
+"       - test compatiblity with quickfix-reflector
 "
 " ToDo's {{{
 " TODO  - make file search case insensitive

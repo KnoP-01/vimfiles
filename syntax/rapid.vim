@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 14. Aug 2020
+" Last Change: 20. Sep 2020
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -21,6 +21,7 @@
 " TODO:   - highlight rapid constants and maybe constants from common
 "           technology packages
 "         - optimize rapidErrorStringTooLong 
+"         - error highlight for missing 2nd point in MoveCirc et al
 
 " Init {{{
 " Remove any old syntax stuff that was loaded (5.x) or quit when a syntax file
@@ -200,7 +201,7 @@ else
   syn keyword rapidType dadescapp dadescprc daintdata
   highlight default link rapidType Type
   " Storage class
-  syn keyword rapidStorageClass LOCAL TASK GLOBAL VAR PERS CONST ALIAS NOVIEW NOSTEPIN VIEWONLY READONLY SYSMODULE INOUT
+  syn keyword rapidStorageClass LOCAL TASK VAR PERS CONST ALIAS NOVIEW NOSTEPIN VIEWONLY READONLY SYSMODULE INOUT
   highlight default link rapidStorageClass StorageClass
   " Not a typedef but I like to have those highlighted different then types,
   " structures or strorage classes
@@ -266,6 +267,8 @@ else
   syn keyword rapidKeyword DaActProc DaDeactAllProc DaDeactProc DaDefExtSig DaDefProcData DaDefProcSig DaDefUserData DaGetCurrData DaSetCurrData DaSetupAppBehav DaStartManAction DaGetAppDescr DaGetAppIndex DaGetNumOfProcs DaGetNumOfRob DaGetPrcDescr 
   " Production Manager instructions
   syn keyword rapidKeyword ExecEngine PMgrGetNextPart PMgrSetNextPart PMgrRunMenu
+  " Homepos-Running instructions
+  syn keyword rapidKeyword HR_Exit HR_ExitCycle HR_SavePos HR_SetMoveToStartPos HR_SetTypeDIndex HR_SetTypeIndex 
   highlight default link rapidKeyword Keyword
   " Exception
   syn keyword rapidException Exit ErrRaise ExitCycle Raise RaiseToUser Retry Return TryNext
@@ -274,30 +277,36 @@ else
   " }}} Statements, keywords et al
 
   " special keyword for move command {{{
-  " arc instructions
+  " uncategorized yet
+  syn keyword rapidMovement MovePnP
+  syn keyword rapidMovement EGMMoveC EGMMoveL EGMRunJoint EGMRunPose EGMStop
+  syn keyword rapidMovement IndAMove IndCMove IndDMove IndRMove 
+  " common instructions
+  syn keyword rapidMovement MoveAbsJ MoveC MoveExtJ MoveJ MoveL 
+  syn keyword rapidMovement MoveCAO MoveCDO MoveCGO MoveCSync MoveJAO MoveJDO MoveJGO MoveJSync MoveLAO MoveLDO MoveLGO MoveLSync 
+  syn keyword rapidMovement SearchC SearchExtJ SearchL
+  syn keyword rapidMovement TriggC TriggJ TriggL TriggJIOs TriggLIOs
+  " Arc instructions
   syn keyword rapidMovement ArcC ArcC1 ArcC2 ArcCEnd ArcC1End ArcC2End ArcCStart ArcC1Start ArcC2Start 
   syn keyword rapidMovement ArcL ArcL1 ArcL2 ArcLEnd ArcL1End ArcL2End ArcLStart ArcL1Start ArcL2Start ArcMoveExtJ 
-  " arc Weldguide and MultiPass instructions
+  " Arc Weldguide and MultiPass instructions
   syn keyword rapidMovement ArcRepL ArcAdaptLStart ArcAdaptL ArcAdaptC ArcAdaptLEnd ArcAdaptCEnd ArcCalcLStart ArcCalcL ArcCalcC ArcCalcLEnd ArcCalcCEnd ArcAdaptRepL 
   syn keyword rapidMovement Break 
   " Continuous Application Platform instructions
   syn keyword rapidMovement CapC CapL CapLATrSetup CSSDeactMoveL ContactL
-  " dispense instructions
+  " Dispense instructions
   syn keyword rapidMovement DispL DispC
-  syn keyword rapidMovement EGMMoveC EGMMoveL EGMRunJoint EGMRunPose EGMStop
-  syn keyword rapidMovement IndAMove IndCMove IndDMove IndRMove 
-  syn keyword rapidMovement MoveAbsJ MoveC MoveExtJ MoveJ MoveL 
-  syn keyword rapidMovement MoveCAO MoveCDO MoveCGO MoveCSync MoveJAO MoveJDO MoveJGO MoveJSync MoveLAO MoveLDO MoveLGO MoveLSync 
-  syn keyword rapidMovement MovePnP
+  " Nut instructions"
   syn keyword rapidMovement NutL NutJ
   syn keyword rapidMovement PathRecMoveBwd PathRecMoveFwd 
+  " Paint instructions"
   syn keyword rapidMovement PaintL PaintLDO PaintC
   syn keyword rapidMovement StartMove StartMoveRetry StepBwdPath StopMove StopMoveReset
   " Spot instructions
   syn keyword rapidMovement SpotL SpotJ SpotML SpotMJ CalibL CalibJ MeasureWearL 
+  " Homepos-Running instructions
   syn keyword rapidMovement SMoveJ SMoveJDO SMoveJGO SMoveJSync SMoveL SMoveLDO SMoveLGO SMoveLSync SSearchL STriggJ STriggL
-  syn keyword rapidMovement SearchC SearchExtJ SearchL
-  syn keyword rapidMovement TriggC TriggJ TriggL TriggJIOs TriggLIOs
+  syn keyword rapidMovement HR_ContMove HR_MoveBack HR_MoveRoutine HR_MoveTo HR_MoveToHome SCSSDeactMoveL 
   " Discrete application platform instructions
   syn keyword rapidMovement DaProcML DaProcMJ
   if g:rapidGroupName
@@ -351,6 +360,8 @@ else
   syn keyword rapidBuildInFunction contained PMgrAtSafe PMgrAtService PMgrAtState PMgrAtStation PMgrNextStation PMgrTaskNumber PMgrTaskName
   " Spot functions
   syn keyword rapidBuildInFunction contained SwGetCurrTargetName SwGetCurrSpotName 
+  " Homepos-Running functions
+  syn keyword rapidBuildInFunction contained HR_RobotInHome HR_GetTypeDIndex HR_GetTypeIndex
   if g:rapidGroupName
     highlight default link rapidBuildInFunction BuildInFunction
   else
@@ -469,8 +480,6 @@ else
   syn keyword rapidConstant OP_UNDEF OP_AUTO OP_MAN_PROG OP_MAN_TEST
   " symnum of RunMode()
   syn keyword rapidConstant RUN_UNDEF RUN_CONT_CYCLE RUN_INSTR_FWD RUN_INSTR_BWD RUN_SIM RUN_STEP_MOVE
-  " opcalc
-  syn keyword rapidConstant OpAdd OpSub OpMult OpDiv OpMod
   " event_type of EventType()
   syn keyword rapidConstant EVENT_NONE EVENT_POWERON EVENT_START EVENT_STOP EVENT_QSTOP EVENT_RESTART EVENT_RESET EVENT_STEP
   " handler_type of ExecHandler()

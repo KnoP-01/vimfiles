@@ -3,10 +3,11 @@
 " don't copy this if you don't know what you are doing
 " and think about the poor pandas if you do!
 
-" Vim Rather Then Vi:
+" {{{ init
+" Vim Rather Then Vi
 set nocompatible
 
-" Language English:
+" Language English
 set langmenu=none
 " if !has("win32") " del c:\Program Files (x86)\Vim\vim81\lang\de\
   language en_US
@@ -15,6 +16,7 @@ set langmenu=none
 " set leader before any plugin, so <leader>-mappings get the right leader 
 let mapleader       = " "
 let maplocalleader  = " "
+" }}}
 
 " Optional Packs:
 " packadd ... {{{
@@ -23,16 +25,8 @@ packadd! editexisting " find existing session if .swp-file exists
 packadd! shellmenu
 packadd! cfilter
 " }}}
-
-" Vim Plug:
-" vim plug: {{{ see :he vim-plug
-" PlugUpdate
-command! MyPlugUpdate   :set statusline=%F%m%r%h%w <bar> noau PlugUpdate
-" PlugInstall
-command! MyPlugInstall  :set statusline=%F%m%r%h%w <bar> noau PlugInstall
-" don't forget PlugClean
-" Plugins
-call plug#begin('~/.vim/plugged')
+" Plugins:
+call plug#begin('~/.vim/plugged') " {{{
 
   " Make sure you use single quotes
   " examples see :he plug-example
@@ -68,6 +62,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-commentary'
   " auto-endif et al
   Plug 'tpope/vim-endwise'
+  " repeat
+  Plug 'tpope/vim-repeat'
 
   " erweiterung fuer quickfix und loclist
   Plug 'romainl/vim-qf'
@@ -82,7 +78,6 @@ call plug#begin('~/.vim/plugged')
   " fenster anordnen
   Plug 'andymass/vim-tradewinds'
   let g:tradewinds_no_maps = 1 " see <plug>(tradewinds-...
-
   " ersatz fuer matchit
   Plug 'andymass/vim-matchup'
   let g:matchup_matchparen_enabled          = 0         " dislable on startup
@@ -110,17 +105,30 @@ call plug#begin('~/.vim/plugged')
   " let g:instant_markdown_logfile = '.\instant_markdown.log'
   " Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 
-" Initialize plugin system
-call plug#end()
-" }}}
+  " switch between true/false...
+  Plug 'AndrewRadev/switch.vim'
+  " let g:switch_mapping = 'gs' " this one is default
+  let g:switch_mapping = '' " disabled b/c <plug> see below
+  " let g:switch_reverse_mapping = 'ga'
+  " nnoremap <silent> <plug>SwitchFwd :Switch<cr>
+  " nnoremap <silent> <plug>SwitchBwd :SwitchReverse<cr>
+  " nmap gs <plug>SwitchFwd
+  " nmap ga <plug>SwitchBwd
 
-" Syntax And Filetype:
+call plug#end()
+" PlugUpdate
+command! MyPlugUpdate   :set statusline=%F%m%r%h%w <bar> noau PlugUpdate
+" PlugInstall
+command! MyPlugInstall  :set statusline=%F%m%r%h%w <bar> noau PlugInstall
+" don't forget PlugClean
+" }}}
+" Syntax And Filetype: " {{{
 syntax off                          " undo what plug#end() did to syntax
 filetype plugin indent off          " undo what plug#end() did to filetype
 if &t_Co > 2 || has("gui_running")  " Switch syntax highlighting on, when the terminal has colors
   syntax on
 endif
-filetype plugin indent on           " filetype on after syntax on for krl-for-vim
+filetype plugin indent on           " filetype on after syntax on for krl-for-vim }}}
 
 " Auto Commands:
 augroup vimrcEx " {{{
@@ -239,9 +247,8 @@ set winaltkeys=no         " disable menu with alt. necessary for <A-x> mappings
 set splitright            " vertival split opens new window to the right
 " }}}
 
-" Statusline: {{{
-
-function! MyStatusline(full)
+" Statusline:
+function! MyStatusline(full) " {{{
   setlocal statusline=%F                " Path to the file in the buffer, as typed or relative to current directory
   setlocal statusline+=%m               " Modified flag       [+] ; [-] if 'modifiable' is off
   setlocal statusline+=%r               " Readonly flag       [RO]
@@ -294,10 +301,9 @@ augroup end
 " }}}
 
 " Rolodex:
-" Rolodex Functions: {{{
-"This function turns Rolodex Vim on or off for the current tab
-"If turning off, it sets all windows to equal height
-function! ToggleRolodexTab()
+function! ToggleRolodexTab() " {{{
+  "This function turns Rolodex Vim on or off for the current tab
+  "If turning off, it sets all windows to equal height
   if exists("t:rolodex_tab")
     unlet t:rolodex_tab
     call ClearRolodexSettings()
@@ -307,8 +313,8 @@ function! ToggleRolodexTab()
     call SetRolodexSettings()
   endif
 endfunction
-"This function set the Rolodex Vim settings and remembers the previous values for later
 function! SetRolodexSettings()
+  "This function set the Rolodex Vim settings and remembers the previous values for later
   if exists("t:rolodex_tab")
     let g:remember_ea  = &equalalways
     let g:remember_wmh = &winminheight
@@ -338,7 +344,7 @@ augroup END
 " }}}
 
 " Mappings:
-" F Keys: {{{
+" F Key Mappings: {{{
 " get rid of trailing white spaces and tabs; use two spaces instead of tab
 nnoremap <F5> :%s/\s\+$//<CR>:%s/\t/  /g<CR>``
 " indent the whole file
@@ -357,7 +363,6 @@ nnoremap <silent> <S-F11> :if &guioptions=~'\Cm'<bar>set guioptions-=m<bar>set g
 " show buffers and start buffer command
 nnoremap <F12> :ls<cr>:buffer 
 " }}}
-
 " Clever Tab: {{{
 function! CleverTab()
   " if strpart( getline('.'), 0, col('.')-1 ) !~ '\(^\s*\|\s\)$'
@@ -369,7 +374,6 @@ endfunction
 inoremap <Tab> <C-R>=CleverTab()<CR>
 inoremap <S-Tab> <C-N>
 " }}}
-
 " Indent Text Object: {{{
 function! IndTxtObj(inner)
   let l:curline  = line(".")
@@ -403,7 +407,6 @@ xnoremap <silent>ii :<C-u>call IndTxtObj(1)<CR>
 onoremap <silent>ai :<C-u>call IndTxtObj(0)<CR>
 onoremap <silent>ii :<C-u>call IndTxtObj(1)<CR>
 " }}}
-
 " Other Mappings: {{{
 " don't break undo and repeat with left/right arrow in insert mode
 inoremap <left> <c-g>U<left>
@@ -534,7 +537,6 @@ let g:knopVerbose=0
 " let g:knopNoVerbose=0
 " let g:knopShortenQFPath=0
 " }}}
-
 " Rapid For VIM: {{{
 " look also into ~/vimfiles/after/ftplugin/rapid.vim
 " augroup RapidAutoForm
@@ -576,7 +578,6 @@ let g:rapidSpaceIndent=0
 " let g:rapidRhsQuickfix " siehe oben g:knop...
 " let g:rapidLhsQuickfix " siehe oben g:knop...
 " }}}
-
 " Krl For Vim: {{{
 " look also into ~/vimfiles/after/ftplugin/krl.vim
 " augroup KrlAutoForm

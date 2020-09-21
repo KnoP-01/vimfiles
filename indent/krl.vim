@@ -81,7 +81,7 @@ function s:GetKrlIndentIntern() abort
   let   l:addShiftwidthPattern  = '\c\v^\s*('
   if get(g:,'krlIndentBetweenDef',1)
     let l:addShiftwidthPattern .=           '(global\s+)?def(fct|dat)?\s+\$?\w'
-    let l:addShiftwidthPattern .=           '|<'
+    let l:addShiftwidthPattern .=           '|'
   endif
   let   l:addShiftwidthPattern .=           'if>|while>|for>|loop>'
   let   l:addShiftwidthPattern .=           '|else>'
@@ -96,7 +96,7 @@ function s:GetKrlIndentIntern() abort
   let   l:subtractShiftwidthPattern  = '\c\v^\s*('
   if get(g:,'krlIndentBetweenDef',1)
     let l:subtractShiftwidthPattern .=           'end(fct|dat)?>'
-    let l:subtractShiftwidthPattern .=           '|<'
+    let l:subtractShiftwidthPattern .=           '|'
   endif
   let   l:subtractShiftwidthPattern .=           'end(if|while|for|loop)>'
   let   l:subtractShiftwidthPattern .=           '|else>'
