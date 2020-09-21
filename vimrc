@@ -108,8 +108,8 @@ call plug#begin('~/.vim/plugged') " {{{
   " switch between true/false...
   Plug 'AndrewRadev/switch.vim'
   " let g:switch_mapping = 'gs' " this one is default
-  let g:switch_mapping = '' " disabled b/c <plug> see below
-  " let g:switch_reverse_mapping = 'ga'
+  " let g:switch_mapping = '' " disabled b/c <plug> see below
+  let g:switch_reverse_mapping = 'ga'
   " nnoremap <silent> <plug>SwitchFwd :Switch<cr>
   " nnoremap <silent> <plug>SwitchBwd :SwitchReverse<cr>
   " nmap gs <plug>SwitchFwd
@@ -117,9 +117,11 @@ call plug#begin('~/.vim/plugged') " {{{
 
 call plug#end()
 " PlugUpdate
-command! MyPlugUpdate   :set statusline=%F%m%r%h%w <bar> noau PlugUpdate
+command! MyPlugUpdate   :set statusline=%F%m%r%h%w shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=! <bar> noau PlugUpdate
 " PlugInstall
-command! MyPlugInstall  :set statusline=%F%m%r%h%w <bar> noau PlugInstall
+command! MyPlugInstall  :set statusline=%F%m%r%h%w shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=! <bar> noau PlugInstall
+" PlugClean
+command! MyPlugInstall  :set statusline=%F%m%r%h%w shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=! <bar> noau PlugClean
 " don't forget PlugClean
 " }}}
 " Syntax And Filetype: " {{{
