@@ -1,4 +1,4 @@
-set autoindent
+setlocal autoindent
 call matchadd('colorcolumn','\%81v')
 
 " if (get(g:,'colors_name'," ")=="tortus" || get(g:,'colors_name'," ")=="tortusless") 

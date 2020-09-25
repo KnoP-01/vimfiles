@@ -50,14 +50,15 @@ command! EioUnAlign call UnAlignEio()
 
 if exists('g:loaded_switch')
 
-  if !exists('s:RapidUseCustomDictForSwitch')
-    function s:RapidUseCustomDictForSwitch(in) abort
-      return    a:in =~ '\c\v^(inpos|stoptime\d_|fllwtime\d_)\d+$'
-            \|| a:in =~ '\c\v^(fine|z\d+|v\d+|vmax|vrot\d+|vlin\d+)$'
+  if !exists('s:RapidUseFwdBwdDictForSwitch')
+    function s:RapidUseFwdBwdDictForSwitch() abort
+      let l:cword = expand('<cword>')
+      return    l:cword =~ '\c\v^(inpos|stoptime\d_|fllwtime\d_)\d+$'
+            \|| l:cword =~ '\c\v^(fine|z\d+|v\d+|vmax|vrot\d+|vlin\d+)$'
     endfunction
 
     function s:RapidSwitch() abort
-      if s:RapidUseCustomDictForSwitch(expand('<cword>'))
+      if s:RapidUseFwdBwdDictForSwitch()
         silent call switch#Switch({'definitions': b:rapidSwitchFwd})
         silent! call repeat#set(":RapidSwitch\<cr>")
       else
@@ -67,7 +68,7 @@ if exists('g:loaded_switch')
     endfunction
 
     function s:RapidSwitchReverse() abort
-      if s:RapidUseCustomDictForSwitch(expand('<cword>'))
+      if s:RapidUseFwdBwdDictForSwitch()
         silent call switch#Switch({'definitions': b:rapidSwitchBwd})
         silent! call repeat#set(":RapidSwitchReverse\<cr>")
       else
@@ -81,8 +82,8 @@ if exists('g:loaded_switch')
 
   nnoremap <buffer> <silent> <Plug>RapidSwitchFwd :RapidSwitch<cr>
   nnoremap <buffer> <silent> <Plug>RapidSwitchBwd :RapidSwitchReverse<cr>
-  nmap gs <Plug>RapidSwitchFwd
-  nmap ga <Plug>RapidSwitchBwd
+  nmap <buffer> gs <Plug>RapidSwitchFwd
+  nmap <buffer> ga <Plug>RapidSwitchBwd
 
   let b:rapidSwitchFwd =
         \ [
@@ -125,7 +126,7 @@ if exists('g:loaded_switch')
         \     '\c\<vmax\>'  : 'v5',
         \   },
         \   {
-        \     '\c\<v\d\+\>' : 'v1500',
+        \     '\c\<v\d\+\>' : 'v2000',
         \   },
         \   {
         \     '\c\<vrot1\>'   : 'vrot2',
@@ -133,15 +134,17 @@ if exists('g:loaded_switch')
         \     '\c\<vrot5\>'   : 'vrot10',
         \     '\c\<vrot10\>'  : 'vrot20',
         \     '\c\<vrot20\>'  : 'vrot50',
-        \     '\c\<vrot50\>'  : 'vrot1',
+        \     '\c\<vrot50\>'  : 'vrot100',
+        \     '\c\<vrot100\>' : 'vrot1',
         \   },
         \   {
-        \     '\c\<vlin10\>'  : 'vlin20',
-        \     '\c\<vlin20\>'  : 'vlin50',
-        \     '\c\<vlin50\>'  : 'vlin100',
-        \     '\c\<vlin100\>' : 'vlin200',
-        \     '\c\<vlin200\>' : 'vlin500',
-        \     '\c\<vlin500\>' : 'vlin10',
+        \     '\c\<vlin10\>'   : 'vlin20',
+        \     '\c\<vlin20\>'   : 'vlin50',
+        \     '\c\<vlin50\>'   : 'vlin100',
+        \     '\c\<vlin100\>'  : 'vlin200',
+        \     '\c\<vlin200\>'  : 'vlin500',
+        \     '\c\<vlin500\>'  : 'vlin1000',
+        \     '\c\<vlin1000\>' : 'vlin10',
         \   },
         \ ]
 
@@ -189,41 +192,83 @@ if exists('g:loaded_switch')
         \     '\c\<v\d\+\>' : 'v2000',
         \   },
         \   {
+        \     '\c\<vrot100\>' : 'vrot50',
         \     '\c\<vrot50\>'  : 'vrot20',
         \     '\c\<vrot20\>'  : 'vrot10',
         \     '\c\<vrot10\>'  : 'vrot5',
         \     '\c\<vrot5\>'   : 'vrot2',
         \     '\c\<vrot2\>'   : 'vrot1',
-        \     '\c\<vrot1\>'   : 'vrot50',
+        \     '\c\<vrot1\>'   : 'vrot100',
         \   },
         \   {
-        \     '\c\<vlin500\>' : 'vlin200',
-        \     '\c\<vlin200\>' : 'vlin100',
-        \     '\c\<vlin100\>' : 'vlin50',
-        \     '\c\<vlin50\>'  : 'vlin20',
-        \     '\c\<vlin20\>'  : 'vlin10',
-        \     '\c\<vlin10\>'  : 'vlin500',
+        \     '\c\<vlin1000\>' : 'vlin500',
+        \     '\c\<vlin500\>'  : 'vlin200',
+        \     '\c\<vlin200\>'  : 'vlin100',
+        \     '\c\<vlin100\>'  : 'vlin50',
+        \     '\c\<vlin50\>'   : 'vlin20',
+        \     '\c\<vlin20\>'   : 'vlin10',
+        \     '\c\<vlin10\>'   : 'vlin1000',
         \   },
         \ ]
 
   let b:switch_custom_definitions =
         \ [
         \   {
-        \     '\c\<true\>'  : 'FALSE',
-        \     '\c\<false\>' : 'TRUE',
+        \     '\C\<TRUE\>'  : 'FALSE',
+        \     '\C\<FALSE\>' : 'TRUE',
+        \   },
+        \   {
+        \     '\C\<True\>'  : 'False',
+        \     '\C\<False\>' : 'True',
+        \   },
+        \   {
+        \     '\c\<true\>'  : 'false',
+        \     '\c\<false\>' : 'true',
+        \   },
+        \   {
+        \     '\C\<HIGH\>' : 'LOW',
+        \     '\C\<LOW\>'  : 'HIGH',
+        \   },
+        \   {
+        \     '\C\<High\>' : 'Low',
+        \     '\C\<Low\>'  : 'High',
         \   },
         \   {
         \     '\c\<high\>' : 'low',
         \     '\c\<low\>'  : 'high',
         \   },
         \   {
-        \     '\c\(not\)\@3<! (' : ' not (',
-        \     '\c not ('         : ' (',
+        \     '\C\<AND\>' : 'OR',
+        \     '\C\<OR\>'  : 'XOR',
+        \     '\C\<XOR\>' : 'AND',
+        \   },
+        \   {
+        \     '\C\<And\>' : 'Or',
+        \     '\C\<Or\>'  : 'XOr',
+        \     '\C\<XOr\>' : 'And',
         \   },
         \   {
         \     '\c\<and\>' : 'or',
         \     '\c\<or\>'  : 'xor',
         \     '\c\<xor\>' : 'and',
+        \   },
+        \   {
+        \     '\c(\(not\)\@!'       : '(not ',
+        \     '\c(not '             : '(',
+        \     '\c\(not\)\@3<! (\@=' : ' not ',
+        \     '\c not (\@='         : ' ',
+        \   },
+        \   {
+        \     '\C\<DIV\>' : 'MOD',
+        \     '\C\<MOD\>' : 'DIV',
+        \   },
+        \   {
+        \     '\C\<Div\>' : 'Mod',
+        \     '\C\<Mod\>' : 'Div',
+        \   },
+        \   {
+        \     '\c\<div\>' : 'mod',
+        \     '\c\<mod\>' : 'div',
         \   },
         \   {
         \     '='  : '>=',
@@ -232,8 +277,36 @@ if exists('g:loaded_switch')
         \     '<>' : '=',
         \   },
         \   {
-        \     '\c\<div\>' : 'MOD',
-        \     '\c\<mod\>' : 'DIV',
+        \     '\c\v<BitAnd(Dnum)?>'   : 'BitOr\L\u\1',
+        \     '\c\v<BitOr(Dnum)?>'    : 'BitXOr\L\u\1',
+        \     '\c\v<BitXOr(Dnum)?>'   : 'BitAnd\L\u\1',
+        \   },
+        \   {
+        \     '\c\v<BitRSh(Dnum)?>' : 'BitLSh\L\u\1',
+        \     '\c\v<BitLSh(Dnum)?>' : 'BitRSh\L\u\1',
+        \   },
+        \   {
+        \     '\c\v<Trunc(Dnum)?>' : 'Round\L\u\1',
+        \     '\c\v<Round(Dnum)?>' : 'Trunc\L\u\1',
+        \   },
+        \   {
+        \     '\c\v<(A)?Sin(Dnum)?>' : '\1Cos\L\u\2',
+        \     '\c\v<(A)?Cos(Dnum)?>' : '\1Tan\L\u\2',
+        \     '\c\v<ATan(Dnum)?>'    : 'ATan2\L\u\1',
+        \     '\c\v<ATan2(Dnum)?>'   : 'ASin\L\u\1',
+        \     '\c\v<Tan(Dnum)?>'     : 'Sin\L\u\1',
+        \   },
+        \   {
+        \     '\C\v^(\s*)<ELSEIF>\s*$'            :  '\1ELSE',
+        \     '\C\v^(\s*)<ELSE>\s*$'              :  '\1ELSEIF ',
+        \     '\C\v^(\s*)<ELSEIF>([^!]+)'         :  '\1ELSE !\2%',
+        \     '\C\v^(\s*)<ELSE>\s?(\s*)!?(.*)\%'  :  '\1ELSEIF\2\3',
+        \   },
+        \   {
+        \     '\C\v^(\s*)<ElseIf>\s*$'            :  '\1Else',
+        \     '\C\v^(\s*)<Else>\s*$'              :  '\1ElseIf ',
+        \     '\C\v^(\s*)<ElseIf>([^!]+)'         :  '\1Else !\2%',
+        \     '\C\v^(\s*)<Else>\s?(\s*)!?(.*)\%'  :  '\1ElseIf\2\3',
         \   },
         \   {
         \     '\c\v^(\s*)<elseif>\s*$'            :  '\1else',
@@ -242,9 +315,22 @@ if exists('g:loaded_switch')
         \     '\c\v^(\s*)<else>\s?(\s*)!?(.*)\%'  :  '\1elseif\2\3',
         \   },
         \   {
+        \     '\C\v^(\s*)<CASE>([^!]*):'            : '\1DEFAULT: !\2%',
+        \     '\C\v^(\s*)<DEFAULT>\s*:(\s*!.*\%)?'  : '\1ENDTEST\2',
+        \     '\C\v^(\s*)<ENDTEST>\s?(\s*)!(.*)\%'  : '\1CASE\2\3:',
+        \     '\C\v^(\s*)<ENDTEST>(\s*!?[^%]*)$'  : '\1DEFAULT:\2',
+        \   },
+        \   {
+        \     '\C\v^(\s*)<Case>([^!]*):'            : '\1Default: !\2%',
+        \     '\C\v^(\s*)<Default>\s*:(\s*!.*\%)?'  : '\1EndTest\2',
+        \     '\C\v^(\s*)<EndTest>\s?(\s*)!(.*)\%'  : '\1Case\2\3:',
+        \     '\C\v^(\s*)<EndTest>(\s*!?[^%]*)$'  : '\1Default:\2',
+        \   },
+        \   {
         \     '\c\v^(\s*)<case>([^!]*):'            : '\1default: !\2%',
         \     '\c\v^(\s*)<default>\s*:(\s*!.*\%)?'  : '\1endtest\2',
         \     '\c\v^(\s*)<endtest>\s?(\s*)!(.*)\%'  : '\1case\2\3:',
+        \     '\c\v^(\s*)<endtest>(\s*!?[^%]*)$'  : '\1default:\2',
         \   },
         \   {
         \     '\c\<local\>' : 'TASK',
@@ -256,16 +342,16 @@ if exists('g:loaded_switch')
         \     '\c\<const\>' : 'VAR',
         \   },
         \   {
-        \     '\c\v^(\s*Move)J>'                               : '\1AbsJ',
-        \     '\c\v^(\s*Move)AbsJ>'                            : '\1L',
-        \     '\c\v^(\s*Move|\s*Trigg)J(IOs|AO|DO|GO|Sync)?>'  : '\1L\2',
-        \     '\c\v^(\s*Move|\s*Trigg)L(IOs|AO|DO|GO|Sync)?>'  : '\1C\2',
-        \     '\c\v^(\s*Move|\s*Trigg)C(IOs|AO|DO|GO|Sync)?>'  : '\1J\2',
+        \     '\c\v^(\s*Move)J>'                               : '\L\u\1\EAbsJ',
+        \     '\c\v^(\s*Move)AbsJ>'                            : '\L\u\1\EL',
+        \     '\c\v^(\s*Move|\s*Trigg)J(IOs|AO|DO|GO|Sync)?>'  : '\L\u\1\EL\2',
+        \     '\c\v^(\s*Move|\s*Trigg)L(IOs|AO|DO|GO|Sync)?>'  : '\L\u\1\EC\2',
+        \     '\c\v^(\s*Move|\s*Trigg)C(IOs|AO|DO|GO|Sync)?>'  : '\L\u\1\EJ\2',
         \   },
         \   {
-        \     '\c\v^(\s*Arc)(Adapt|Calc)?([CL])([12])?Start>' : '\1\2\3\4',
-        \     '\c\v^(\s*Arc)(Adapt|Calc)?([CL])([12])?>'      : '\1\2\3\4End',
-        \     '\c\v^(\s*Arc)(Adapt|Calc)?([CL])([12])?End>'   : '\1\2\3\4Start',
+        \     '\c\v^(\s*)(Arc)(Adapt|Calc)?([CL])([12])?Start>' : '\1\L\u\2\E\3\L\u\4\5',
+        \     '\c\v^(\s*)(Arc)(Adapt|Calc)?([CL])([12])?>'      : '\1\L\u\2\E\3\L\u\4\5\EEnd',
+        \     '\c\v^(\s*)(Arc)(Adapt|Calc)?([CL])([12])?End>'   : '\1\L\u\2\E\3\L\u\4\5\EStart',
         \   },
         \   {
         \     '\c\v^(\s*)(Nut|SpotM?|Calib|DaProcM)L' : '\1\2J',
@@ -276,20 +362,147 @@ if exists('g:loaded_switch')
         \     '\c\v^(\s*)(Cap|Disp|EGMMove|Paint|Search)C' : '\1\2L',
         \   },
         \   {
-        \     '\c\<IndAMove\>'  : 'IndCMove',
-        \     '\c\<IndCMove\>'  : 'IndDMove',
-        \     '\c\<IndDMove\>'  : 'IndRMove',
-        \     '\c\<IndRMove\>'  : 'IndAMove',
+        \     '\c\v^(\s*)IndAMove>'  : '\1IndCMove',
+        \     '\c\v^(\s*)IndCMove>'  : '\1IndDMove',
+        \     '\c\v^(\s*)IndDMove>'  : '\1IndRMove',
+        \     '\c\v^(\s*)IndRMove>'  : '\1IndAMove',
         \   },
         \   {
-        \     '\c\v^(\s*SMove|\s*STrigg)J(DO|GO|Sync)?' : '\1L\2',
-        \     '\c\v^(\s*SMove|\s*STrigg)L(DO|GO|Sync)?' : '\1J\2',
+        \     '\c\v^(\s*S)(Move|Trigg)J(DO|GO|Sync)?' : '\1\L\u\2\EL\3',
+        \     '\c\v^(\s*S)(Move|Trigg)L(DO|GO|Sync)?' : '\1\L\u\2\EJ\3',
         \   },
         \   {
-        \     '\c\<StartMove\>'       : 'StartMoveRetry',
-        \     '\c\<StartMoveRetry\>'  : 'StopMove',
-        \     '\c\<StopMove\>'        : 'StopMoveReset',
-        \     '\c\<StopMoveReset\>'   : 'StartMove',
+        \     '\c\v^(\s*)StartMove>'       : '\1StartMoveRetry',
+        \     '\c\v^(\s*)StartMoveRetry>'  : '\1StopMove',
+        \     '\c\v^(\s*)StopMove>'        : '\1StopMoveReset',
+        \     '\c\v^(\s*)StopMoveReset>'   : '\1StartMove',
+        \   },
+        \   {
+        \     '\c\v^(\s*)Set>'   : '\1Reset',
+        \     '\c\v^(\s*)Reset>' : '\1Set',
+        \   },
+        \   {
+        \     '\c\v^(\s*)Open>'  : '\1Write',
+        \     '\c\v^(\s*)Write>' : '\1Close',
+        \     '\c\v^(\s*)Close>' : '\1Open',
+        \   },
+        \   {
+        \     '\c\v^(\s*)OpenDir>'  : '\1CloseDir',
+        \     '\c\v^(\s*)CloseDir>' : '\1OpenDir',
+        \   },
+        \   {
+        \     '\c\v^(\s*)DeactUnit>'  : '\1ActUnit',
+        \     '\c\v^(\s*)ActUnit>'    : '\1DeactUnit',
+        \   },
+        \   {
+        \     '\c\v^(\s*)DropWObj>' : '\1WaitWObj',
+        \     '\c\v^(\s*)WaitWObj>' : '\1DropWObj',
+        \   },
+        \   {
+        \     '\c\v^(\s*)ConfJ>' : '\1ConfL',
+        \     '\c\v^(\s*)ConfL>' : '\1ConfJ',
+        \   },
+        \   {
+        \     '\c\v^(\s*)EOffsOff>' : '\1EOffsOn',
+        \     '\c\v^(\s*)EOffsOn>'  : '\1EOffsSet',
+        \     '\c\v^(\s*)EOffsSet>' : '\1EOffsOff',
+        \   },
+        \   {
+        \     '\c\v^(\s*)Incr>'  : '\1Decr',
+        \     '\c\v^(\s*)Decr>'  : '\1Clear',
+        \     '\c\v^(\s*)Clear>' : '\1Incr',
+        \   },
+        \   {
+        \     '\c\v^(\s*)ClkReset>' : '\1ClkStart',
+        \     '\c\v^(\s*)ClkStart>' : '\1ClkStop',
+        \     '\c\v^(\s*)ClkStop>'  : '\1ClkReset',
+        \   },
+        \   {
+        \     '\c\v^(\s*)IWatch>'   : '\1ISleep',
+        \     '\c\v^(\s*)ISleep>'   : '\1IDelete',
+        \     '\c\v^(\s*)IDelete>'  : '\1IEnable',
+        \     '\c\v^(\s*)IEnable>'  : '\1IDisable',
+        \     '\c\v^(\s*)IDisable>' : '\1IWatch',
+        \   },
+        \   {
+        \     '\c\v^(\s*)ISignalAI>' : '\1ISignalAO',
+        \     '\c\v^(\s*)ISignalAO>' : '\1ISignalAI',
+        \   },
+        \   {
+        \     '\c\v^(\s*)ISignalDI>' : '\1ISignalDO',
+        \     '\c\v^(\s*)ISignalDO>' : '\1ISignalDI',
+        \   },
+        \   {
+        \     '\c\v^(\s*)ISignalGI>' : '\1ISignalGO',
+        \     '\c\v^(\s*)ISignalGO>' : '\1ISignalGI',
+        \   },
+        \   {
+        \     '\c\v^(\s*)Load>'   : '\1Save',
+        \     '\c\v^(\s*)Save>'   : '\1UnLoad',
+        \     '\c\v^(\s*)UnLoad>' : '\1Load',
+        \   },
+        \   {
+        \     '\c\v^(\s*)MakeDir>'   : '\1RemoveDir',
+        \     '\c\v^(\s*)RemoveDir>' : '\1MakeDir',
+        \   },
+        \   {
+        \     '\c\v^(\s*)PathRecStart>' : '\1PathRecStop',
+        \     '\c\v^(\s*)PathRecStop>'  : '\1PathRecStart',
+        \   },
+        \   {
+        \     '\c\v^(\s*)PathRecMoveBwd>' : '\1PathRecMoveFwd',
+        \     '\c\v^(\s*)PathRecMoveFwd>' : '\1PathRecMoveBwd',
+        \   },
+        \   {
+        \     '\c\v^(\s*)RenameFile>' : '\1RemoveFile',
+        \     '\c\v^(\s*)RemoveFile>' : '\1RenameFile',
+        \   },
+        \   {
+        \     '\c\v^(\s*)Retry>'   : '\1TryNext',
+        \     '\c\v^(\s*)TryNext>' : '\1Retry',
+        \   },
+        \   {
+        \     '\c\v^(\s*)SetDO>' : '\1SetGO',
+        \     '\c\v^(\s*)SetGO>' : '\1SetAO',
+        \     '\c\v^(\s*)SetAO>' : '\1SetDO',
+        \   },
+        \   {
+        \     '\c\v^(\s*)SocketCreate>'      : '\1SocketListen',
+        \     '\c\v^(\s*)SocketListen>'      : '\1SocketBind',
+        \     '\c\v^(\s*)SocketBind>'        : '\1SocketConnect',
+        \     '\c\v^(\s*)SocketConnect>'     : '\1SocketAccept',
+        \     '\c\v^(\s*)SocketAccept>'      : '\1SocketReceive',
+        \     '\c\v^(\s*)SocketReceive>'     : '\1SocketReceiveFrom',
+        \     '\c\v^(\s*)SocketReceiveFrom>' : '\1SocketSend',
+        \     '\c\v^(\s*)SocketSend>'        : '\1SocketSendTo',
+        \     '\c\v^(\s*)SocketSendTo>'      : '\1SocketClose',
+        \     '\c\v^(\s*)SocketClose>'       : '\1SocketCreate',
+        \   },
+        \   {
+        \     '\c\v^(\s*)SoftAct>'   : '\1SoftDeact',
+        \     '\c\v^(\s*)SoftDeact>' : '\1SoftAct',
+        \   },
+        \   {
+        \     '\c\v^(\s*)SyncMoveOn>'  : '\1SyncMoveOff',
+        \     '\c\v^(\s*)SyncMoveOff>' : '\1SyncMoveOn',
+        \   },
+        \   {
+        \     '\c\v^(\s*)SyncMoveSuspend>' : '\1SyncMoveResume',
+        \     '\c\v^(\s*)SyncMoveResume>'  : '\1SyncMoveSuspend',
+        \   },
+        \   {
+        \     '\c\v^(\s*)WaitAI>' : '\1WaitAO',
+        \     '\c\v^(\s*)WaitAO>' : '\1WaitDI',
+        \     '\c\v^(\s*)WaitDI>' : '\1WaitDO',
+        \     '\c\v^(\s*)WaitDO>' : '\1WaitGI',
+        \     '\c\v^(\s*)WaitGO>' : '\1WaitAI',
+        \   },
+        \   {
+        \     '\c\v^(\s*)WZBoxDef>'       : '\1WZCylDef',
+        \     '\c\v^(\s*)WZCylDef>'       : '\1WZSphDef',
+        \     '\c\v^(\s*)WZSphDef>'       : '\1WZHomeJointDef',
+        \     '\c\v^(\s*)WZHomeJointDef>' : '\1WZLimJointDef',
+        \     '\c\v^(\s*)WZLimJointDef>'  : '\1WZBoxDef',
         \   },
         \   {
         \     '\c\<STR_DIGIT\>'  : 'STR_LOWER',
@@ -411,135 +624,7 @@ if exists('g:loaded_switch')
         \     '\c\<GTEQ\>'  : 'GT',
         \     '\c\<GT\>'    : 'LT',
         \   },
-        \   {
-        \     '\c\v(\s*)\<Set\>'   : '\1Reset',
-        \     '\c\v(\s*)\<Reset\>' : '\1Set',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<Open\>'  : '\1Write',
-        \     '\c\v(\s*)\<Write\>' : '\1Close',
-        \     '\c\v(\s*)\<Close\>' : '\1Open',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<OpenDir\>'  : '\1CloseDir',
-        \     '\c\v(\s*)\<CloseDir\>' : '\1OpenDir',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<DeactUnit\>'  : '\1ActUnit',
-        \     '\c\v(\s*)\<ActUnit\>'    : '\1DeactUnit',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<DropWObj\>' : '\1WaitWObj',
-        \     '\c\v(\s*)\<WaitWObj\>' : '\1DropWObj',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<ConfJ\>' : '\1ConfL',
-        \     '\c\v(\s*)\<ConfL\>' : '\1ConfJ',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<EOffsOff\>'  : '\1EOffsOn',
-        \     '\c\v(\s*)\<EOffsOn\>'  : '\1EOffsSet',
-        \     '\c\v(\s*)\<EOffsSet\>' : '\1EOffsOff',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<Incr\>'  : '\1Decr',
-        \     '\c\v(\s*)\<Decr\>'  : '\1Clear',
-        \     '\c\v(\s*)\<Clear\>' : '\1Incr',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<ClkReset\>' : '\1ClkStart',
-        \     '\c\v(\s*)\<ClkStart\>' : '\1ClkStop',
-        \     '\c\v(\s*)\<ClkStop\>'  : '\1ClkReset',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<IWatch\>'   : '\1ISleep',
-        \     '\c\v(\s*)\<ISleep\>'   : '\1IDelete',
-        \     '\c\v(\s*)\<IDelete\>'  : '\1IEnable',
-        \     '\c\v(\s*)\<IEnable\>'  : '\1IDisable',
-        \     '\c\v(\s*)\<IDisable\>' : '\1IWatch',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<ISignalAI\>' : '\1ISignalAO',
-        \     '\c\v(\s*)\<ISignalAO\>' : '\1ISignalAI',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<ISignalDI\>' : '\1ISignalDO',
-        \     '\c\v(\s*)\<ISignalDO\>' : '\1ISignalDI',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<ISignalGI\>' : '\1ISignalGO',
-        \     '\c\v(\s*)\<ISignalGO\>' : '\1ISignalGI',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<Load\>'   : '\1Save',
-        \     '\c\v(\s*)\<Save\>'   : '\1UnLoad',
-        \     '\c\v(\s*)\<UnLoad\>' : '\1Load',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<MakeDir\>'   : '\1RemoveDir',
-        \     '\c\v(\s*)\<RemoveDir\>' : '\1MakeDir',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<PathRecStart\>' : '\1PathRecStop',
-        \     '\c\v(\s*)\<PathRecStop\>'  : '\1PathRecStart',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<PathRecMoveBwd\>' : '\1PathRecMoveFwd',
-        \     '\c\v(\s*)\<PathRecMoveFwd\>' : '\1PathRecMoveBwd',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<RenameFile\>' : '\1RemoveFile',
-        \     '\c\v(\s*)\<RemoveFile\>' : '\1RenameFile',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<Retry\>'   : '\1TryNext',
-        \     '\c\v(\s*)\<TryNext\>' : '\1Retry',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<SetDO\>' : '\1SetGO',
-        \     '\c\v(\s*)\<SetGO\>' : '\1SetAO',
-        \     '\c\v(\s*)\<SetAO\>' : '\1SetDO',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<SocketCreate\>'      : '\1SocketListen',
-        \     '\c\v(\s*)\<SocketListen\>'      : '\1SocketBind',
-        \     '\c\v(\s*)\<SocketBind\>'        : '\1SocketConnect',
-        \     '\c\v(\s*)\<SocketConnect\>'     : '\1SocketAccept',
-        \     '\c\v(\s*)\<SocketAccept\>'      : '\1SocketReceive',
-        \     '\c\v(\s*)\<SocketReceive\>'     : '\1SocketReceiveFrom',
-        \     '\c\v(\s*)\<SocketReceiveFrom\>' : '\1SocketSend',
-        \     '\c\v(\s*)\<SocketSend\>'        : '\1SocketSendTo',
-        \     '\c\v(\s*)\<SocketSendTo\>'      : '\1SocketClose',
-        \     '\c\v(\s*)\<SocketClose\>'       : '\1SocketCreate',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<SoftAct\>'   : '\1SoftDeact',
-        \     '\c\v(\s*)\<SoftDeact\>' : '\1SoftAct',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<SyncMoveOn\>'  : '\1SyncMoveOff',
-        \     '\c\v(\s*)\<SyncMoveOff\>' : '\1SyncMoveOn',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<SyncMoveSuspend\>' : '\1SyncMoveResume',
-        \     '\c\v(\s*)\<SyncMoveResume\>'  : '\1SyncMoveSuspend',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<WaitAI\>' : '\1WaitAO',
-        \     '\c\v(\s*)\<WaitAO\>' : '\1WaitDI',
-        \     '\c\v(\s*)\<WaitDI\>' : '\1WaitDO',
-        \     '\c\v(\s*)\<WaitDO\>' : '\1WaitGI',
-        \     '\c\v(\s*)\<WaitGO\>' : '\1WaitAI',
-        \   },
-        \   {
-        \     '\c\v(\s*)\<WZBoxDef\>'       : '\1WZCylDef',
-        \     '\c\v(\s*)\<WZCylDef\>'       : '\1WZSphDef',
-        \     '\c\v(\s*)\<WZSphDef\>'       : '\1WZHomeJointDef',
-        \     '\c\v(\s*)\<WZHomeJointDef\>' : '\1WZLimJointDef',
-        \     '\c\v(\s*)\<WZLimJointDef\>'  : '\1WZBoxDef',
-        \   },
         \ ]
 endif
-" nnoremap <F6> :syntax on<bar>normal mzgg=G`z<cr>:syntax off<cr>
 
 " vim:sw=2 sts=2 et fdm=marker fmr={{{,}}}

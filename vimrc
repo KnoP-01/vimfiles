@@ -121,7 +121,7 @@ command! MyPlugUpdate   :set statusline=%F%m%r%h%w shell=cmd.exe shellcmdflag=/c
 " PlugInstall
 command! MyPlugInstall  :set statusline=%F%m%r%h%w shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=! <bar> noau PlugInstall
 " PlugClean
-command! MyPlugInstall  :set statusline=%F%m%r%h%w shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=! <bar> noau PlugClean
+command! MyPlugClean    :set statusline=%F%m%r%h%w shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=! <bar> noau PlugClean
 " don't forget PlugClean
 " }}}
 " Syntax And Filetype: " {{{
@@ -258,8 +258,8 @@ function! MyStatusline(full) " {{{
   setlocal statusline+=%w               " Preview window flag [Preview]
   if a:full
     setlocal statusline+=%=               " align right from here on
-    setlocal statusline+=%#Error#         " change coloring
-    setlocal statusline+=%{b:gitbranch}
+    " setlocal statusline+=%#Error#         " change coloring
+    " setlocal statusline+=%{b:gitbranch}
     setlocal statusline+=%#StatusLineNC#  " change coloring
     setlocal statusline+=\                " a space
     setlocal statusline+=%{substitute(&ff\,'\\(.\\).\\+'\,'\\1'\,'')}           " file format
@@ -298,7 +298,7 @@ augroup myStatusline
   autocmd!
   autocmd BufEnter,WinEnter * :call MyStatusline(1)
   autocmd BufLeave,WinLeave * :call MyStatusline(0)
-  autocmd VimEnter,WinEnter,BufEnter * call StatuslineGitBranch()
+  " autocmd VimEnter,WinEnter,BufEnter * call StatuslineGitBranch()
 augroup end
 " }}}
 
@@ -632,6 +632,7 @@ let g:krlFoldLevel=2
 
 " Colorscheme:
 " colorscheme: {{{
+set termguicolors
 " let g:rapidGroupName=0
 " let g:krlGroupName=0
 "
