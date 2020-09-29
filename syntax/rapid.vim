@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 25. Sep 2020
+" Last Change: 29. Sep 2020
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -440,6 +440,8 @@ else
   syn keyword rapidConstant LONG_JMP_ALL_ERR
   " Arc and Arc sensor
   syn keyword rapidConstant AW_IGNI_ERR AW_EQIP_ERR AW_START_ERR AW_STOP_ERR AW_TRACK_ERR AW_TRACKCORR_ERR AW_TRACKSTA_ERR AW_USERSIG_ERR AW_WELD_ERR AW_WIRE_ERR
+  " EGM egmframetype
+  syn keyword rapidConstant EGM_FRAME_BASE EGM_FRAME_TOOL EGM_FRAME_WOBJ EGM_FRAME_WORLD EGM_FRAME_JOINT
   " Events
   syn keyword rapidConstant EE_START EE_CYCLE_START EE_PROC_START EE_PRE_PROD EE_CLOSE_JIG EE_INDEX EE_PRE_PART EE_POST_PART EE_OPEN_JIG EE_SERVICE EE_POST_PROD EE_ABORT EE_WAIT_ORDER EE_POST_PROC
   syn keyword rapidConstant EE_POWERON EE_POWERON_OR_START EE_RESTART EE_START_OR_RESTART EE_STOP EE_QSTOP EE_STOP_OR_QSTOP EE_RESET EE_STEP EE_STEP_FWD EE_STEP_BCK EE_BEFORE_INIT EE_AFTER_INIT EE_BEFORE_PROD EE_AFTER_PROD EE_BEFORE_MENU EE_AFTER_MENU
@@ -550,7 +552,7 @@ else
     highlight default link rapidErrorIdentifierNameTooLong Error
     "
     " a == b + 1
-    syn match rapidErrorShouldBeColonEqual /\c\v%(^\s*%(%(global\s+|task\s+|local\s+)?%(var|pers|const)\s+\k+\s+)?\k+%(\k|\{|,|\}|\+|\-|\*|\/|\.)*\s*)@<=\=/
+    syn match rapidErrorShouldBeColonEqual /\c\v%(^\s*%(%(TASK\s+|LOCAL\s+)?%(VAR|PERS|CONST)\s+\k+\s+)?\k+%(\k|\{|,|\}|\+|\-|\*|\/|\.)*\s*)@<=\=/
     highlight default link rapidErrorShouldBeColonEqual Error
     "
     " WaitUntil a==b

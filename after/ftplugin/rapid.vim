@@ -342,11 +342,11 @@ if exists('g:loaded_switch')
         \     '\c\<const\>' : 'VAR',
         \   },
         \   {
-        \     '\c\v^(\s*Move)J>'                               : '\L\u\1\EAbsJ',
-        \     '\c\v^(\s*Move)AbsJ>'                            : '\L\u\1\EL',
-        \     '\c\v^(\s*Move|\s*Trigg)J(IOs|AO|DO|GO|Sync)?>'  : '\L\u\1\EL\2',
-        \     '\c\v^(\s*Move|\s*Trigg)L(IOs|AO|DO|GO|Sync)?>'  : '\L\u\1\EC\2',
-        \     '\c\v^(\s*Move|\s*Trigg)C(IOs|AO|DO|GO|Sync)?>'  : '\L\u\1\EJ\2',
+        \     '\c\v^(\s*)(Move)J>'                               : '\1\L\u\2\EAbsJ',
+        \     '\c\v^(\s*)(Move)AbsJ>'                            : '\1\L\u\2\EL',
+        \     '\c\v^(\s*)(Move|Trigg)J(IOs|AO|DO|GO|Sync)?>'  : '\1\L\u\2\EL\3',
+        \     '\c\v^(\s*)(Move|Trigg)L(IOs|AO|DO|GO|Sync)?>'  : '\1\L\u\2\EC\3',
+        \     '\c\v^(\s*)(Move|Trigg)C(IOs|AO|DO|GO|Sync)?>'  : '\1\L\u\2\EJ\3',
         \   },
         \   {
         \     '\c\v^(\s*)(Arc)(Adapt|Calc)?([CL])([12])?Start>' : '\1\L\u\2\E\3\L\u\4\5',
@@ -354,12 +354,20 @@ if exists('g:loaded_switch')
         \     '\c\v^(\s*)(Arc)(Adapt|Calc)?([CL])([12])?End>'   : '\1\L\u\2\E\3\L\u\4\5\EStart',
         \   },
         \   {
-        \     '\c\v^(\s*)(Nut|SpotM?|Calib|DaProcM)L' : '\1\2J',
-        \     '\c\v^(\s*)(Nut|SpotM?|Calib|DaProcM)J' : '\1\2L',
+        \     '\c\v^(\s*)(Nut|Spot|Calib)(M)?L' : '\1\L\u\2\U\3J',
+        \     '\c\v^(\s*)(Nut|Spot|Calib)(M)?J' : '\1\L\u\2\U\3L',
         \   },
         \   {
-        \     '\c\v^(\s*)(Cap|Disp|EGMMove|Paint|Search)L' : '\1\2C',
-        \     '\c\v^(\s*)(Cap|Disp|EGMMove|Paint|Search)C' : '\1\2L',
+        \     '\c\v^(\s*)DaProcML' : '\1DaProcMJ',
+        \     '\c\v^(\s*)DaProcMJ' : '\1DaProcML',
+        \   },
+        \   {
+        \     '\c\v^(\s*)(Cap|Disp|Paint|Search)L' : '\1\L\u\2\EC',
+        \     '\c\v^(\s*)(Cap|Disp|Paint|Search)C' : '\1\L\u\2\EL',
+        \   },
+        \   {
+        \     '\c\v^(\s*)EGMMoveL' : '\1EGMMoveC',
+        \     '\c\v^(\s*)EGMMoveC' : '\1EGMMoveL',
         \   },
         \   {
         \     '\c\v^(\s*)IndAMove>'  : '\1IndCMove',
@@ -368,8 +376,8 @@ if exists('g:loaded_switch')
         \     '\c\v^(\s*)IndRMove>'  : '\1IndAMove',
         \   },
         \   {
-        \     '\c\v^(\s*S)(Move|Trigg)J(DO|GO|Sync)?' : '\1\L\u\2\EL\3',
-        \     '\c\v^(\s*S)(Move|Trigg)L(DO|GO|Sync)?' : '\1\L\u\2\EJ\3',
+        \     '\c\v^(\s*)(S)(Move|Trigg)J(DO|GO|Sync)?' : '\1\u\2\L\u\3\EL\4',
+        \     '\c\v^(\s*)(S)(Move|Trigg)L(DO|GO|Sync)?' : '\1\u\2\L\u\3\EJ\4',
         \   },
         \   {
         \     '\c\v^(\s*)StartMove>'       : '\1StartMoveRetry',
@@ -401,6 +409,10 @@ if exists('g:loaded_switch')
         \   {
         \     '\c\v^(\s*)ConfJ>' : '\1ConfL',
         \     '\c\v^(\s*)ConfL>' : '\1ConfJ',
+        \   },
+        \   {
+        \     '\c\v<Off>' : 'On',
+        \     '\c\v<On>'  : 'Off',
         \   },
         \   {
         \     '\c\v^(\s*)EOffsOff>' : '\1EOffsOn',
@@ -495,6 +507,7 @@ if exists('g:loaded_switch')
         \     '\c\v^(\s*)WaitAO>' : '\1WaitDI',
         \     '\c\v^(\s*)WaitDI>' : '\1WaitDO',
         \     '\c\v^(\s*)WaitDO>' : '\1WaitGI',
+        \     '\c\v^(\s*)WaitGI>' : '\1WaitGO',
         \     '\c\v^(\s*)WaitGO>' : '\1WaitAI',
         \   },
         \   {
