@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 29. Sep 2020
+" Last Change: 25. Oct 2020
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -80,13 +80,13 @@ endif
 
 " Constant values {{{
 " Boolean
-syn keyword rapidBoolean True False Edge High Low
+syn keyword rapidBoolean TRUE FALSE Edge High Low
 highlight default link rapidBoolean Boolean
 " Float (num)
 syn match rapidFloat /\v%(\W|_)@1<=[+-]?\d+\.?\d*%(\s*[eE][+-]?\d+)?/
 highlight default link rapidFloat Float
 " String. Note: Don't rename group rapidString. Indent depend on this
-syn region rapidString matchgroup=rapidString start=/"/ skip=/""/ end=/"/ contains=rapidCharCode,rapidEscapedBackSlash,rapidStringDoubleQuote,rapidErrorSingleBackslash,rapidErrorStringTooLong
+syn region rapidString matchgroup=rapidString start=/"/ skip=/""/ end=/"/ contains=rapidErrorStringTooLong,rapidCharCode,rapidEscapedBackSlash,rapidStringDoubleQuote,rapidErrorSingleBackslash
 highlight default link rapidString String
 " two adjacent "" in string for one double quote
 syn match rapidStringDoubleQuote /""/ contained
@@ -320,7 +320,7 @@ else
   syn match rapidNames /[a-zA-Z_][.a-zA-Z0-9_]*/
   " highlight default link rapidNames None
   " rapid structrure values. added to be able to conceal them
-  syn region rapidConcealableString start=/"/ end=/"/ contained contains=rapidCharCode,rapidEscapedBackSlash,rapidErrorSingleBackslash,rapidErrorStringTooLong  conceal 
+  syn region rapidConcealableString start=/"/ end=/"/ contained contains=rapidErrorStringTooLong,rapidCharCode,rapidEscapedBackSlash,rapidErrorSingleBackslash  conceal 
   highlight default link rapidConcealableString String
   syn region rapidStructVal matchgroup=rapidDelimiter start=/\[/ end=/\]/ contains=ALLBUT,rapidString keepend extend conceal cchar=* 
   " }}} Structure value
@@ -376,7 +376,7 @@ else
   highlight default link rapidCallByVar Function
   " }}} Function
 
-  " Rapid Constants {{{
+  " Constants {{{
   " standard rapid constants
   syn keyword rapidConstant pi stEmpty
   syn keyword rapidConstant STR_DIGIT STR_LOWER STR_UPPER STR_WHITE
@@ -425,7 +425,7 @@ else
   syn keyword rapidConstant ERR_SPEEDLIM_VALUE ERR_SPEED_REFRESH_LIM
   syn keyword rapidConstant ERR_STARTMOVE ERR_STORE_PROF ERR_STRTOOLNG ERR_SYMBOL_TYPE ERR_SYM_ACCESS ERR_SYNCMOVEOFF ERR_SYNCMOVEON ERR_SYNTAX
   syn keyword rapidConstant ERR_TASKNAME
-  syn keyword rapidConstant ERR_TP_DIBREAK ERR_TP_DOBREAK ERR_TP_MAXTIME ERR_TP_NO_CLIENT
+  syn keyword rapidConstant ERR_TP_DIBREAK ERR_TP_DOBREAK ERR_TP_MAXTIME ERR_TP_NO_CLIENT ERR_TP_PERSBOOLBREAK
   syn keyword rapidConstant ERR_TRUSTLEVEL ERR_TXTNOEXIST ERR_UDPUC_COMM
   syn keyword rapidConstant ERR_UISHOW_FATAL ERR_UISHOW_FULL ERR_UI_INITVALUE ERR_UI_MAXMIN ERR_UI_NOTINT
   syn keyword rapidConstant ERR_UNIT_PAR ERR_UNKINO ERR_UNKPROC ERR_UNLOAD ERR_USE_PROF
@@ -588,7 +588,9 @@ if get(g:,'rapidShowError',1)
   "
   " This error must be defined after rapidString
   " string too long
-  syn match rapidErrorStringTooLong /\v("[^"]{80})@81<=[^"]+\ze"/ contained
+  " syn match rapidErrorStringTooLong /\v("[^"]{80})@81<=[^"]+\ze"/ contained
+  " syn match rapidErrorStringTooLong /\v"@1<=[^"]{80}\zs[^"]+\ze"/ contained contains=rapidCharCode,rapidEscapedBackSlash,rapidStringDoubleQuote,rapidErrorSingleBackslash
+  syn match rapidErrorStringTooLong /\v[^"]{80}\zs[^"]+/ contained contains=rapidCharCode,rapidEscapedBackSlash,rapidStringDoubleQuote,rapidErrorSingleBackslash
   highlight default link rapidErrorStringTooLong Error
   "
 endif
