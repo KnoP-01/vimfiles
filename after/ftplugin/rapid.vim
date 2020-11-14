@@ -430,6 +430,10 @@ if exists('g:loaded_switch')
         \     '\c\v^(\s*)ClkStop>'  : '\1ClkReset',
         \   },
         \   {
+        \     '\c\v^(\s*)IOEnable>'  : '\1IODisable',
+        \     '\c\v^(\s*)IODisable>' : '\1IOEnable',
+        \   },
+        \   {
         \     '\c\v^(\s*)IWatch>'   : '\1ISleep',
         \     '\c\v^(\s*)ISleep>'   : '\1IDelete',
         \     '\c\v^(\s*)IDelete>'  : '\1IEnable',

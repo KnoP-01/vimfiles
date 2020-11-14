@@ -160,6 +160,11 @@ augroup END
 " Options:
 " Other Options: {{{
 
+" truecolor in terminals which support it. May not work in all cases!
+if has('termguicolors') && $COLORTERM ==# 'truecolor'
+  set termguicolors
+endif
+
 " better diff
 if has("patch-8.1.0360")
     set diffopt+=internal,algorithm:patience
@@ -200,7 +205,7 @@ set guioptions-=T    " keine Toolbar per default. Siehe <S-F11> unten
 
 set nrformats-=octal  " don't use octal in case of leading 0
 
-set scrolloff=3       " scroll offset at top or bottom
+set scrolloff=2       " scroll offset at top or bottom
 set sidescrolloff=5   " scroll offset at left or right
 
 set history=50        " keep 50 lines of command line history
@@ -605,6 +610,7 @@ let g:krlCommentIndent=1
 " let g:krlCompleteStd = 0
 let g:krlCompleteCustom = [
       \'R1/Program/sonstiges/acol.src', 
+      \'R1/System/bas.src', 
       \'R1/Graeff TP/global_var.dat', 
       \'R1/Graeff TP/mymessage.src', 
       \'R1/Graeff TP/mymessage.dat', 
@@ -706,7 +712,7 @@ let g:netrw_browse_split = 0    " reuse current window
 " Autodate: {{{
 " let g:plugin_autodate_disable = 1 " not present enables, any value disables
 let g:autodate_keyword_post   = '$'
-let b:autodate_format         = '%d. %3m %Y'
+let g:autodate_format         = '%d. %3m %Y'
 " }}}
 
 " vim:sw=2 sts=2 et fdm=marker fmr={{{,}}}

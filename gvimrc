@@ -1,5 +1,5 @@
-set lines=56
-set columns=189
+set lines=999
+set columns=999
 
 set guicursor=n-v-c:block-Cursor/lCursor-blinkoff500-blinkon500,
 			\ve:ver35-Cursor-blinkoff500-blinkon500,
@@ -12,9 +12,9 @@ set guicursor=n-v-c:block-Cursor/lCursor-blinkoff500-blinkon500,
 
 " bewaehrt
 if has("win32")
-    set guifont=terminus:h14
+    set guifont=terminus:h12
 else
-    set guifont=Terminus\ 14
+    set guifont=Terminus\ 12
 endif
 
 " tests

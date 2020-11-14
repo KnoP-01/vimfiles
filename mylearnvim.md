@@ -15,11 +15,13 @@
 * `:?patter?c.<cr>` = search backward for pattern and copy found line to the
     current one
 * `q:` = edit commandline like any buffer `c_CRTL-F` also works 
+* `CTRL-C`    := go back to normal command line after q: or c_CTRL-F
 * `i_CTRL-O`    := exec a single normal mode command in insert mode
 * `:Cfilter`    := filter quick fix list  
   
 ## completion
 ### command line mode completion
+* `c_CTRL-F`    := edit commandline like any buffer
 * `c_CTRL-D`    := clipboard (selection)
 * `c_CTRL-R *`  := clipboard (selection)
 * `c_CTRL-R +`  := clipboard
