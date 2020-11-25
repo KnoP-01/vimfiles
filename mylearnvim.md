@@ -12,6 +12,7 @@
 ------------------------------------------------------------------------------
 # New Discoveries
 ## Uncategorized
+* `v_o` = go to the opposite side of the current visual selection
 * `:?patter?c.<cr>` = search backward for pattern and copy found line to the
     current one
 * `q:` = edit commandline like any buffer `c_CRTL-F` also works 
