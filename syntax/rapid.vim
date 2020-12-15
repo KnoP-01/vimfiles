@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 25. Oct 2020
+" Last Change: 02. Dec 2020
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -161,7 +161,7 @@ else
   " Type, StorageClass and Typedef {{{
   " anytype (preceded by 'alias|pers|var|const|func'
   " TODO: still missing are userdefined types which are part of a parameter:
-  " proc message( mystring msMessagePart1{},
+  " PROC message( mystring msMessagePart1{},
   "               \ myvar msMsg4{})
   " TODO testing. Problem: does not highlight any type if it's part of an argument list
   " syn match rapidAnyType /\v^\s*(global\s+|task\s+|local\s+)?(alias|pers|var|const|func)\s+\w+>/ contains=rapidStorageClass,rapidType,rapidTypeDef
@@ -221,13 +221,13 @@ else
   syn keyword rapidConditional if then elseif else endif test case default endtest
   highlight default link rapidConditional Conditional
   " Repeat
-  syn keyword rapidRepeat DO
+  syn keyword rapidRepeat do
   syn match rapidRepeat /\c\v^\s*%(<while>|<for>)%([^!]+<do>)@=/
   syn keyword rapidRepeat from to step endfor endwhile
   highlight default link rapidRepeat Repeat
   " Label
   syn keyword rapidLabel goto
-  syn match rapidLabel /\c\v^\s*\a\k*\:\ze%([^=]|$)/ contains=rapidConditional,rapidOperator
+  syn match rapidLabel /\c\v^\s*[[:upper:][:lower:]]\k*\:\ze%([^=]|$)/ contains=rapidConditional,rapidOperator
   highlight default link rapidLabel Label
   " Keyword
   syn keyword rapidKeyword AccSet ActEventBuffer ActUnit Add AliasCamera AliasIO AliasIOReset BitClear BitSet BookErrNo BrakeCheck
@@ -317,7 +317,7 @@ else
   " }}} special keyword for move command 
 
   " Structure value {{{
-  syn match rapidNames /[a-zA-Z_][.a-zA-Z0-9_]*/
+  syn match rapidNames /\v[[:upper:][:lower:]](\k|\.)*/
   " highlight default link rapidNames None
   " rapid structrure values. added to be able to conceal them
   syn region rapidConcealableString start=/"/ end=/"/ contained contains=rapidErrorStringTooLong,rapidCharCode,rapidEscapedBackSlash,rapidErrorSingleBackslash  conceal 
@@ -370,7 +370,7 @@ else
   " }}}
 
   " Function {{{
-  syn match rapidFunction contains=rapidBuildInFunction /\v\c%(<(proc|module)\s+)@10<!<[a-zA-Z_]\k+ *\(/me=e-1
+  syn match rapidFunction contains=rapidBuildInFunction /\v\c%(<%(PROC|MODULE)\s+)@10<!<[[:upper:][:lower:]]\k+ *\(/me=e-1
   highlight default link rapidFunction Function
   syn match rapidCallByVar /%\ze[^%]/
   highlight default link rapidCallByVar Function
@@ -552,7 +552,7 @@ else
     highlight default link rapidErrorIdentifierNameTooLong Error
     "
     " a == b + 1
-    syn match rapidErrorShouldBeColonEqual /\c\v%(^\s*%(%(TASK\s+|LOCAL\s+)?%(VAR|PERS|CONST)\s+\k+\s+)?\k+%(\k|\{|,|\}|\+|\-|\*|\/|\.)*\s*)@<=\=/
+    syn match rapidErrorShouldBeColonEqual /\c\v%(^\s*%(%(TASK\s+|LOCAL\s+)?%(VAR|PERS|CONST)\s+\k+\s+)?\k+%(\k|[.{},*/+-])*\s*)@<=\=/
     highlight default link rapidErrorShouldBeColonEqual Error
     "
     " WaitUntil a==b
@@ -573,7 +573,7 @@ else
     highlight default link rapidErrorMissingOperator Error
     "
     " "for" missing "from"
-    syn match rapidErrorMissingFrom /\c\v^\s*for\s+%(\k[0-9a-zA-Z_.{},*/+-]*\s+from)@!\S+\s+\S+/
+    syn match rapidErrorMissingFrom /\c\v^\s*for\s+%([[:upper:][:lower:]]%(\k|[.{},*/+-])*\s+from)@!\S+\s+\S+/
     highlight default link rapidErrorMissingFrom Error
     "
     "

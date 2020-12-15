@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 25. Sep 2020
+" Last Change: 15. Dec 2020
 " Credits: Based on indent/vim.vim
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -32,7 +32,11 @@ setlocal nolisp
 setlocal nosmartindent
 setlocal autoindent
 setlocal indentexpr=GetRapidIndent()
-setlocal indentkeys=!^F,o,O,0=~endmodule,0=~error,0=~undo,0=~backward,0=~endproc,0=~endrecord,0=~endtrap,0=~endfunc,0=~else,0=~endif,0=~endtest,0=~endfor,0=~endwhile,:
+if get(g:,'rapidNewStyleIndent',0)
+  setlocal indentkeys=!^F,o,O,0=~endmodule,0=~error,0=~undo,0=~backward,0=~endproc,0=~endrecord,0=~endtrap,0=~endfunc,0=~else,0=~endif,0=~endtest,0=~endfor,0=~endwhile,:,<[>,<]>,<(>,<)>
+else
+  setlocal indentkeys=!^F,o,O,0=~endmodule,0=~error,0=~undo,0=~backward,0=~endproc,0=~endrecord,0=~endtrap,0=~endfunc,0=~else,0=~endif,0=~endtest,0=~endfor,0=~endwhile,:
+endif
 let b:undo_indent="setlocal lisp< si< ai< inde< indk<"
 
 if get(g:,'rapidSpaceIndent',1)
@@ -86,7 +90,7 @@ function s:GetRapidIndentIntern() abort
 
   " Define add a 'shiftwidth' pattern
   let l:addShiftwidthPattern  = '\c\v^\s*('
-  let l:addShiftwidthPattern .=           '((local|task)\s+)?(module|record|proc|func|trap)\s+\w'
+  let l:addShiftwidthPattern .=           '((local|task)\s+)?(module|record|proc|func|trap)\s+\k'
   let l:addShiftwidthPattern .=           '|(backward|error|undo)>'
   let l:addShiftwidthPattern .=         ')'
   "
@@ -119,14 +123,18 @@ function s:GetRapidIndentIntern() abort
     let l:ind = l:ind - &sw
   endif
 
-  " First case after a test gets the indent of the test.
-  if s:RapidLenTilStr(l:currentLineNum, "case", 0)>=0 && s:RapidLenTilStr(l:preNoneBlankLineNum, "test", 0)>=0
+  " First case (or default) after a test gets the indent of the test.
+  if (s:RapidLenTilStr(l:currentLineNum, "case", 0)>=0 || s:RapidLenTilStr(l:currentLineNum, "default", 0)>=0) && s:RapidLenTilStr(l:preNoneBlankLineNum, "test", 0)>=0
     let l:ind += &sw
   endif
 
   " continued lines with () or []
   let l:OpenSum  = s:RapidLoneParen(l:preNoneBlankLineNum,"(") + s:RapidLoneParen(l:preNoneBlankLineNum,"[")
-  let l:CloseSum = s:RapidLoneParen(l:preNoneBlankLineNum,")") + s:RapidLoneParen(l:preNoneBlankLineNum,"]")
+  if get(g:,'rapidNewStyleIndent',0)
+    let l:CloseSum = s:RapidLoneParen(l:currentLineNum,")") + s:RapidLoneParen(l:currentLineNum,"]")
+  else
+    let l:CloseSum = s:RapidLoneParen(l:preNoneBlankLineNum,")") + s:RapidLoneParen(l:preNoneBlankLineNum,"]")
+  endif
   if l:OpenSum > l:CloseSum
     let l:ind += (l:OpenSum * 4 * &sw)
   elseif l:OpenSum < l:CloseSum
@@ -145,7 +153,7 @@ function s:RapidLenTilStr(lnum, str, startIdx) abort
   let l:line = getline(a:lnum)
   let l:len  = strlen(l:line)
   let l:idx  = a:startIdx
-  if a:str =~ '^\w\+$'
+  if a:str =~ '^\k\+$'
     let l:str = '\c\<' . a:str . '\>'
   else
     let l:str = a:str

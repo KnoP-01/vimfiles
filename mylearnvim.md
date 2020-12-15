@@ -19,6 +19,7 @@
 * `CTRL-C`    := go back to normal command line after q: or c_CTRL-F
 * `i_CTRL-O`    := exec a single normal mode command in insert mode
 * `:Cfilter`    := filter quick fix list  
+* `i_CTRL-A`    := redo last insert (insert previously inserted text)
   
 ## completion
 ### command line mode completion

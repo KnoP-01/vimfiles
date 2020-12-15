@@ -137,10 +137,10 @@ augroup vimrcEx " {{{
   au!
 
   " relativenumber and cursorline only in current window
-  " autocmd BufEnter,WinEnter *                           setlocal    cursorline
-  " autocmd BufLeave,WinLeave *                           setlocal  nocursorline
-  autocmd BufEnter,WinEnter * if &filetype !=# 'help' | setlocal    relativenumber | endif
-  autocmd BufLeave,WinLeave * if &filetype !=# 'help' | setlocal  norelativenumber | endif
+  autocmd BufEnter,WinEnter *                           setlocal    cursorline
+  autocmd BufLeave,WinLeave *                           setlocal  nocursorline
+  " autocmd BufEnter,WinEnter * if &filetype !=# 'help' | setlocal    relativenumber | endif
+  " autocmd BufLeave,WinLeave * if &filetype !=# 'help' | setlocal  norelativenumber | endif
 
   " For all text files set 'textwidth' to 78 characters.
   autocmd FileType text setlocal textwidth=78
@@ -159,6 +159,9 @@ augroup END
 
 " Options:
 " Other Options: {{{
+
+" read UTF-8 files correctly
+set fileencodings=ucs-bom,utf-8,latin1
 
 " truecolor in terminals which support it. May not work in all cases!
 if has('termguicolors') && $COLORTERM ==# 'truecolor'
@@ -223,7 +226,7 @@ set showmode          " display mode
 set cursorline        " always enable cursorline
 
 set number            " line number
-set relativenumber    " relative line number
+" set relativenumber    " relative line number
 
 set nowrap            " don't wrap long lines
 set linebreak         " break long lines at word bounderies in case I use wrap
@@ -262,6 +265,7 @@ function! MyStatusline(full) " {{{
   setlocal statusline+=%h               " Help buffer flag    [help]
   setlocal statusline+=%w               " Preview window flag [Preview]
   if a:full
+    setlocal statusline+=\                " a space
     setlocal statusline+=%=               " align right from here on
     " setlocal statusline+=%#Error#         " change coloring
     " setlocal statusline+=%{b:gitbranch}
@@ -552,6 +556,7 @@ let g:knopVerbose=0
 " augroup END
 " let g:rapidEndwiseUpperCase=1
 " let g:rapidGroupName=0
+let g:rapidNewStyleIndent=1
 " let g:rapidNoCommentIndent=0 " undokumentiert
 let g:rapidCommentIndent=0
 " let g:rapidCommentTextObject=0
@@ -564,7 +569,7 @@ let g:rapidCommentIndent=0
 " let g:rapidListUsageKeyMap=1
 " let g:rapidConcealStructsKeyMap=1 " deprecated
 " let g:rapidConcealStructKeyMap=1
-let g:rapidConcealStructs=2
+let g:rapidConcealStructs=0
 " let g:rapidAutoFormKeyMap=1
 " let g:rapidCompleteStd = 0
 let g:rapidCompleteCustom = [
@@ -573,6 +578,15 @@ let g:rapidCompleteCustom = [
       \'TASK1/PROGMOD/MainRob1.mod',
       \'TASK1/PROGMOD/MainRob2.mod',
       \'TASK1/PROGMOD/MainRob3.mod']
+      \'TASK1/PROGMOD/Admin.mod',
+      \'TASK1/PROGMOD/Berechnung.mod',
+      \'TASK1/PROGMOD/Blisterfunktionen.mod',
+      \'TASK1/PROGMOD/Daten.mod',
+      \'TASK1/PROGMOD/Greifer.mod',
+      \'TASK1/PROGMOD/KLT_DATEN.mod',
+      \'TASK1/PROGMOD/Gestell_DATEN.mod',
+      \'TASK1/SYSMOD/mvBefehle.sys',
+      \'TASK1/SYSMOD/Befehle.sys']
 " let g:rapidPathToBodyFiles='d:\daten\scripts\vim_resource\rapid resource\'
 " let g:rapidNoHighLink=1
 " let g:rapidShowError=0
