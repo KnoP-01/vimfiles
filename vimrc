@@ -577,7 +577,7 @@ let g:rapidCompleteCustom = [
       \'TASK3/PROGMOD/CyclicProg.mod',
       \'TASK1/PROGMOD/MainRob1.mod',
       \'TASK1/PROGMOD/MainRob2.mod',
-      \'TASK1/PROGMOD/MainRob3.mod']
+      \'TASK1/PROGMOD/MainRob3.mod',
       \'TASK1/PROGMOD/Admin.mod',
       \'TASK1/PROGMOD/Berechnung.mod',
       \'TASK1/PROGMOD/Blisterfunktionen.mod',
