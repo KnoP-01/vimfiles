@@ -643,6 +643,7 @@ let g:krlFoldLevel=2
 " let g:krlNoIndent=0
 " let g:krlNoSpaceIndent=0
 " let g:krlSpaceIndent=0
+" let g:krlKeyWord=0
 " let g:krlNoKeyWord=0
 " let g:krlNoPath=0
 " let g:krlNoVerbose=1 " siehe oben g:knop...
