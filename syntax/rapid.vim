@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 02. Dec 2020
+" Last Change: 22. Dec 2020
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -86,7 +86,7 @@ highlight default link rapidBoolean Boolean
 syn match rapidFloat /\v%(\W|_)@1<=[+-]?\d+\.?\d*%(\s*[eE][+-]?\d+)?/
 highlight default link rapidFloat Float
 " String. Note: Don't rename group rapidString. Indent depend on this
-syn region rapidString matchgroup=rapidString start=/"/ skip=/""/ end=/"/ contains=rapidErrorStringTooLong,rapidCharCode,rapidEscapedBackSlash,rapidStringDoubleQuote,rapidErrorSingleBackslash
+syn region rapidString matchgroup=rapidString start=/"/ skip=/""/ end=/"/ contains=rapidCharCode,rapidEscapedBackSlash,rapidStringDoubleQuote,rapidErrorSingleBackslash,rapidErrorStringTooLong
 highlight default link rapidString String
 " two adjacent "" in string for one double quote
 syn match rapidStringDoubleQuote /""/ contained
@@ -320,7 +320,7 @@ else
   syn match rapidNames /\v[[:upper:][:lower:]](\k|\.)*/
   " highlight default link rapidNames None
   " rapid structrure values. added to be able to conceal them
-  syn region rapidConcealableString start=/"/ end=/"/ contained contains=rapidErrorStringTooLong,rapidCharCode,rapidEscapedBackSlash,rapidErrorSingleBackslash  conceal 
+  syn region rapidConcealableString start=/"/ end=/"/ contained contains=rapidCharCode,rapidEscapedBackSlash,rapidErrorSingleBackslash,rapidErrorStringTooLong  conceal 
   highlight default link rapidConcealableString String
   syn region rapidStructVal matchgroup=rapidDelimiter start=/\[/ end=/\]/ contains=ALLBUT,rapidString keepend extend conceal cchar=* 
   " }}} Structure value

@@ -1,4 +1,4 @@
-*rapid.txt*	Abb Rapid Command for Vim version 7.4	Last change: 30. Nov 2020
+*rapid.txt*	Abb Rapid Command for Vim version 7.4	Last change: 12. Jan 2021
 
 
 		  VIM REFERENCE MANUAL    by Patrick Meiser-Knosowski
@@ -125,7 +125,7 @@ A: rapid-for-vim will not override existing mappings unless the corresponding
             Override existing mapping with
         let g:rapidListUsageKeyMap = 1
 
-    <leader>f List all def/deffct of the current file.
+    <leader>f List all PROC/FUNC/TRAP/RECORD of the current file.
             Override existing mapping with
         let g:rapidListDefKeyMap = 1
 
@@ -152,7 +152,7 @@ A: rapid-for-vim will not override existing mappings unless the corresponding
             Override existing mapping with
         let g:rapidCommentTextObject = 1
 
-    <leader>n Inserts a new def/deffct.
+    <leader>n Inserts a new PROC/FUNC/TRAP/RECORD.
             Override existing mapping with
         let g:rapidAutoFormKeyMap = 1
 
@@ -398,13 +398,10 @@ Note: These mappings depend on |g:rapidConcealStructs| >= 1 or omitted.
 To force these mappings if your F-Keys are already mapped: >
     let g:rapidConcealStructKeyMap = 1
 
-Alternativ <Plug> mapping: >
-  augroup RapidConcealStructs
-  au!
-  au FileType rapid nmap <silent><buffer> ANYKEY <Plug>RapidConcealStructs
-  au FileType rapid nmap <silent><buffer> SOMEKEY <Plug>RapidShowStructsAtCursor
-  au FileType rapid nmap <silent><buffer> OTHERKEY <Plug>RapidShowStructs
-  augroup END
+Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
+    nmap <silent><buffer> ANYKEY <Plug>RapidConcealStructs
+    nmap <silent><buffer> SOMEKEY <Plug>RapidShowStructsAtCursor
+    nmap <silent><buffer> OTHERKEY <Plug>RapidShowStructs
 
 
 Index: |rapid-index|
@@ -440,11 +437,8 @@ Note: This mapping overshadows the default Vim command |gd|.
 To force this mapping off and make Vims default available: >
     let g:rapidGoDefinitionKeyMap = 0
 
-Alternativ <Plug> mapping: >
-    augroup RapidGoDefMapping
-    au!
+Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
     au FileType rapid nmap <silent><buffer> ANYKEY <Plug>RapidGoDef
-    augroup END
 
 A succesful search for a file local declaration jumps there right away. Get
 back where you were with |CTRL-O|. A succesful search for a global declaration
@@ -464,11 +458,8 @@ g:rapidListUsageKeyMap:
 To force this mapping if `<leader>u` is already mapped: >
     let g:rapidListUsageKeyMap = 1
 
-Alternativ <Plug> mapping: >
-    augroup RapidListUseMapping
-    au!
-    au FileType rapid nmap <silent><buffer> ANYKEY <Plug>RapidListUse
-    augroup END
+Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
+    nmap <silent><buffer> ANYKEY <Plug>RapidListUse
 
 
 Index: |rapid-index|
@@ -481,11 +472,8 @@ g:rapidListDefKeyMap:
 To force this mapping if `<leader>f` is already mapped: >
     let g:rapidListDefKeyMap = 1
 
-Alternativ <Plug> mapping: >
-    augroup RapidListDefMapping
-    au!
-    au FileType rapid nmap <silent><buffer> ANYKEY <Plug>RapidListDef
-    augroup END
+Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
+    nmap <silent><buffer> ANYKEY <Plug>RapidListDef
 
 
 Index: |rapid-index|
@@ -713,16 +701,13 @@ Note: These text objects depend on |g:rapidMoveAroundKeyMap| = 1 or omitted.
 To force these text objects if `if`, `af` and/or `aF` is already mapped: >
     let g:rapidFunctionTextObject = 1
 
-Alternativ <Plug> mappings: >
-  augroup RapidFuncTextObj
-  au!
-  au FileType rapid xmap <silent><buffer> KEY1 <Plug>RapidTxtObjAroundFuncInclCo
-  au FileType rapid omap <silent><buffer> KEY1 <Plug>RapidTxtObjAroundFuncInclCo
-  au FileType rapid xmap <silent><buffer> KEY2 <Plug>RapidTxtObjAroundFuncExclCo
-  au FileType rapid omap <silent><buffer> KEY2 <Plug>RapidTxtObjAroundFuncExclCo
-  au FileType rapid xmap <silent><buffer> KEY3 <Plug>RapidTxtObjInnerFunc
-  au FileType rapid omap <silent><buffer> KEY3 <Plug>RapidTxtObjInnerFunc
-  augroup END
+Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
+    xmap <silent><buffer> KEY1 <Plug>RapidTxtObjAroundFuncInclCo
+    omap <silent><buffer> KEY1 <Plug>RapidTxtObjAroundFuncInclCo
+    xmap <silent><buffer> KEY2 <Plug>RapidTxtObjAroundFuncExclCo
+    omap <silent><buffer> KEY2 <Plug>RapidTxtObjAroundFuncExclCo
+    xmap <silent><buffer> KEY3 <Plug>RapidTxtObjInnerFunc
+    omap <silent><buffer> KEY3 <Plug>RapidTxtObjInnerFunc
 
 
 Index: |rapid-index|
@@ -739,14 +724,11 @@ Note: These text objects depend on |g:rapidMoveAroundKeyMap| = 1 or omitted.
 To force these text objects if `ic` and/or `ac` is already mapped: >
     let g:rapidCommentTextObject = 1
 
-Alternativ <Plug> mappings: >
-    augroup RapidCommentTextObj
-    au!
-    au FileType rapid xmap <silent><buffer> KEY1 <Plug>RapidTxtObjAroundComment
-    au FileType rapid omap <silent><buffer> KEY1 <Plug>RapidTxtObjAroundComment
-    au FileType rapid xmap <silent><buffer> KEY2 <Plug>RapidTxtObjInnerComment
-    au FileType rapid omap <silent><buffer> KEY2 <Plug>RapidTxtObjInnerComment
-    augroup END
+Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
+    xmap <silent><buffer> KEY1 <Plug>RapidTxtObjAroundComment
+    omap <silent><buffer> KEY1 <Plug>RapidTxtObjAroundComment
+    xmap <silent><buffer> KEY2 <Plug>RapidTxtObjInnerComment
+    omap <silent><buffer> KEY2 <Plug>RapidTxtObjInnerComment
 
 
 Index: |rapid-index|
@@ -824,95 +806,92 @@ would answer the prompts for "[g]lobal or [l]ocal?", "[p]roc, [f]unc, [t]rap or
 
 Note: Mappings marked with * will have a little delay until they trigger.
 
-  `<leader>n`     New prompted body *
-  `<leader>nn`    New prompted body
-   
-  `<leader>nl`    New Local prompted body *
-  `<leader>nll`   New Local prompted body
-   
-  `<leader>nlp`   New Local PROC body
-  `<leader>nlt`   New Local TRAP body
-  `<leader>nlr`   New Local RECORD body
-  `<leader>nlf`   New Local FUNC of prompted type *
-  `<leader>nlfu`  New Local FUNC of prompted type
-   
-  `<leader>nlfb`  New Local FUNC of type Bool
-  `<leader>nlfn`  New Local FUNC of type Num
-  `<leader>nlfd`  New Local FUNC of type DNum
-  `<leader>nlfs`  New Local FUNC of type String
-  `<leader>nlfp`  New Local FUNC of type Pose
-  `<leader>nlfr`  New Local FUNC of type Robtarget
-  `<leader>nlfj`  New Local FUNC of type Jointtarget
-  `<leader>nlft`  New Local FUNC of type Tooldata
-  `<leader>nlfw`  New Local FUNC of type Wobjdata
-   
-  `<leader>np`    New local PROC body
-  `<leader>nt`    New local TRAP body
-  `<leader>nr`    New local RECORD body
-  `<leader>nf`    New local FUNC of prompted type *
-  `<leader>nfu`   New local FUNC of prompted type
-   
-  `<leader>nfb`   New local FUNC of type Bool
-  `<leader>nfn`   New local FUNC of type Num
-  `<leader>nfd`   New local FUNC of type DNum
-  `<leader>nfs`   New local FUNC of type String
-  `<leader>nfp`   New local FUNC of type Pose
-  `<leader>nfr`   New local FUNC of type Robtarget
-  `<leader>nfj`   New local FUNC of type Jointtarget
-  `<leader>nft`   New local FUNC of type Tooldata
-  `<leader>nfw`   New local FUNC of type Wobjdata
-   
-  `<leader>ng`    New Global prompted body *
-  `<leader>ngg`   New Global prompted body
-   
-  `<leader>ngp`   New Global PROC body
-  `<leader>ngt`   New Global TRAP body
-  `<leader>ngr`   New Global RECORD body
-  `<leader>ngf`   New Global FUNC of prompted type *
-  `<leader>ngfu`  New Global FUNC of prompted type
-   
-  `<leader>ngfb`   New Global FUNC of type Bool
-  `<leader>ngfn`   New Global FUNC of type Num
-  `<leader>ngfd`   New Global FUNC of type DNum
-  `<leader>ngfs`   New Global FUNC of type String
-  `<leader>ngfp`   New Global FUNC of type Pose
-  `<leader>ngfr`   New Global FUNC of type Robtarget
-  `<leader>ngfj`   New Global FUNC of type Jointtarget
-  `<leader>ngft`   New Global FUNC of type Tooldata
-  `<leader>ngfw`   New Global FUNC of type Wobjdata
+    `<leader>n`     New prompted body *
+    `<leader>nn`    New prompted body
+     
+    `<leader>nl`    New Local prompted body *
+    `<leader>nll`   New Local prompted body
+     
+    `<leader>nlp`   New Local PROC body
+    `<leader>nlt`   New Local TRAP body
+    `<leader>nlr`   New Local RECORD body
+    `<leader>nlf`   New Local FUNC of prompted type *
+    `<leader>nlfu`  New Local FUNC of prompted type
+     
+    `<leader>nlfb`  New Local FUNC of type Bool
+    `<leader>nlfn`  New Local FUNC of type Num
+    `<leader>nlfd`  New Local FUNC of type DNum
+    `<leader>nlfs`  New Local FUNC of type String
+    `<leader>nlfp`  New Local FUNC of type Pose
+    `<leader>nlfr`  New Local FUNC of type Robtarget
+    `<leader>nlfj`  New Local FUNC of type Jointtarget
+    `<leader>nlft`  New Local FUNC of type Tooldata
+    `<leader>nlfw`  New Local FUNC of type Wobjdata
+     
+    `<leader>np`    New local PROC body
+    `<leader>nt`    New local TRAP body
+    `<leader>nr`    New local RECORD body
+    `<leader>nf`    New local FUNC of prompted type *
+    `<leader>nfu`   New local FUNC of prompted type
+     
+    `<leader>nfb`   New local FUNC of type Bool
+    `<leader>nfn`   New local FUNC of type Num
+    `<leader>nfd`   New local FUNC of type DNum
+    `<leader>nfs`   New local FUNC of type String
+    `<leader>nfp`   New local FUNC of type Pose
+    `<leader>nfr`   New local FUNC of type Robtarget
+    `<leader>nfj`   New local FUNC of type Jointtarget
+    `<leader>nft`   New local FUNC of type Tooldata
+    `<leader>nfw`   New local FUNC of type Wobjdata
+     
+    `<leader>ng`    New Global prompted body *
+    `<leader>ngg`   New Global prompted body
+     
+    `<leader>ngp`   New Global PROC body
+    `<leader>ngt`   New Global TRAP body
+    `<leader>ngr`   New Global RECORD body
+    `<leader>ngf`   New Global FUNC of prompted type *
+    `<leader>ngfu`  New Global FUNC of prompted type
+     
+    `<leader>ngfb`   New Global FUNC of type Bool
+    `<leader>ngfn`   New Global FUNC of type Num
+    `<leader>ngfd`   New Global FUNC of type DNum
+    `<leader>ngfs`   New Global FUNC of type String
+    `<leader>ngfp`   New Global FUNC of type Pose
+    `<leader>ngfr`   New Global FUNC of type Robtarget
+    `<leader>ngfj`   New Global FUNC of type Jointtarget
+    `<leader>ngft`   New Global FUNC of type Tooldata
+    `<leader>ngfw`   New Global FUNC of type Wobjdata
 
                         *<Plug>RapidAutoForm*
-Alternativ <Plug> mappings: >
-  augroup RapidAutoFormMapping
-  au!
-  au FileType rapid nmap <silent><buffer> KEY01 <Plug>RapidAutoForm
-  au FileType rapid nmap <silent><buffer> KEY02 <Plug>RapidAutoFormLocalProc       
-  au FileType rapid nmap <silent><buffer> KEY03 <Plug>RapidAutoFormLocalTrap       
-  au FileType rapid nmap <silent><buffer> KEY04 <Plug>RapidAutoFormLocalRecord     
-  au FileType rapid nmap <silent><buffer> KEY05 <Plug>RapidAutoFormLocalFunc       
-  au FileType rapid nmap <silent><buffer> KEY06 <Plug>RapidAutoFormLocalFuncBool   
-  au FileType rapid nmap <silent><buffer> KEY07 <Plug>RapidAutoFormLocalFuncNum    
-  au FileType rapid nmap <silent><buffer> KEY08 <Plug>RapidAutoFormLocalFuncDNum   
-  au FileType rapid nmap <silent><buffer> KEY09 <Plug>RapidAutoFormLocalFuncString 
-  au FileType rapid nmap <silent><buffer> KEY10 <Plug>RapidAutoFormLocalFuncPose   
-  au FileType rapid nmap <silent><buffer> KEY11 <Plug>RapidAutoFormLocalFuncRobt   
-  au FileType rapid nmap <silent><buffer> KEY12 <Plug>RapidAutoFormLocalFuncJointt 
-  au FileType rapid nmap <silent><buffer> KEY13 <Plug>RapidAutoFormLocalFuncToold  
-  au FileType rapid nmap <silent><buffer> KEY14 <Plug>RapidAutoFormLocalFuncWobj   
-  au FileType rapid nmap <silent><buffer> KEY15 <Plug>RapidAutoFormGlobalProc      
-  au FileType rapid nmap <silent><buffer> KEY16 <Plug>RapidAutoFormGlobalTrap      
-  au FileType rapid nmap <silent><buffer> KEY17 <Plug>RapidAutoFormGlobalRecord    
-  au FileType rapid nmap <silent><buffer> KEY18 <Plug>RapidAutoFormGlobalFunc      
-  au FileType rapid nmap <silent><buffer> KEY19 <Plug>RapidAutoFormGlobalFuncBool  
-  au FileType rapid nmap <silent><buffer> KEY20 <Plug>RapidAutoFormGlobalFuncNum   
-  au FileType rapid nmap <silent><buffer> KEY21 <Plug>RapidAutoFormGlobalFuncDNum  
-  au FileType rapid nmap <silent><buffer> KEY22 <Plug>RapidAutoFormGlobalFuncString
-  au FileType rapid nmap <silent><buffer> KEY23 <Plug>RapidAutoFormGlobalFuncPose  
-  au FileType rapid nmap <silent><buffer> KEY24 <Plug>RapidAutoFormGlobalFuncRobt  
-  au FileType rapid nmap <silent><buffer> KEY25 <Plug>RapidAutoFormGlobalFuncJointt
-  au FileType rapid nmap <silent><buffer> KEY26 <Plug>RapidAutoFormGlobalFuncToold 
-  au FileType rapid nmap <silent><buffer> KEY27 <Plug>RapidAutoFormGlobalFuncWobj  
-  augroup END
+Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
+    nmap <silent><buffer> KEY01 <Plug>RapidAutoForm
+    nmap <silent><buffer> KEY02 <Plug>RapidAutoFormLocalProc       
+    nmap <silent><buffer> KEY03 <Plug>RapidAutoFormLocalTrap       
+    nmap <silent><buffer> KEY04 <Plug>RapidAutoFormLocalRecord     
+    nmap <silent><buffer> KEY05 <Plug>RapidAutoFormLocalFunc       
+    nmap <silent><buffer> KEY06 <Plug>RapidAutoFormLocalFuncBool   
+    nmap <silent><buffer> KEY07 <Plug>RapidAutoFormLocalFuncNum    
+    nmap <silent><buffer> KEY08 <Plug>RapidAutoFormLocalFuncDNum   
+    nmap <silent><buffer> KEY09 <Plug>RapidAutoFormLocalFuncString 
+    nmap <silent><buffer> KEY10 <Plug>RapidAutoFormLocalFuncPose   
+    nmap <silent><buffer> KEY11 <Plug>RapidAutoFormLocalFuncRobt   
+    nmap <silent><buffer> KEY12 <Plug>RapidAutoFormLocalFuncJointt 
+    nmap <silent><buffer> KEY13 <Plug>RapidAutoFormLocalFuncToold  
+    nmap <silent><buffer> KEY14 <Plug>RapidAutoFormLocalFuncWobj   
+    nmap <silent><buffer> KEY15 <Plug>RapidAutoFormGlobalProc      
+    nmap <silent><buffer> KEY16 <Plug>RapidAutoFormGlobalTrap      
+    nmap <silent><buffer> KEY17 <Plug>RapidAutoFormGlobalRecord    
+    nmap <silent><buffer> KEY18 <Plug>RapidAutoFormGlobalFunc      
+    nmap <silent><buffer> KEY19 <Plug>RapidAutoFormGlobalFuncBool  
+    nmap <silent><buffer> KEY20 <Plug>RapidAutoFormGlobalFuncNum   
+    nmap <silent><buffer> KEY21 <Plug>RapidAutoFormGlobalFuncDNum  
+    nmap <silent><buffer> KEY22 <Plug>RapidAutoFormGlobalFuncString
+    nmap <silent><buffer> KEY23 <Plug>RapidAutoFormGlobalFuncPose  
+    nmap <silent><buffer> KEY24 <Plug>RapidAutoFormGlobalFuncRobt  
+    nmap <silent><buffer> KEY25 <Plug>RapidAutoFormGlobalFuncJointt
+    nmap <silent><buffer> KEY26 <Plug>RapidAutoFormGlobalFuncToold 
+    nmap <silent><buffer> KEY27 <Plug>RapidAutoFormGlobalFuncWobj  
 
 
 Index: |rapid-index|

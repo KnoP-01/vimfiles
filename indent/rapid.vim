@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.2
-" Last Change: 15. Dec 2020
+" Last Change: 20. Dec 2020
 " Credits: Based on indent/vim.vim
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -131,7 +131,7 @@ function s:GetRapidIndentIntern() abort
   " continued lines with () or []
   let l:OpenSum  = s:RapidLoneParen(l:preNoneBlankLineNum,"(") + s:RapidLoneParen(l:preNoneBlankLineNum,"[")
   if get(g:,'rapidNewStyleIndent',0)
-    let l:CloseSum = s:RapidLoneParen(l:currentLineNum,")") + s:RapidLoneParen(l:currentLineNum,"]")
+    let l:CloseSum = s:RapidLoneParen(l:preNoneBlankLineNum,")") + s:RapidLoneParen(l:currentLineNum,"]")
   else
     let l:CloseSum = s:RapidLoneParen(l:preNoneBlankLineNum,")") + s:RapidLoneParen(l:preNoneBlankLineNum,"]")
   endif
@@ -153,10 +153,9 @@ function s:RapidLenTilStr(lnum, str, startIdx) abort
   let l:line = getline(a:lnum)
   let l:len  = strlen(l:line)
   let l:idx  = a:startIdx
-  if a:str =~ '^\k\+$'
-    let l:str = '\c\<' . a:str . '\>'
-  else
-    let l:str = a:str
+  let l:str  = a:str
+  if l:str =~ '^\k\+$'
+    let l:str = '\c\<' . l:str . '\>'
   endif
 
   while l:len > l:idx
