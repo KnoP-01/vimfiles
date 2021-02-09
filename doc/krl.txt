@@ -1,9 +1,28 @@
-*krl.txt*	Kuka Robot Language for Vim version 7.4	Last change: 03. Feb 2021
+*krl.txt*	Kuka Robot Language for Vim version 7.4	Last change: 04. Feb 2021
 
 
 		  VIM REFERENCE MANUAL    by Patrick Meiser-Knosowski
 					  <knosowski@graeff.de>
 
+
+>
+                                              _           _______
+                                             /.\\        /  ___  \_________  _
+          _   __   ___      _                \_/ \       | /   \     ____  \/ |   _____   
+         | | /  | |   \    | |                 \  \      | | O |  _________/\_|  /  | o\  
+         | |/  /  |  _ |   | |                  \--\     | \___/ /             _/  _/  /  
+         |    /   | | ||   | |                  | o |     \      \       /\   /.\ / | |   
+         |    \   | |_| \  | |___               /--/       \  \\  \      \/\  \_//  | |   
+         |  _  \  |  __  | |     |             /  /         \  \\  \      \ \      /  |   
+         |_| \__\ |_|  \_| |_____|           _/  /           \   _  \      \-\     |  o\_ 
+                                            / \ /            |  /.\  |     |o|     /_____\
+                  for Vim                  | o |_      _____/   \_/  |     /-/     |     |
+                by Knosowski                \_/__|__  |____   ______/     / /      |_____|
+                                            |___ ___\ |    \_____   |    /  |
+                                             |  \__ |  \___________/     | o \__
+                                             |______|  |           |     \______\
+         industrial robot programming                  |           |      |     |
+                                                       |___________|      |_____|
 
 
 ==============================================================================
@@ -164,7 +183,7 @@ A: krl-for-vim will not override existing mappings unless the corresponding
             Override existing mapping with
         let g:krlAutoFormKeyMap = 1
 
-Q: Does krl-for-vim provide a mapping for indenting a complete file?  
+Q: Does krl-for-vim provide a mapping for indenting the whole file?  
 A: No, but you may put the following in your .vimrc or
    `~/.vim/after/ftplugin/krl.vim`: >
 
@@ -1075,10 +1094,10 @@ Example defdat.dat:  >
 
 Note the <Markers> in the example body files. Markers have to be put in
 <>. Any marker but | may be present multiple times or omitted.
-Markers:  global    substituted with "global " (or " public" if defdat) or ""
-          name      substituted with "<entered name>"
+Markers:  global    substituted with "global " or " public" if defdat or ""
+          name      substituted with entered "<name>"
           type      substituted with "def", "deffct" or "defdat"
-          datatype  substituted with the "<chosen data type>"
+          datatype  substituted with the chosen "<data type>"
           returnvar substituted with a varname in the form of "[prefix]Result"
           |         put cursor here when finished
 
