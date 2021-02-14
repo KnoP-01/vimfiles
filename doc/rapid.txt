@@ -1,4 +1,4 @@
-*rapid.txt*	Abb Rapid Command for Vim version 7.4	Last change: 05. Feb 2021
+*rapid.txt*	Abb Rapid Command for Vim version 7.4	Last change: 14. Feb 2021
 
 
 		  VIM REFERENCE MANUAL    by Patrick Meiser-Knosowski
@@ -133,7 +133,8 @@ A: rapid-for-vim will not override existing mappings unless the corresponding
         let g:rapidConcealStructKeyMap = 1
 
     gd Go to or show definition of variable or func, proc et al.
-            Does override Vim's default.
+            Does override Vim's default. Make Vim's default available with 
+        nnoremap gd gd
             Override existing mapping with
         let g:rapidGoDefinitionKeyMap = 1
 
@@ -263,7 +264,7 @@ Also see these options for alternative <Plug> mappings.
 |g:rapidShortenQFPath|      Disable shortening of paths in quickfix
 |g:rapidRhsQuickfix|        Open quickfix right hand side
 |g:rapidLhsQuickfix|        Open quickfix left hand side
-|g:rapidPath|               Disable 'path' setting
+|g:rapidPath|               Disable setting 'path'
 
 *rapid-complete-options*
 |g:rapidCompleteStd|        Disable standard 'complete' setting
@@ -283,7 +284,7 @@ Index: |rapid-index|
 g:rapidShowError:
 -----------------
 
-Disable error highlighting:  >
+Disable error highlighting for better performance:  >
     let g:rapidShowError = 0
 
 If omitted or set to 1 a few syntax errors, mainly false usages of =, :=, <=
@@ -310,9 +311,6 @@ rapidMovement to `Movement` and
 rapidSysvars to `Sysvars`: >
     let g:rapidGroupName = 1
 
-If omitted this option is automatically set if you use colorscheme
-tortus or tortusless and reset for any other colorscheme. 
-
 This is usefull if you want to set your own colors for Sysvars, Movement
 and/or BuildInFunction:  >
     highlight Sysvars           guibg=Black     guifg=white
@@ -320,12 +318,15 @@ and/or BuildInFunction:  >
     highlight Movement          guibg=black     guifg=green
 
 `rapidBuildInFunction`    contains Rapid functions.
-`rapidSysvars`            nothing yet, maybe predefined Rapid constants someday.
+`rapidSysvars`            contains predefined constants like ERR_-codes.
 `rapidMovement`           contains movement instructions like MoveJ, MoveJ .
 
 If you like it colorful and dark background you may try the 
 colorscheme tortus or tortusless which makes use of these groups:
     https://github.com/KnoP-01/tortus
+
+If omitted this option is automatically set if you use colorscheme
+tortus or tortusless and reset for any other colorscheme. 
 
 
 Index: |rapid-index|
@@ -334,9 +335,9 @@ Index: |rapid-index|
 
 Note: rapid-for-vim indentation works best with |syn-on|. 
 You may map >
-    nnoremap <ANYKEY> mzgg=G`z 
+    nnoremap <ANYKEY> gg=G``zz 
 or if you don't use syntax highlighting >
-    nnoremap <ANYKEY> :syntax on<bar>normal mzgg=G'z<cr>:syntax off<cr>
+    nnoremap <ANYKEY> :syntax on<bar>normal gg=G``zz<cr>:syntax off<cr>
 to indent the whole file with one key stroke. 
 
 Index: |rapid-index|
@@ -354,8 +355,8 @@ If omitted or set to 1 the following Vim options get set:
     'expandtab'
     'shiftround'
 
-Keep in mind that space is rare and tabs look really awful on the teach
-pendant.
+Keep in mind that screen space is scarce and tabs look really awful on the
+teach pendant.
 
 
 Index: |rapid-index|
@@ -407,13 +408,11 @@ Index: |rapid-index|
 g:rapidConcealStructKeyMap:
 ---------------------------
 
-Note: These mappings depend on |g:rapidConcealStructs| >= 1 or omitted.
-
     `<F2>`: Show all structure values
-    `<F3>`: Show structure values at cursorline	
+    `<F3>`: Show structure values at cursorline
     `<F4>`: Conceal all structure values
 
-To force these mappings if your F-Keys are already mapped: >
+To force these mappings for Rapid-files if your F-Keys are already mapped: >
     let g:rapidConcealStructKeyMap = 1
 
 Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
@@ -430,7 +429,7 @@ Vim by itself provides a lot of nice features to get around quickly. Some of
 those features depend on proper 'path' setting. Fortunatly rapid-for-vim takes
 care about that and more for you.
 
-For the best experience keep your files below `RAPID/` and `SYSPAR/` folder.
+For the best experience keep your files below the `RAPID/` and `SYSPAR/` folders.
 
 Note to unix/linux users: Keep your files on a filesystem which ingores case
 (e.g. FAT) or some of the following features may not work correctly.
@@ -452,11 +451,11 @@ Note: This mapping overshadows the default Vim command |gd|.
 
     `gd`: Jump to or shows variable or Proc/Func... declarations.
 
-To force this mapping off and make Vims default available: >
+To force this mappings for Rapid-files if `gd` is already mapped: >
     let g:rapidGoDefinitionKeyMap = 0
 
 Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
-    au FileType rapid nmap <silent><buffer> ANYKEY <Plug>RapidGoDef
+    nmap <silent><buffer> ANYKEY <Plug>RapidGoDef
 
 A succesful search for a file local declaration jumps there right away. Get
 back where you were with |CTRL-O|. A succesful search for a global declaration
@@ -473,7 +472,7 @@ g:rapidListUsageKeyMap:
     `<leader>u`: List all references, outside of enum declarations and comments 
                  of the word under the cursor in the |quickfix-window|.
 
-To force this mapping if `<leader>u` is already mapped: >
+To force this mapping for Rapid-files if `<leader>u` is already mapped: >
     let g:rapidListUsageKeyMap = 1
 
 Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
@@ -487,7 +486,7 @@ g:rapidListDefKeyMap:
 
     `<leader>f`: List Proc/Func... of the current file in the |quickfix-window|. >
 
-To force this mapping if `<leader>f` is already mapped: >
+To force this mapping for Rapid-files if `<leader>f` is already mapped: >
     let g:rapidListDefKeyMap = 1
 
 Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
@@ -518,11 +517,11 @@ Note: These mappings overshadow the default Vim commands
 [count]`];`   Like [[ but jumps forward to the end of the current or, if in
             between, next comment.
 
-To force these mappings off and make Vims default available: >
+To force these mappings off for Rapid-files and make Vims default available: >
     let g:rapidMoveAroundKeyMap = 0
 
-Note that |g:rapidFunctionTextObject| and |g:rapidCommentTextObject| depend on
-this feature.
+Note that |g:rapidCommentTextObject| and |g:rapidFunctionTextObject| depend on
+these mappings.
 
 
 Index: |rapid-index|
@@ -582,10 +581,10 @@ HOME/
 RAPID/
     +-TASK*/
           +-PROGMOD/
-          |-SYSMOD/
+          +-SYSMOD/
 SYSPAR/
 
-rapid-for-vim does looks 1 or 3 levels upward for a `BACKINFO/`, `CS`, 
+rapid-for-vim does look 1 or 3 levels upward for a `BACKINFO/`, `CS`, 
 `HOME`, `RAPID/` and `SYSPAR/` folders. If found those get added to 
 'path' with ** appended See |starstar|.
 In case you work with a .prg file, put your SYSPAR/ folder parallel to that
@@ -596,9 +595,9 @@ Index: |rapid-index|
                         *rapid-matchit-support* *rapid-matchup-support*
 Match it support:
 -----------------
-You may have to install the matchit plugin to use this. See |matchit-install|
+You may have to install the |matchit| plugin to use this. See |matchit-install|
 for help on this. 
-for help on this. See also http://www.vim.org/scripts/script.php?script_id=39
+See also https://www.vim.org/scripts/script.php?script_id=39
 An alternative for matchit is |matchup|. 
 See also https://www.vim.org/scripts/script.php?script_id=5624
 
@@ -667,16 +666,16 @@ Add custom files to 'complete': >
 Note: Make sure to use forward slashes (`/`) as path separator, also on
 Windows!
 
-You should add the path relative to `RAPID/`. `HOME/`, `CS/` etc. Even if you 
-put all the files you edit are in the same directory, they will be found. You 
-may also add just a file name, However, in that case the file will only be 
-found if present in the same directory as the current file. 
+You should add the path relative to `RAPID/`. `HOME/`, `CS/` etc. 
+Even if you put all the files you edit are in the same directory, they will 
+be found. You may also add just a file name, However, in that case the file 
+will only be found if present in the same directory as the current file. 
 
 Enable |g:rapidVerbose| to see what files are actually added.
 
 See also |rapid-complete|.
 
-If omitted or set to 0 no custom files get added to complete.
+If omitted no custom files get added to 'complete'.
 
 
 Index: |rapid-index|
@@ -709,14 +708,15 @@ They can be used in |Visual|- and |Operator-pending|-mode, see |operator|.
 g:rapidFunctionTextObject:
 --------------------------
 
-Note: These text objects depend on |g:rapidMoveAroundKeyMap| = 1 or omitted.
+Note: These text objects depends on |g:rapidMoveAroundKeyMap| not existing or =1.
 
     [count]`if`: inner part of FUNC/PROC....
     [count]`af`: outer part of FUNC/PROC....
     [count]`aF`: outer part of FUNC/PROC... including, if present, one empty
-            following line and directly preceding comments.
+                 following line and directly preceding comments.
 
-To force these text objects if `if`, `af` and/or `aF` is already mapped: >
+To force these text objects for Rapid-files if `if`, `af` and/or `aF` is already 
+mapped: >
     let g:rapidFunctionTextObject = 1
 
 Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
@@ -734,12 +734,13 @@ Index: |rapid-index|
 g:rapidCommentTextObject:
 -------------------------
 
-Note: These text objects depend on |g:rapidMoveAroundKeyMap| = 1 or omitted.
+Note: These text objects depends on |g:rapidMoveAroundKeyMap| not existing or =1.
 
     `ic`: comment block.
-    `ac`: comment block including one followng empty line.
+    `ac`: comment block including, if present, one followng empty line.
 
-To force these text objects if `ic` and/or `ac` is already mapped: >
+To force these text objects for Rapid-files if `ic` and/or `ac` is already 
+mapped: >
     let g:rapidCommentTextObject = 1
 
 Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
@@ -814,7 +815,7 @@ Index: |rapid-index|
 g:rapidAutoFormKeyMap:
 ----------------------
 
-To force these mappings if `<leader>n` is already mapped: >
+To force these mappings for Rapid-files if `<leader>n` is already mapped: >
     let g:rapidAutoFormKeyMap = 1
 
 This list may seem overwhelming, but those mappings are quite logical and can
@@ -824,92 +825,92 @@ would answer the prompts for "[g]lobal or [l]ocal?", "[p]roc, [f]unc, [t]rap or
 
 Note: Mappings marked with * will have a little delay until they trigger.
 
-    `<leader>n`     New prompted body *
-    `<leader>nn`    New prompted body
-     
-    `<leader>nl`    New Local prompted body *
-    `<leader>nll`   New Local prompted body
-     
-    `<leader>nlp`   New Local PROC body
-    `<leader>nlt`   New Local TRAP body
-    `<leader>nlr`   New Local RECORD body
-    `<leader>nlf`   New Local FUNC of prompted type *
-    `<leader>nlfu`  New Local FUNC of prompted type
-     
-    `<leader>nlfb`  New Local FUNC of type Bool
-    `<leader>nlfn`  New Local FUNC of type Num
-    `<leader>nlfd`  New Local FUNC of type DNum
-    `<leader>nlfs`  New Local FUNC of type String
-    `<leader>nlfp`  New Local FUNC of type Pose
-    `<leader>nlfr`  New Local FUNC of type Robtarget
-    `<leader>nlfj`  New Local FUNC of type Jointtarget
-    `<leader>nlft`  New Local FUNC of type Tooldata
-    `<leader>nlfw`  New Local FUNC of type Wobjdata
-     
-    `<leader>np`    New local PROC body
-    `<leader>nt`    New local TRAP body
-    `<leader>nr`    New local RECORD body
-    `<leader>nf`    New local FUNC of prompted type *
-    `<leader>nfu`   New local FUNC of prompted type
-     
-    `<leader>nfb`   New local FUNC of type Bool
-    `<leader>nfn`   New local FUNC of type Num
-    `<leader>nfd`   New local FUNC of type DNum
-    `<leader>nfs`   New local FUNC of type String
-    `<leader>nfp`   New local FUNC of type Pose
-    `<leader>nfr`   New local FUNC of type Robtarget
-    `<leader>nfj`   New local FUNC of type Jointtarget
-    `<leader>nft`   New local FUNC of type Tooldata
-    `<leader>nfw`   New local FUNC of type Wobjdata
-     
-    `<leader>ng`    New Global prompted body *
-    `<leader>ngg`   New Global prompted body
-     
-    `<leader>ngp`   New Global PROC body
-    `<leader>ngt`   New Global TRAP body
-    `<leader>ngr`   New Global RECORD body
-    `<leader>ngf`   New Global FUNC of prompted type *
-    `<leader>ngfu`  New Global FUNC of prompted type
-     
-    `<leader>ngfb`   New Global FUNC of type Bool
-    `<leader>ngfn`   New Global FUNC of type Num
-    `<leader>ngfd`   New Global FUNC of type DNum
-    `<leader>ngfs`   New Global FUNC of type String
-    `<leader>ngfp`   New Global FUNC of type Pose
-    `<leader>ngfr`   New Global FUNC of type Robtarget
-    `<leader>ngfj`   New Global FUNC of type Jointtarget
-    `<leader>ngft`   New Global FUNC of type Tooldata
-    `<leader>ngfw`   New Global FUNC of type Wobjdata
+  `<leader>n`     New prompted body *
+  `<leader>nn`    New prompted body
+  
+  `<leader>nl`    New Local prompted body *
+  `<leader>nll`   New Local prompted body
+  
+  `<leader>nlp`   New Local PROC body
+  `<leader>nlt`   New Local TRAP body
+  `<leader>nlr`   New Local RECORD body
+  `<leader>nlf`   New Local FUNC of prompted type *
+  `<leader>nlfu`  New Local FUNC of prompted type
+  
+  `<leader>nlfb`  New Local FUNC of type Bool
+  `<leader>nlfn`  New Local FUNC of type Num
+  `<leader>nlfd`  New Local FUNC of type DNum
+  `<leader>nlfs`  New Local FUNC of type String
+  `<leader>nlfp`  New Local FUNC of type Pose
+  `<leader>nlfr`  New Local FUNC of type Robtarget
+  `<leader>nlfj`  New Local FUNC of type Jointtarget
+  `<leader>nlft`  New Local FUNC of type Tooldata
+  `<leader>nlfw`  New Local FUNC of type Wobjdata
+  
+  `<leader>np`    New local PROC body
+  `<leader>nt`    New local TRAP body
+  `<leader>nr`    New local RECORD body
+  `<leader>nf`    New local FUNC of prompted type *
+  `<leader>nfu`   New local FUNC of prompted type
+  
+  `<leader>nfb`   New local FUNC of type Bool
+  `<leader>nfn`   New local FUNC of type Num
+  `<leader>nfd`   New local FUNC of type DNum
+  `<leader>nfs`   New local FUNC of type String
+  `<leader>nfp`   New local FUNC of type Pose
+  `<leader>nfr`   New local FUNC of type Robtarget
+  `<leader>nfj`   New local FUNC of type Jointtarget
+  `<leader>nft`   New local FUNC of type Tooldata
+  `<leader>nfw`   New local FUNC of type Wobjdata
+  
+  `<leader>ng`    New Global prompted body *
+  `<leader>ngg`   New Global prompted body
+  
+  `<leader>ngp`   New Global PROC body
+  `<leader>ngt`   New Global TRAP body
+  `<leader>ngr`   New Global RECORD body
+  `<leader>ngf`   New Global FUNC of prompted type *
+  `<leader>ngfu`  New Global FUNC of prompted type
+  
+  `<leader>ngfb`   New Global FUNC of type Bool
+  `<leader>ngfn`   New Global FUNC of type Num
+  `<leader>ngfd`   New Global FUNC of type DNum
+  `<leader>ngfs`   New Global FUNC of type String
+  `<leader>ngfp`   New Global FUNC of type Pose
+  `<leader>ngfr`   New Global FUNC of type Robtarget
+  `<leader>ngfj`   New Global FUNC of type Jointtarget
+  `<leader>ngft`   New Global FUNC of type Tooldata
+  `<leader>ngfw`   New Global FUNC of type Wobjdata
 
                         *<Plug>RapidAutoForm*
 Alternativ <Plug> mapping to put into .vimrc or `~/.vim/after/ftplugin/rapid.vim`: >
-    nmap <silent><buffer> KEY01 <Plug>RapidAutoForm
-    nmap <silent><buffer> KEY02 <Plug>RapidAutoFormLocalProc       
-    nmap <silent><buffer> KEY03 <Plug>RapidAutoFormLocalTrap       
-    nmap <silent><buffer> KEY04 <Plug>RapidAutoFormLocalRecord     
-    nmap <silent><buffer> KEY05 <Plug>RapidAutoFormLocalFunc       
-    nmap <silent><buffer> KEY06 <Plug>RapidAutoFormLocalFuncBool   
-    nmap <silent><buffer> KEY07 <Plug>RapidAutoFormLocalFuncNum    
-    nmap <silent><buffer> KEY08 <Plug>RapidAutoFormLocalFuncDNum   
-    nmap <silent><buffer> KEY09 <Plug>RapidAutoFormLocalFuncString 
-    nmap <silent><buffer> KEY10 <Plug>RapidAutoFormLocalFuncPose   
-    nmap <silent><buffer> KEY11 <Plug>RapidAutoFormLocalFuncRobt   
-    nmap <silent><buffer> KEY12 <Plug>RapidAutoFormLocalFuncJointt 
-    nmap <silent><buffer> KEY13 <Plug>RapidAutoFormLocalFuncToold  
-    nmap <silent><buffer> KEY14 <Plug>RapidAutoFormLocalFuncWobj   
-    nmap <silent><buffer> KEY15 <Plug>RapidAutoFormGlobalProc      
-    nmap <silent><buffer> KEY16 <Plug>RapidAutoFormGlobalTrap      
-    nmap <silent><buffer> KEY17 <Plug>RapidAutoFormGlobalRecord    
-    nmap <silent><buffer> KEY18 <Plug>RapidAutoFormGlobalFunc      
-    nmap <silent><buffer> KEY19 <Plug>RapidAutoFormGlobalFuncBool  
-    nmap <silent><buffer> KEY20 <Plug>RapidAutoFormGlobalFuncNum   
-    nmap <silent><buffer> KEY21 <Plug>RapidAutoFormGlobalFuncDNum  
-    nmap <silent><buffer> KEY22 <Plug>RapidAutoFormGlobalFuncString
-    nmap <silent><buffer> KEY23 <Plug>RapidAutoFormGlobalFuncPose  
-    nmap <silent><buffer> KEY24 <Plug>RapidAutoFormGlobalFuncRobt  
-    nmap <silent><buffer> KEY25 <Plug>RapidAutoFormGlobalFuncJointt
-    nmap <silent><buffer> KEY26 <Plug>RapidAutoFormGlobalFuncToold 
-    nmap <silent><buffer> KEY27 <Plug>RapidAutoFormGlobalFuncWobj  
+  nmap <silent><buffer> KEY01 <Plug>RapidAutoForm
+  nmap <silent><buffer> KEY02 <Plug>RapidAutoFormLocalProc       
+  nmap <silent><buffer> KEY03 <Plug>RapidAutoFormLocalTrap       
+  nmap <silent><buffer> KEY04 <Plug>RapidAutoFormLocalRecord     
+  nmap <silent><buffer> KEY05 <Plug>RapidAutoFormLocalFunc       
+  nmap <silent><buffer> KEY06 <Plug>RapidAutoFormLocalFuncBool   
+  nmap <silent><buffer> KEY07 <Plug>RapidAutoFormLocalFuncNum    
+  nmap <silent><buffer> KEY08 <Plug>RapidAutoFormLocalFuncDNum   
+  nmap <silent><buffer> KEY09 <Plug>RapidAutoFormLocalFuncString 
+  nmap <silent><buffer> KEY10 <Plug>RapidAutoFormLocalFuncPose   
+  nmap <silent><buffer> KEY11 <Plug>RapidAutoFormLocalFuncRobt   
+  nmap <silent><buffer> KEY12 <Plug>RapidAutoFormLocalFuncJointt 
+  nmap <silent><buffer> KEY13 <Plug>RapidAutoFormLocalFuncToold  
+  nmap <silent><buffer> KEY14 <Plug>RapidAutoFormLocalFuncWobj   
+  nmap <silent><buffer> KEY15 <Plug>RapidAutoFormGlobalProc      
+  nmap <silent><buffer> KEY16 <Plug>RapidAutoFormGlobalTrap      
+  nmap <silent><buffer> KEY17 <Plug>RapidAutoFormGlobalRecord    
+  nmap <silent><buffer> KEY18 <Plug>RapidAutoFormGlobalFunc      
+  nmap <silent><buffer> KEY19 <Plug>RapidAutoFormGlobalFuncBool  
+  nmap <silent><buffer> KEY20 <Plug>RapidAutoFormGlobalFuncNum   
+  nmap <silent><buffer> KEY21 <Plug>RapidAutoFormGlobalFuncDNum  
+  nmap <silent><buffer> KEY22 <Plug>RapidAutoFormGlobalFuncString
+  nmap <silent><buffer> KEY23 <Plug>RapidAutoFormGlobalFuncPose  
+  nmap <silent><buffer> KEY24 <Plug>RapidAutoFormGlobalFuncRobt  
+  nmap <silent><buffer> KEY25 <Plug>RapidAutoFormGlobalFuncJointt
+  nmap <silent><buffer> KEY26 <Plug>RapidAutoFormGlobalFuncToold 
+  nmap <silent><buffer> KEY27 <Plug>RapidAutoFormGlobalFuncWobj  
 
 
 Index: |rapid-index|
@@ -989,12 +990,12 @@ Example FUNC.mod:  >
 
 Note the <Markers> in the example body files. Markers have to be put in
 <>. Any marker but | may be present multiple times or omitted.
-Markers:  global    substituted with "LOCAL " or ""
-          name      substituted with entered "<name>"
-          type      substituted with "PROC", "TRAP", "RECORD" or "FUNC"
-          datatype  substituted with the chosen "<data type>"
-          returnvar substituted with a varname in the form of "[prefix]Result"
-          |         put cursor here when finished
+Markers:  <global>    substituted with "LOCAL " or ""
+          <name>      substituted with entered "<name>"
+          <type>      substituted with "PROC", "TRAP", "RECORD" or "FUNC"
+          <datatype>  substituted with the chosen "<data type>"
+          <returnvar> substituted with a varname in the form of "[prefix]Result"
+          <|>         put cursor here when finished
 
 Note that comments or anything below the END line is not supported and may
 have unexpected results!
