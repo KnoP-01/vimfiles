@@ -38,7 +38,7 @@ call plug#begin('~/.vim/plugged') " {{{
 
   Plug 'KnoP-01/tortus'
   Plug 'KnoP-01/vimbuddy'
-  Plug 'KnoP-01/vim-tp'
+  " Plug 'KnoP-01/vim-tp', { 'branch': 'dev' }
   Plug 'KnoP-01/vim-karel'
   Plug 'KnoP-01/DrChipsCecutil'
   Plug 'KnoP-01/DrChipsAlign'
