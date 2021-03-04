@@ -22,7 +22,7 @@ nmap <leader>gs :set hidden<cr>*N<leader>u:cdo s///g<left><left>
 " Das hier ist die git-for-win shell version
 if has("win32")
   let g:rapidPathToSumatraPDF='c:\apps\SumatraPDF\SumatraPDF.exe'
-  let g:rapidPathToRefGuide='d:\daten\doku\abb\RefGuide_RW6.10\abb_reference_inst_func_dat.pdf'
+  let g:rapidPathToRefGuide='d:\daten\doku\abb\RefGuide_RW6.10.02\abb_reference_inst_func_dat.pdf'
   nnoremap <buffer> <silent> K :let rapidCmd=
         \"! start '" .
         \g:rapidPathToSumatraPDF .
