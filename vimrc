@@ -150,9 +150,9 @@ augroup vimrcEx " {{{
 
   " Continue editing where left unless the position is invalid
   autocmd BufReadPost *
-        \ if line("'\"") > 0 && line("'\"") <= line("$") |
-        \   exe "normal g`\"" |
-        \ endif
+        \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+        \ |   exe "normal! g`\""
+        \ | endif
 
 augroup END
 " }}}

@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
 " Version: 2.2.3
-" Last Change: 25. Feb 2021
+" Last Change: 08. Mar 2021
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -83,10 +83,11 @@ endif
 syn keyword rapidBoolean TRUE FALSE Edge High Low
 highlight default link rapidBoolean Boolean
 " Float (num)
-syn match rapidFloat /\v%(\W|_)@1<=[+-]?\d+\.?\d*%(\s*[eE][+-]?\d+)?/
+" syn match rapidFloat /\v%(\W|_)@1<=[+-]?\d+\.?\d*%(\s*[eE][+-]?\d+)?/
+syn match rapidFloat /\v\c%(<\d+\.|\.?<\d)\d*%(E[+-]?\d+)?>/ contains=rapidOperator
 highlight default link rapidFloat Float
 " String. Note: Don't rename group rapidString. Indent depend on this
-syn region rapidString matchgroup=rapidString start=/"/ skip=/""/ end=/"/ contains=rapidCharCode,rapidEscapedBackSlash,rapidStringDoubleQuote,rapidErrorSingleBackslash,rapidErrorStringTooLong
+syn region rapidString matchgroup=rapidString start=/"/ skip=/""/ end=/"/ oneline contains=rapidCharCode,rapidEscapedBackSlash,rapidErrorSingleBackslash,rapidErrorStringTooLong,rapidStringDoubleQuote
 highlight default link rapidString String
 " two adjacent "" in string for one double quote
 syn match rapidStringDoubleQuote /""/ contained
@@ -105,7 +106,8 @@ if bufname("%") =~ '\c\.cfg$'
 " {{{ highlighting for *.cfg
 
   " special chars {{{
-  syn match rapidOperator /:\|[+-]\|\*\|\/\|\\/
+  " syn match rapidOperator /:\|[+-]\|\*\|\/\|\\/
+  syn match rapidOperator /[-+*/:\\]/
   syn match rapidOperator /^#/
   highlight default link rapidOperator Operator
   " }}} special chars
@@ -210,11 +212,6 @@ else
   syn keyword rapidTypeDef MODULE ENDMODULE PROC ERROR UNDO BACKWARD ENDPROC RECORD ENDRECORD TRAP ENDTRAP FUNC ENDFUNC
   highlight default link rapidTypeDef TypeDef
   " }}} Type, StorageClass and Typedef
-
-  " Delimiter {{{
-  syn match rapidDelimiter /[\\(){},;|\[\]]/
-  highlight default link rapidDelimiter Delimiter
-  " }}} Delimiter
 
   " Statements, keywords et al {{{
   " syn keyword rapidStatement
@@ -326,10 +323,23 @@ else
   syn match rapidNames /\v[[:upper:][:lower:]](\k|\.)*/
   " highlight default link rapidNames None
   " rapid structrure values. added to be able to conceal them
-  syn region rapidConcealableString start=/"/ end=/"/ contained contains=rapidCharCode,rapidEscapedBackSlash,rapidErrorSingleBackslash,rapidErrorStringTooLong  conceal 
+  syn region rapidConcealableString start=/"/ skip=/""/ end=/"/ oneline contained contains=rapidCharCode,rapidEscapedBackSlash,rapidErrorSingleBackslash,rapidErrorStringTooLong,rapidStringDoubleQuote conceal 
   highlight default link rapidConcealableString String
   syn region rapidStructVal matchgroup=rapidDelimiter start=/\[/ end=/\]/ contains=ALLBUT,rapidString keepend extend conceal cchar=* 
   " }}} Structure value
+
+  " Delimiter {{{
+  " must come after rapidConcealableString
+  " otherwise the follwoing gets messed up:
+  "
+  "  LOCAL CONST listitem lstAuswService{18}:=[["","Service Position"],["","Bremsentest"],["","Referenzfahrt"],["","Manuelles Abfahren"],["","Justagestellung"],["","Transportposition"],
+  "      ["","Spitze-Spitze Greifer 1, [RT]"],["","Spitze-Spitze Greifer 2, [FT]"],["","Spitze-Spitze Pruefspitze"],["","Werkobjekt Ablage"],["","Werkobjekt Modul 1"],
+  "      ["","Werkobjekt Modul 2"],["","TCP von Greifer 1 vermessen, [RT]"],["","TCP von Greifer 2 vermessen, [FT]"],["","TCP von Basisdorn vermessen"],
+  "      ["","Greifer abdocken"],["","Greifer andocken"],["","Kollision Check (Ohne Greifer)"]];
+  " 
+  syn match rapidDelimiter /[\\(){},;|\[\]]/
+  highlight default link rapidDelimiter Delimiter
+  " }}} Delimiter
 
   " BuildInFunction {{{
   " dispense functions
@@ -597,8 +607,8 @@ if get(g:,'rapidShowError',1)
   " This error must be defined after rapidString
   " string too long
   " syn match rapidErrorStringTooLong /\v("[^"]{80})@81<=[^"]+\ze"/ contained
-  " syn match rapidErrorStringTooLong /\v"@1<=[^"]{80}\zs[^"]+\ze"/ contained contains=rapidCharCode,rapidEscapedBackSlash,rapidStringDoubleQuote,rapidErrorSingleBackslash
-  syn match rapidErrorStringTooLong /\v[^"]{80}\zs[^"]+/ contained contains=rapidCharCode,rapidEscapedBackSlash,rapidStringDoubleQuote,rapidErrorSingleBackslash
+  " syn match rapidErrorStringTooLong /\v"@1<=[^"]{80}\zs[^"]+\ze"/ contained contains=rapidCharCode,rapidEscapedBackSlash,rapidErrorSingleBackslash
+  syn match rapidErrorStringTooLong /\v[^"]{80}\zs[^"]+/ contained contains=rapidCharCode,rapidEscapedBackSlash,rapidErrorSingleBackslash
   highlight default link rapidErrorStringTooLong Error
   "
 endif
