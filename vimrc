@@ -659,6 +659,7 @@ set termguicolors
 "
 " colorscheme tortus
 colorscheme tortusless
+" colorscheme railscasts
 " colorscheme highlight
 " colorscheme robotstudio
 " colorscheme vulpo
