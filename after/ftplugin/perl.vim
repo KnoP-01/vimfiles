@@ -1,13 +1,17 @@
 " my perl modifications
 
+let g:perl_compiler_force_warnings = 1
+compiler perl
+
 " fix gd (why is this not working by default?)
-nnoremap gd :keepjumps normal *<cr>:keepjumps normal gg<cr>:keepjumps normal n<cr>
+" nnoremap gd :keepjumps normal *<cr>:keepjumps normal gg<cr>:keepjumps normal n<cr>
 
 " create <leader>f like in rapid/krl
 nnoremap <leader>f :vimgrep /^\s*sub\s\+\w\+/ %<cr>
 
 " compile perl script for syntax check
-nnoremap <buffer> <F4> :!perl -wc %<CR>
+nnoremap <buffer> <F4> :make<CR>
+nnoremap <buffer> <S-F4> :!perl -wc %<CR>
 
 function! <SID>KnopNTimesSearch(nCount,sSearchPattern,sFlags) abort
   let l:nCount=a:nCount

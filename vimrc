@@ -556,7 +556,7 @@ let g:knopVerbose=0
 " augroup END
 " let g:rapidEndwiseUpperCase=1
 " let g:rapidGroupName=0
-let g:rapidNewStyleIndent=1
+" let g:rapidNewStyleIndent=1
 " let g:rapidNoCommentIndent=0 " undokumentiert
 let g:rapidCommentIndent=0
 " let g:rapidCommentTextObject=0

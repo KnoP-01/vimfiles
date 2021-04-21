@@ -1,4 +1,4 @@
-
+* `[I` := Display all lines that contain the keyword under the cursor.
 * `<leader>l` := open this file  
   
 ------------------------------------------------------------------------------
@@ -13,6 +13,8 @@
 # New Discoveries
 ## Uncategorized
 * `v_o` = go to the opposite side of the current visual selection
+* `v_O` = go to the opposite side of the current visual selection (different
+    from v_o only in visual block mode)
 * `:?patter?c.<cr>` = search backward for pattern and copy found line to the
     current one
 * `q:` = edit commandline like any buffer `c_CRTL-F` also works 
@@ -33,6 +35,7 @@
 * `c_CTRL-R 0`  := last big yank
 * `c_CTRL-R c_CTRL-W`   := word under the cursor
 * `c_CTRL-R c_CTRL-A`   := WORD under the cursor
+* `c_CTRL-R c_CTRL-L`   := line under the cursor
 ### insert mode completion
 * `CTRL-R *` := clipboard (selection)
 * `CTRL-R +` := clipboard
