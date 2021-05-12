@@ -8,6 +8,7 @@
 * remember the indent text object
 * `i_CTRL-w` := delete last word, I always foget about that
 * `:B <cmd>` := execute command on a visual block
+* `<leader>gs` := global substitute in Rapid/KRL-files
   
 ------------------------------------------------------------------------------
 # New Discoveries

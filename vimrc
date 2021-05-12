@@ -256,7 +256,6 @@ set winaltkeys=no         " disable menu with alt. necessary for <A-x> mappings
 
 set splitright            " vertival split opens new window to the right
 " }}}
-
 " Statusline:
 function! MyStatusline(full) " {{{
   setlocal statusline=%F                " Path to the file in the buffer, as typed or relative to current directory

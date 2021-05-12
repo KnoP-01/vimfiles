@@ -1,8 +1,8 @@
 " ABB Rapid Command syntax file for Vim
 " Language: ABB Rapid Command
-" Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
+" Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.2.3
-" Last Change: 11. Mar 2021
+" Last Change: 29. Apr 2021
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -173,7 +173,7 @@ else
   syn keyword rapidType egmframetype egmident egm_minmax egmstate egmstopmode errdomain errnum ErrorInfo errstr errtype event_type exec_level extjoint handler_type
   syn keyword rapidType icondata identno inposdata intnum inttypes iodev iounit_state jointtarget
   syn keyword rapidType listitem loaddata loadidnum loadsession mecunit motionprocessmode motsetdata
-  syn keyword rapidType num
+  " syn keyword rapidType num
   syn keyword rapidType opcalc opnum orient paridnum paridvalidnum pathrecid pnpdata pos pose proc_times progdisp o_jointtarget o_robtarget
   syn keyword rapidType rawbytes restartdata rmqheader rmqmessage rmqslot robjoint robtarget
   syn keyword rapidType searchdata sensor sensorstate sensorvardata shapedata signalai signalao signaldi signaldo signalgi signalgo signalorigin singdata socketdev socketstatus speeddata stopmovestartmove_mem stoppoint stoppointdata string stringdig sup_timeouts supervtype switch symnum syncident 
@@ -279,7 +279,7 @@ else
   highlight default link rapidException Exception
   " }}} Statements, keywords et al
 
-  " special keyword for move command {{{
+  " Special keyword for move command {{{
   " uncategorized yet
   syn keyword rapidMovement MovePnP
   syn keyword rapidMovement EGMMoveC EGMMoveL EGMRunJoint EGMRunPose EGMStop
@@ -322,6 +322,11 @@ else
   " Any name {{{
   syn match rapidNames /\v[[:upper:][:lower:]](\k|\.)*/
   " }}} Any name
+
+  " Attempt to avoid false highlight of num in case of parameter name:
+  "   TPWrite "goPosNo="\num:=GOutput(goPosNo);
+  " Must follow after rapidNames in this file
+  syn match rapidType /\c\v<num>\s*\ze[^ :]/
 
   " Structure value {{{
   " rapid structrure values. added to be able to conceal them

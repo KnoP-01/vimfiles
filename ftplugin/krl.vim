@@ -1,8 +1,8 @@
 " Kuka Robot Language file type plugin for Vim
 " Language: Kuka Robot Language
-" Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
+" Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.2.3
-" Last Change: 21. Apr 2021
+" Last Change: 29. Apr 2021
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -311,6 +311,7 @@ if !exists("*s:KnopVerboseEcho()")
   function s:KnopSearchPathForPatternNTimes(Pattern,path,n,useSyntax) abort
     call setqflist([])
     try
+      call s:KnopVerboseEcho("try: ".':noautocmd ' . a:n . 'vimgrep /' . a:Pattern . '/j ' . a:path)
       execute ':noautocmd ' . a:n . 'vimgrep /' . a:Pattern . '/j ' . a:path
     catch /^Vim\%((\a\+)\)\=:E303/
       call s:KnopVerboseEcho(":vimgrep stopped with E303. No match found")
@@ -1630,9 +1631,7 @@ if get(g:,'krlPath',1)
     let s:krlpath='./**'
   endif
 
-  execute "setlocal path+=".s:krlpath
-  setlocal path-=/usr/include
-  setlocal path-=.
+  execute "setlocal path=".s:krlpath
   let b:undo_ftplugin = b:undo_ftplugin." pa<"
 
 endif " get(g:,'krlPath',1)

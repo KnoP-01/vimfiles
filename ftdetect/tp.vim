@@ -1,8 +1,8 @@
 " Fanuc TP file type detection for Vim
 " Language: Fanuc TP
-" Maintainer: Patrick Meiser-Knosowski <knosowski@graeff.de>
+" Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 1.0.0
-" Last Change: 19. Feb 2021
+" Last Change: 29. Apr 2021
 " Credits:
 "
 " Suggestions of improvement are very welcome. Please email me!
