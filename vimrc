@@ -105,6 +105,9 @@ call plug#begin('~/.vim/plugged') " {{{
   " let g:instant_markdown_logfile = '.\instant_markdown.log'
   " Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 
+  " 
+  Plug 'itchyny/landscape.vim'
+
   " switch between true/false...
   Plug 'AndrewRadev/switch.vim'
   " let g:switch_mapping = 'gs' " this one is default
@@ -168,11 +171,6 @@ if has('termguicolors') && $COLORTERM ==# 'truecolor'
   set termguicolors
 endif
 
-" better diff
-if has("patch-8.1.0360")
-    set diffopt+=internal,algorithm:patience
-endif
-
 " 'wildmenu'
 set wildchar=<Tab> wildcharm=<C-Z> wildmenu wildmode=full
 
@@ -181,7 +179,9 @@ set listchars=nbsp:~,tab:>-,trail:.,eol:$
 
 set backspace=indent,eol,start    " allow backspacing over everything in insert mode
 
+" better diff
 set diffopt=filler,icase,iwhite   " settings for diff mode: keep window lines synchronised, ignore case, ignore different amount of white spaces
+set diffopt+=internal,algorithm:patience
 
 set backup            " write a backup.file~
 " set directory-=.      " redirect .swp files to C:\Users\<user>\AppData\Local\Temp
@@ -658,6 +658,7 @@ set termguicolors
 "
 " colorscheme tortus
 colorscheme tortusless
+" colorscheme landscape
 " colorscheme railscasts
 " colorscheme highlight
 " colorscheme robotstudio
