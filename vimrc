@@ -266,8 +266,8 @@ function! MyStatusline(full) " {{{
   if a:full
     setlocal statusline+=\                " a space
     setlocal statusline+=%=               " align right from here on
-    " setlocal statusline+=%#Error#         " change coloring
-    " setlocal statusline+=%{b:gitbranch}
+    setlocal statusline+=%#Error#         " change coloring
+    setlocal statusline+=%{get(b:\,'gitbranch'\,'')}
     setlocal statusline+=%#StatusLineNC#  " change coloring
     setlocal statusline+=\                " a space
     setlocal statusline+=%{substitute(&ff\,'\\(.\\).\\+'\,'\\1'\,'')}           " file format
@@ -306,7 +306,7 @@ augroup myStatusline
   autocmd!
   autocmd BufEnter,WinEnter * :call MyStatusline(1)
   autocmd BufLeave,WinLeave * :call MyStatusline(0)
-  " autocmd VimEnter,WinEnter,BufEnter * call StatuslineGitBranch()
+  autocmd VimEnter,WinEnter,BufEnter d:/daten/scripts/git/* call StatuslineGitBranch()
 augroup end
 " }}}
 
