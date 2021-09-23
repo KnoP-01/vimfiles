@@ -351,16 +351,19 @@ augroup END
 " }}}
 
 " Relativenumber:
-autocmd ModeChanged *:n   setlocal norelativenumber  " {{{
-autocmd ModeChanged *:v   setlocal relativenumber
-autocmd ModeChanged *:V   setlocal relativenumber
-autocmd ModeChanged *:  setlocal relativenumber
-" autocmd ModeChanged *:o setlocal relativenumber " scheint nicht zu funktionieren
-autocmd ModeChanged *:i   setlocal norelativenumber
-autocmd ModeChanged *:R   setlocal norelativenumber
-autocmd ModeChanged *:c   setlocal norelativenumber
-autocmd ModeChanged *:tl  setlocal norelativenumber
-autocmd CursorMoved *     setlocal norelativenumber
+augroup myRelativeNumber  " {{{
+  au!
+  autocmd ModeChanged *:n   setlocal norelativenumber
+  autocmd ModeChanged *:v   setlocal relativenumber
+  autocmd ModeChanged *:V   setlocal relativenumber
+  autocmd ModeChanged *:  setlocal relativenumber
+  " autocmd ModeChanged *:o setlocal relativenumber " scheint nicht zu funktionieren
+  autocmd ModeChanged *:i   setlocal norelativenumber
+  autocmd ModeChanged *:R   setlocal norelativenumber
+  autocmd ModeChanged *:c   setlocal norelativenumber
+  autocmd ModeChanged *:tl  setlocal norelativenumber
+  autocmd CursorMoved *     setlocal norelativenumber
+augroup END
 " work around operator pending
 nnoremap c  :setlocal relativenumber<cr>c
 nnoremap d  :setlocal relativenumber<cr>d
