@@ -175,7 +175,7 @@ endif
 set wildchar=<Tab> wildcharm=<C-Z> wildmenu wildmode=full
 
 " set listchars=tab:»·,trail:·,eol:$
-set listchars=nbsp:~,tab:>-,trail:.,eol:$
+set listchars=nbsp:~,tab:>-,trail:*,eol:$
 
 set backspace=indent,eol,start    " allow backspacing over everything in insert mode
 
@@ -275,7 +275,6 @@ function! MyStatusline(full) " {{{
     setlocal statusline+=\ %{&ft}         " file type
     setlocal statusline+=\                " a space
     setlocal statusline+=%#StatusLine#   " change coloring
-    " setlocal statusline+=%#ToDo#          " change coloring
     setlocal statusline+=\ L%04l          " cursor position: 4 digits line   number
     setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
     setlocal statusline+=\ %02p%%         " cursor position: percent of file
@@ -292,7 +291,6 @@ function! StatuslineGitBranch()
   if &modifiable
     try
       let l:gitrevparse = system("git -C ".substitute(expand('%:p:h:S'),'\(\a\):','/\1','')." rev-parse --abbrev-ref HEAD")
-      " let l:gitrevparse = system('git -C /d/daten/scripts/git/knop-01/rapid-for-vim rev-parse --abbrev-ref HEAD')
       if !v:shell_error
         let b:gitbranch = " " . substitute(l:gitrevparse, '\( \|\n\)', '', 'g') . " "
       endif
@@ -301,7 +299,6 @@ function! StatuslineGitBranch()
   endif
 endfunction
 
-" call MyStatusline(1)
 augroup myStatusline
   autocmd!
   autocmd BufEnter,WinEnter * :call MyStatusline(1)
@@ -351,6 +348,36 @@ augroup vimrcEx
   autocmd TabEnter * call SetRolodexSettings()
   autocmd TabLeave * call ClearRolodexSettings()
 augroup END
+" }}}
+
+" Relativenumber:
+autocmd ModeChanged *:n   setlocal norelativenumber  " {{{
+autocmd ModeChanged *:v   setlocal relativenumber
+autocmd ModeChanged *:V   setlocal relativenumber
+autocmd ModeChanged *:  setlocal relativenumber
+" autocmd ModeChanged *:o setlocal relativenumber " scheint nicht zu funktionieren
+autocmd ModeChanged *:i   setlocal norelativenumber
+autocmd ModeChanged *:R   setlocal norelativenumber
+autocmd ModeChanged *:c   setlocal norelativenumber
+autocmd ModeChanged *:tl  setlocal norelativenumber
+autocmd CursorMoved *     setlocal norelativenumber
+" work around operator pending
+nnoremap c  :setlocal relativenumber<cr>c
+nnoremap d  :setlocal relativenumber<cr>d
+nnoremap y  :setlocal relativenumber<cr>y
+" nnoremap ~  :setlocal relativenumber<cr>~ " auch wenn ~ als operator aufgefuehrt ist, relativenumber ist hier nicht sinnvoll
+nnoremap g~ :setlocal relativenumber<cr>g~
+nnoremap gu :setlocal relativenumber<cr>gu
+nnoremap gU :setlocal relativenumber<cr>gU
+nnoremap !  :setlocal relativenumber<cr>!
+nnoremap =  :setlocal relativenumber<cr>=
+nnoremap gq :setlocal relativenumber<cr>gq
+nnoremap gw :setlocal relativenumber<cr>gw
+nnoremap g? :setlocal relativenumber<cr>g?
+nnoremap >  :setlocal relativenumber<cr>>
+nnoremap <  :setlocal relativenumber<cr><
+nnoremap zf :setlocal relativenumber<cr>zf
+nnoremap g@ :setlocal relativenumber<cr>g@
 " }}}
 
 " Mappings:

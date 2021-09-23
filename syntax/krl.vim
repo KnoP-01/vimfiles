@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.2.3
-" Last Change: 29. Apr 2021
+" Last Change: 21. Jul 2021
 " Credits: Thanks for contributions to this to Michael Jagusch
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -356,7 +356,7 @@ syn keyword krlBuildInFunction contained cal_to_rdc rdc_file_to_hd
 syn keyword krlBuildInFunction contained delete_pid_on_rdc delete_rdc_content 
 syn keyword krlBuildInFunction contained create_rdc_archive restore_rdc_archive 
 " ioctl
-syn keyword krlBuildInFunction contained IoCtl CioCtl 
+syn keyword krlBuildInFunction contained IOCtl cIOCtl 
 syn keyword krlBuildInFunction contained WSpaceGive WSpaceTake 
 " sync
 syn keyword krlBuildInFunction contained Sync SyncCmd CancelProgSync 
