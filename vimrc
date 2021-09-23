@@ -266,6 +266,8 @@ function! MyStatusline(full) " {{{
   if a:full
     setlocal statusline+=\                " a space
     setlocal statusline+=%=               " align right from here on
+    " setlocal statusline+=%{mode(1)}
+    " setlocal statusline+=\                " a space
     setlocal statusline+=%#Error#         " change coloring
     setlocal statusline+=%{get(b:\,'gitbranch'\,'')}
     setlocal statusline+=%#StatusLineNC#  " change coloring
@@ -362,7 +364,8 @@ augroup myRelativeNumber  " {{{
   autocmd ModeChanged *:R   setlocal norelativenumber
   autocmd ModeChanged *:c   setlocal norelativenumber
   autocmd ModeChanged *:tl  setlocal norelativenumber
-  autocmd CursorMoved *     setlocal norelativenumber
+  " beim umschalten in v, V oder ^V triggert CursorMoved wenn der Cursor auf einer Fold-Zeile ist, daher das if mode...
+  autocmd CursorMoved *     if mode()!~'[vV]' | setlocal norelativenumber | endif
 augroup END
 " work around operator pending
 nnoremap c  :setlocal relativenumber<cr>c
