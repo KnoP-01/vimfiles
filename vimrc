@@ -273,10 +273,10 @@ function! MyStatusline(full) " {{{
     setlocal statusline+=%#StatusLineNC#  " change coloring
     setlocal statusline+=\                " a space
     setlocal statusline+=%{substitute(&ff\,'\\(.\\).\\+'\,'\\1'\,'')}           " file format
-    setlocal statusline+=\ %{&enc}        " encoding
-    setlocal statusline+=\ %{&ft}         " file type
     setlocal statusline+=\                " a space
-    setlocal statusline+=%#StatusLine#   " change coloring
+    setlocal statusline+=%{MyEnc()}       " fileencoding
+    setlocal statusline+=%{MyFt()}        " file type
+    setlocal statusline+=%#StatusLine#    " change coloring
     setlocal statusline+=\ L%04l          " cursor position: 4 digits line   number
     setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
     setlocal statusline+=\ %02p%%         " cursor position: percent of file
@@ -288,7 +288,21 @@ function! MyStatusline(full) " {{{
   endif
 endfunction
 
-function! StatuslineGitBranch()
+function! MyFt() abort
+  if &ft != ""
+    return &ft . " "
+  endif
+  return ""
+endfunction
+
+function! MyEnc() abort
+  if &fenc != ""
+    return &fenc . " "
+  endif
+  return &enc . " "
+endfunction
+
+function! StatuslineGitBranch() abort
   let b:gitbranch=""
   if &modifiable
     try
