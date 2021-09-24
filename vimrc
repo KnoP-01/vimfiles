@@ -375,9 +375,9 @@ augroup myRelativeNumber  " {{{
   autocmd ModeChanged *:  setlocal relativenumber
   " autocmd ModeChanged *:o setlocal relativenumber " scheint nicht zu funktionieren
   autocmd ModeChanged *:i   setlocal norelativenumber
-  autocmd ModeChanged *:R   setlocal norelativenumber
-  autocmd ModeChanged *:c   setlocal norelativenumber
-  autocmd ModeChanged *:tl  setlocal norelativenumber
+  " autocmd ModeChanged *:R   setlocal norelativenumber " unnoetig
+  " autocmd ModeChanged *:c   setlocal norelativenumber " functioniert nicht wg setlocal
+  " autocmd ModeChanged *:tl  setlocal norelativenumber " keine Ahnung, benutz ich zZt nicht
   " beim umschalten in v, V oder ^V triggert CursorMoved wenn der Cursor auf einer Fold-Zeile ist, daher das if mode...
   autocmd CursorMoved *     if mode()!~'[vV]' | setlocal norelativenumber | endif
 augroup END
