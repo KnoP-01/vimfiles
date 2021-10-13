@@ -368,37 +368,45 @@ augroup END
 " }}}
 
 " Relativenumber:
-augroup myRelativeNumber  " {{{
-  au!
-  autocmd ModeChanged *:n   setlocal norelativenumber
-  autocmd ModeChanged *:v   setlocal relativenumber
-  autocmd ModeChanged *:V   setlocal relativenumber
-  autocmd ModeChanged *:  setlocal relativenumber
-  " autocmd ModeChanged *:o setlocal relativenumber " scheint nicht zu funktionieren
-  autocmd ModeChanged *:i   setlocal norelativenumber
-  " autocmd ModeChanged *:R   setlocal norelativenumber " unnoetig
-  " autocmd ModeChanged *:c   setlocal norelativenumber " functioniert nicht wg setlocal
-  " autocmd ModeChanged *:tl  setlocal norelativenumber " keine Ahnung, benutz ich zZt nicht
-  " beim umschalten in v, V oder ^V triggert CursorMoved wenn der Cursor auf einer Fold-Zeile ist, daher das if mode...
-  autocmd CursorMoved *     if mode()!~'[vV]' | setlocal norelativenumber | endif
-augroup END
-" work around operator pending
-nnoremap c  :setlocal relativenumber<cr>c
-nnoremap d  :setlocal relativenumber<cr>d
-nnoremap y  :setlocal relativenumber<cr>y
-" nnoremap ~  :setlocal relativenumber<cr>~ " auch wenn ~ als operator aufgefuehrt ist, relativenumber ist hier nicht sinnvoll
-nnoremap g~ :setlocal relativenumber<cr>g~
-nnoremap gu :setlocal relativenumber<cr>gu
-nnoremap gU :setlocal relativenumber<cr>gU
-nnoremap !  :setlocal relativenumber<cr>!
-nnoremap =  :setlocal relativenumber<cr>=
-nnoremap gq :setlocal relativenumber<cr>gq
-nnoremap gw :setlocal relativenumber<cr>gw
-nnoremap g? :setlocal relativenumber<cr>g?
-nnoremap >  :setlocal relativenumber<cr>>
-nnoremap <  :setlocal relativenumber<cr><
-nnoremap zf :setlocal relativenumber<cr>zf
-nnoremap g@ :setlocal relativenumber<cr>g@
+if exists("##ModeChanged")
+  augroup myRelativeNumber  " {{{
+    au!
+    autocmd ModeChanged *:n   setlocal norelativenumber
+    autocmd ModeChanged *:[vV]   setlocal relativenumber
+    " autocmd ModeChanged *:o setlocal relativenumber " operator pending mode scheint nicht zu funktionieren
+    autocmd ModeChanged *:i   setlocal norelativenumber
+    " autocmd ModeChanged *:R   setlocal norelativenumber " unnoetig
+    " autocmd ModeChanged *:c   setlocal norelativenumber " functioniert nicht wg setlocal
+    " autocmd ModeChanged *:tl  setlocal norelativenumber " keine Ahnung, benutz ich zZt nicht
+    " beim umschalten in v, V oder ^V triggert CursorMoved wenn der Cursor auf einer Fold-Zeile ist, daher das if mode...
+    autocmd CursorMoved *     if mode()!~'[vV]' | setlocal norelativenumber | endif
+  augroup END
+  " command line mode
+  nnoremap :  :setlocal relativenumber<cr>:
+  " map operators to set relativenumber
+  nnoremap c  :setlocal relativenumber<cr>c
+  nnoremap d  :setlocal relativenumber<cr>d
+  nnoremap y  :setlocal relativenumber<cr>y
+  " nnoremap ~  :setlocal relativenumber<cr>~ " auch wenn ~ als operator aufgefuehrt ist, relativenumber ist hier nicht sinnvoll
+  nnoremap g~ :setlocal relativenumber<cr>g~
+  nnoremap gu :setlocal relativenumber<cr>gu
+  nnoremap gU :setlocal relativenumber<cr>gU
+  nnoremap !  :setlocal relativenumber<cr>!
+  nnoremap =  :setlocal relativenumber<cr>=
+  nnoremap gq :setlocal relativenumber<cr>gq
+  nnoremap gw :setlocal relativenumber<cr>gw
+  nnoremap g? :setlocal relativenumber<cr>g?
+  nnoremap >  :setlocal relativenumber<cr>>
+  nnoremap <  :setlocal relativenumber<cr><
+  nnoremap zf :setlocal relativenumber<cr>zf
+  nnoremap g@ :setlocal relativenumber<cr>g@
+  " commentary operator
+  nmap gc :setlocal relativenumber<cr><Plug>Commentary
+  xmap gc  <Plug>Commentary
+  omap gc  <Plug>Commentary
+  nmap gcc <Plug>CommentaryLine
+  nmap gcu <Plug>Commentary<Plug>Commentary
+endif
 " }}}
 
 " Mappings:
