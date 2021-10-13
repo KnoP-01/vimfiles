@@ -368,8 +368,8 @@ augroup END
 " }}}
 
 " Relativenumber:
-if exists("##ModeChanged")
-  augroup myRelativeNumber  " {{{
+if exists("##ModeChanged")  " {{{
+  augroup myRelativeNumber
     au!
     autocmd ModeChanged *:n   setlocal norelativenumber
     autocmd ModeChanged *:[vV]   setlocal relativenumber
