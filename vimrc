@@ -205,6 +205,7 @@ set guioptions-=L     " no left scroll bar in case of vertical split
 
 set guioptions-=m    " kein Menu per default. Siehe <S-F11> unten
 set guioptions-=T    " keine Toolbar per default. Siehe <S-F11> unten
+set guioptions+=k    " keep window size when adding/removing menu/scrollbar
 
 set nrformats-=octal  " don't use octal in case of leading 0
 
