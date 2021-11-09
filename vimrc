@@ -87,6 +87,11 @@ call plug#begin('~/.vim/plugged') " {{{
   " let g:matchup_matchparen_deferred_show_delay  = 800   " delay until display matching paren
   let g:matchup_matchparen_offscreen        = {'method':'popup'}
 
+  " focus
+  Plug 'blueyed/vim-diminactive/'
+  " let g:diminactive_use_colorcolumn = 0 " see also ColorColumn
+  " let g:diminactive_use_syntax = 1
+
   " Plug 'vim-scripts/RelOps'
   " let g:relops_check_for_nu = 1
   " let g:relops_mappings = ['gc']
@@ -286,6 +291,7 @@ function! MyStatusline(full) " {{{
     " setlocal statusline+=%#SpecialChar#   " change coloring
     setlocal statusline+=%{VimBuddy()}    " fun
     setlocal statusline+=\                " a space
+    " setlocal statusline+=%{mode('1')}               " current mode (debug purpose only)
   endif
 endfunction
 
@@ -372,14 +378,14 @@ if exists("##ModeChanged")  " {{{
   augroup myRelativeNumber
     au!
     autocmd ModeChanged *:n   setlocal norelativenumber
-    autocmd ModeChanged *:[vV]   setlocal relativenumber
+    autocmd ModeChanged *:[vV]   if &filetype!~'help' | setlocal relativenumber | endif
     " autocmd ModeChanged *:o setlocal relativenumber " operator pending mode scheint nicht zu funktionieren
     autocmd ModeChanged *:i   setlocal norelativenumber
     " autocmd ModeChanged *:R   setlocal norelativenumber " unnoetig
     " autocmd ModeChanged *:c   setlocal norelativenumber " functioniert nicht wg setlocal
     " autocmd ModeChanged *:tl  setlocal norelativenumber " keine Ahnung, benutz ich zZt nicht
     " beim umschalten in v, V oder ^V triggert CursorMoved wenn der Cursor auf einer Fold-Zeile ist, daher das if mode...
-    autocmd CursorMoved *     if mode()!~'[vV]' | setlocal norelativenumber | endif
+    " autocmd CursorMoved *     if mode()!~'[vV]' | setlocal norelativenumber | endif
   augroup END
   " command line mode
   nnoremap :  :setlocal relativenumber<cr>:
@@ -714,6 +720,8 @@ set termguicolors
 "
 " colorscheme tortus
 colorscheme tortusless
+hi ColorColumn ctermbg=0 guibg=#1c1c1c
+
 " colorscheme landscape
 " colorscheme railscasts
 " colorscheme highlight

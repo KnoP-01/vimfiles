@@ -2,6 +2,10 @@
 * `<leader>l` := open this file  
   
 ------------------------------------------------------------------------------
+# RegEx
+* `/\%[` starti\%[nsert] 
+  
+------------------------------------------------------------------------------
 # To Practice On
 * `CTRL-O`, `CTRL-I` := older/newer far jump position
 * `f`,`t`,`F`,`T`,`;` and , := inline movements  
