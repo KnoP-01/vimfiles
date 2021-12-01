@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.2.3
-" Last Change: 29. Apr 2021
+" Last Change: 01. Dec 2021
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -1504,13 +1504,17 @@ endif " format comments
 if get(g:,'krlPath',1)
 
   let s:pathcurrfile = s:KnopFnameescape4Path(substitute(expand("%:p:h"), '\\', '/', 'g'))
-  if s:pathcurrfile =~ '\v\c\/krc%(\/[^/]+){,4}$'
+  if s:pathcurrfile =~ '\v\c\/krc%(\/[^/]+){,5}$'
     let s:krlpath=substitute(s:pathcurrfile, '\c\v(\/krc)\/%(%(<krc>)@!.)*$', '\1/**,' ,'g')
-  elseif s:pathcurrfile =~ '\v\c\/r1%(\/[^/]+){,3}$'
+  elseif s:pathcurrfile =~ '\v\c\/r1%(\/[^/]+){,4}$'
         \&& (     s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/TP',''))
         \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/System',''))
         \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/Mada',''))
         \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/Program',''))
+        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/Folge',''))
+        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/Makros',''))
+        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/UPs',''))
+        \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v%(\/r1)\/%(%(<r1>)@!.)*$','/R1/VW_User',''))
         \     ||  s:KnopDirExists(substitute(s:pathcurrfile,   '\c\v(\/MaDa)%(\/r1)\/%(%(<r1>)@!.)*$','\1',''))
         \     ||  s:KnopDirExists(substitute(s:pathcurrfile,'\c\v(\/PowerOn)%(\/r1)\/%(%(<r1>)@!.)*$','\1',''))
         \    )
@@ -1565,7 +1569,7 @@ if get(g:,'krlPath',1)
         let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
       endif
     endif
-  elseif s:pathcurrfile =~ '\v\c\/program%(\/[^/]+){,2}$'
+  elseif s:pathcurrfile =~ '\v\c\/program%(\/[^/]+){,3}$'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/program)\/%(%(<program>)@!.)*$', '\1' ,'g')
     let s:krlpath=s:pathcurrfile. '/**,'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\cprogram$', 'System' ,'')
@@ -1580,7 +1584,7 @@ if get(g:,'krlPath',1)
     if s:KnopDirExists(s:pathcurrfile)
       let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
     endif
-  elseif s:pathcurrfile =~ '\v\c\/system%(\/[^/]+){,2}$'
+  elseif s:pathcurrfile =~ '\v\c\/system%(\/[^/]+){,3}$'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/system)\/%(%(<system>)@!.)*$', '\1' ,'g')
     let s:krlpath=s:pathcurrfile. '/**,'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\csystem$', 'Program' ,'')
@@ -1595,7 +1599,7 @@ if get(g:,'krlPath',1)
     if s:KnopDirExists(s:pathcurrfile)
       let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
     endif
-  elseif s:pathcurrfile =~ '\v\c\/mada%(\/[^/]+){,2}$'
+  elseif s:pathcurrfile =~ '\v\c\/mada%(\/[^/]+){,3}$'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/mada)\/%(%(<mada>)@!.)*$', '\1' ,'g')
     let s:krlpath=s:pathcurrfile. '/**,'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\cmada$', 'Program' ,'')
@@ -1610,7 +1614,7 @@ if get(g:,'krlPath',1)
     if s:KnopDirExists(s:pathcurrfile)
       let s:krlpath=s:krlpath. s:pathcurrfile. '/**,'
     endif
-  elseif s:pathcurrfile =~ '\v\c\/tp%(\/[^/]+){,2}$'
+  elseif s:pathcurrfile =~ '\v\c\/tp%(\/[^/]+){,3}$'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\c\v(\/tp)\/%(%(<tp>)@!.)*$', '\1' ,'g')
     let s:krlpath=s:pathcurrfile. '/**,'
     let s:pathcurrfile = substitute(s:pathcurrfile, '\ctp$', 'Program' ,'')

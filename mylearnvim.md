@@ -17,6 +17,9 @@
 ------------------------------------------------------------------------------
 # New Discoveries
 ## Uncategorized
+* `gn` = movement to next match (like n) but visually selects match
+* `cgn` = change next match: /something<cr>, cwbla<esc>, cgn (change next
+    something)
 * `v_o` = go to the opposite side of the current visual selection
 * `v_O` = go to the opposite side of the current visual selection (different
     from v_o only in visual block mode)

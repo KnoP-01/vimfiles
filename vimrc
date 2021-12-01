@@ -100,6 +100,9 @@ call plug#begin('~/.vim/plugged') " {{{
 
   " compare character wise with vimdiff
   Plug 'rickhowe/diffchar.vim'
+  Plug 'rickhowe/spotdiff.vim'
+  " avoid collision with krl- and rapid-<leader>u
+  nmap <silent> <Leader>U <Plug>(VDiffupdate)
 
   " markdown
   Plug 'godlygeek/tabular'
