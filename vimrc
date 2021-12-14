@@ -393,22 +393,29 @@ if exists("##ModeChanged")  " {{{
   " command line mode
   nnoremap :  :setlocal relativenumber<cr>:
   " map operators to set relativenumber
-  nnoremap c  :setlocal relativenumber<cr>c
-  nnoremap d  :setlocal relativenumber<cr>d
-  nnoremap y  :setlocal relativenumber<cr>y
-  " nnoremap ~  :setlocal relativenumber<cr>~ " auch wenn ~ als operator aufgefuehrt ist, relativenumber ist hier nicht sinnvoll
-  nnoremap g~ :setlocal relativenumber<cr>g~
-  nnoremap gu :setlocal relativenumber<cr>gu
-  nnoremap gU :setlocal relativenumber<cr>gU
-  nnoremap !  :setlocal relativenumber<cr>!
-  nnoremap =  :setlocal relativenumber<cr>=
-  nnoremap gq :setlocal relativenumber<cr>gq
-  nnoremap gw :setlocal relativenumber<cr>gw
-  nnoremap g? :setlocal relativenumber<cr>g?
-  nnoremap >  :setlocal relativenumber<cr>>
-  nnoremap <  :setlocal relativenumber<cr><
-  nnoremap zf :setlocal relativenumber<cr>zf
-  nnoremap g@ :setlocal relativenumber<cr>g@
+  function <SID>My_cRelNum(a) abort
+    if v:count > 0
+      call feedkeys( v:count . a:a,'n')
+      return
+    endif
+    setlocal relativenumber
+    call feedkeys(a:a,'n')
+  endfunction
+  nnoremap c  :<c-u>call <SID>My_cRelNum('c')<cr>
+  nnoremap d  :<c-u>call <SID>My_cRelNum('d')<cr>
+  nnoremap y  :<c-u>call <SID>My_cRelNum('y')<cr>
+  nnoremap g~ :<c-u>call <SID>My_cRelNum('g~')<cr>
+  nnoremap gu :<c-u>call <SID>My_cRelNum('gu')<cr>
+  nnoremap gU :<c-u>call <SID>My_cRelNum('gU')<cr>
+  nnoremap !  :<c-u>call <SID>My_cRelNum('!')<cr>
+  nnoremap =  :<c-u>call <SID>My_cRelNum('=')<cr>
+  nnoremap gq :<c-u>call <SID>My_cRelNum('gq')<cr>
+  nnoremap gw :<c-u>call <SID>My_cRelNum('gw')<cr>
+  nnoremap g? :<c-u>call <SID>My_cRelNum('g?')<cr>
+  nnoremap >  :<c-u>call <SID>My_cRelNum('>')<cr>
+  nnoremap <  :<c-u>call <SID>My_cRelNum('<')<cr>
+  nnoremap zf :<c-u>call <SID>My_cRelNum('zf')<cr>
+  nnoremap g@ :<c-u>call <SID>My_cRelNum('g@')<cr>
   " commentary operator
   nmap gc :setlocal relativenumber<cr><Plug>Commentary
   xmap gc  <Plug>Commentary
