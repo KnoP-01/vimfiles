@@ -725,73 +725,75 @@ let g:krlFoldLevel=2
 " Colorscheme:
 " colorscheme: {{{
 set termguicolors
+
 " let g:rapidGroupName=0
 " let g:krlGroupName=0
-"
-" colorscheme tortus
-colorscheme tortusless
-hi ColorColumn ctermbg=0 guibg=#1c1c1c
 
-" colorscheme landscape
-" colorscheme railscasts
-" colorscheme highlight
-" colorscheme robotstudio
-" colorscheme vulpo
-" 
-" colorscheme ir_black
-"
-" colorscheme mustang
 " colorscheme anokha
-" colorscheme BusyBee
-" colorscheme edark
+" hi ColorColumn ctermbg=0 guibg=#001010
+" hi NonText     guifg=#336633   guibg=#003333   gui=NONE
+
+" colorscheme ayu
+
+" colorscheme desert-night
+
+" colorscheme despacio
+
+" colorscheme fahrenheit
+
 " colorscheme falcon
+
 " colorscheme flatlandia
-" colorscheme flattened_dark
+
+" colorscheme flattened_dark          "  ***
+
 " colorscheme frictionless
-"
-" colorscheme seoul256
-" let g:seoul256_background = 233
-"
-" colorscheme gruvbox
-" highlight Cursor guifg=#00FF00 ctermfg=green
-" highlight Folded guifg=#8e9200 ctermfg=106
-" highlight link krlMovement   Folded
-" highlight link rapidMovement Folded
-"
-" colorscheme holokai
-" colorscheme jellybeans
+
+" colorscheme goodwolf                "  ***
+
+" colorscheme hybrid
+
 " colorscheme lizard
-" colorscheme midnight2
-" colorscheme mythos
-" colorscheme neodark
-" colorscheme oceandeep
+
+" colorscheme mustang
+" hi ColorColumn ctermbg=0 guibg=#101010
+
+" colorscheme nordisk
+
+" colorscheme PerfectDark
+" hi ColorColumn ctermbg=0 guibg=#404040
+" highlight Folded guifg=#999999 guibg=#222222 gui=NONE 
+
 " colorscheme petrel
-" colorscheme papercolor
-" let g:PaperColor_Theme_Options = {
-"   \   'theme': {
-"   \     'default': {
-"   \       'allow_bold': 0
-"   \      ,'allow_italic': 0
-"   \     }
-"   \   }
-"   \ }
-" highlight link Folded Statement
-" colorscheme rdark
+" hi  ColorColumn   ctermbg=0  guibg=#3d454b  gui=NONE
+" hi  NonText       cterm=NONE ctermfg=11  guibg=#3d454b   guifg=#6d767d  gui=NONE
+
+" colorscheme quantum
+
+" colorscheme robotstudio
+
 " colorscheme scheakur
-" colorscheme seti
-" colorscheme solarized
-" colorscheme solarized8_dark_flat
+
+" let g:solarized_style    = "dark"
+" let g:solarized_contrast = "high"
+" let g:solarized_italic   = 0
+" let g:solarized_bold     = 0
+" colorscheme solarized               "  ***
+
+" colorscheme solarized8_dark_high    "  ***
+
+" colorscheme sorcerer
+
 " colorscheme stormpetrel
-" colorscheme true-monochrome
-" colorscheme tortex
-" colorscheme vitamins
-" colorscheme vividchalk
-" colorscheme vydark
-" colorscheme wombat256mod
-" colorscheme zazen
-" highlight Todo          guibg=#404040   guifg=white 
-" colorscheme zendnb
-" colorscheme znake
+
+" colorscheme tortus
+colorscheme tortusless              "  ***
+
+" colorscheme true-monochrome         "  ***
+" hi ColorColumn ctermbg=0 guibg=#1c1c1c
+
+" colorscheme zazen                   "  ***
+
 " }}}
 
 " Other Plugin Settings:
