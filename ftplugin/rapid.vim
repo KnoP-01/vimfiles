@@ -1,8 +1,8 @@
 " ABB Rapid Command file type plugin for Vim
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
-" Version: 2.2.5
-" Last Change: 04. Nov 2021
+" Version: 2.2.7
+" Last Change: 05. Jan 2022
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -298,6 +298,9 @@ if !exists("*s:KnopVerboseEcho()")
     catch /^Vim\%((\a\+)\)\=:E303/
       call s:KnopVerboseEcho(":vimgrep stopped with E303. No match found")
       return -1
+    catch /^Vim\%((\a\+)\)\=:E479/
+      call s:KnopVerboseEcho(":vimgrep stopped with E479. No match found")
+      return -1
     catch /^Vim\%((\a\+)\)\=:E480/
       call s:KnopVerboseEcho(":vimgrep stopped with E480. No match found")
       return -1
@@ -544,6 +547,10 @@ if !exists("*s:KnopVerboseEcho()")
       endif
       try
         execute ':noautocmd lvimgrep '.l:prefix.a:currentWord.l:suffix.' '.l:path
+      catch /^Vim\%((\a\+)\)\=:E479/
+        call s:KnopVerboseEcho(":lvimgrep stopped with E479!",1)
+        return -1
+        "
       catch /^Vim\%((\a\+)\)\=:E480/
         call s:KnopVerboseEcho(":lvimgrep stopped with E480!",1)
         return -1

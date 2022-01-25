@@ -425,6 +425,9 @@ if exists("##ModeChanged")  " {{{
 endif
 " }}}
 
+" Uniq:
+command -range Uniq <line1>,<line2>s/\v^(.*)\n\zs(\1\n)+//
+
 " Mappings:
 " F Key Mappings: {{{
 " get rid of trailing white spaces and tabs; use two spaces instead of tab
@@ -633,7 +636,7 @@ let g:rapidCommentIndent=0
 " let g:rapidCommentTextObject=0
 " let g:rapidFormatComments=1
 " let g:rapidAutoComment=0
-" let g:rapidAutoCorrCfgLineEnd=1
+" let g:rapidAutoCorrCfgLineEnd=0
 " let g:rapidMoveAroundKeyMap=2
 " let g:rapidGoDefinitionKeyMap=1
 " let g:rapidListDefKeyMap=1
@@ -787,6 +790,7 @@ set termguicolors
 " colorscheme stormpetrel
 
 " colorscheme tortus
+
 colorscheme tortusless              "  ***
 
 " colorscheme true-monochrome         "  ***

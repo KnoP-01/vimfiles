@@ -1,7 +1,7 @@
-nnoremap <F1> :if expand('%')=~'\.dat$' 
-			\<bar> e %:s?\.dat$?.src? 
+nnoremap <F1> :if expand('%:t')=~'dat' 
+			\<bar> e %:r.src 
 			\<bar> else 
-			\<bar> e %:s?\.src$?.dat? 
+			\<bar> e %:r.dat 
 			\<bar> endif<CR>
 
 " global substitute
