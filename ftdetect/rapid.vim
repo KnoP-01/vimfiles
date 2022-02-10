@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.0.5
-" Last Change: 26. Dec 2021
+" Last Change: 07. Feb 2022
 " Credits:
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -58,7 +58,7 @@ augroup filetypedetect
   au! BufNewFile *.cfg,*.Cfg,*.CFG
         \  setf rapid
   au! BufRead *.cfg,*.Cfg,*.CFG
-        \  if getline(1) =~? '\c\v^' . expand('<afile>:t:r') . ':CFG'
+        \  if getline(1) =~? '\c\v^(EIO|MMC|MOC|PROC|SIO|SYS):CFG'
         \|   call <SID>RapidDetectFTandCorrEOL() 
         \| else 
         \|   setf cfg 

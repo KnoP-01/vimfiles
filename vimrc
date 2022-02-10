@@ -54,6 +54,7 @@ call plug#begin('~/.vim/plugged') " {{{
   Plug 'xolox/vim-shell'
   let g:shell_mappings_enabled          = 0
   let g:shell_fullscreen_always_on_top  = 0
+  let g:shell_fullscreen_message        = 0
 
   " erweiterung fuer netrw
   Plug 'tpope/vim-vinegar'
@@ -197,9 +198,13 @@ set backup            " write a backup.file~
 if has("win32")
   set shell=c:/apps/gitforwin/bin/bash.exe " use git for windows bash
   set shellcmdflag=-c
-  " set shellquote="\""
-  " set shellxquote="\""
+  set shellredir=>%s\ 2>&1
   set shellslash
+  " ausprobieren
+  " set shelltemp
+  " set noshelltemp
+  let &shellxescape = ''
+  let &shellxquote = '"'
   set guioptions+=!     " don't open cmd.exe-window on windows in case of :!
 endif
 
@@ -283,11 +288,11 @@ function! MyStatusline(full) " {{{
     setlocal statusline+=\                " a space
     setlocal statusline+=%{substitute(&ff\,'\\(.\\).\\+'\,'\\1'\,'')}           " file format
     setlocal statusline+=\                " a space
-    setlocal statusline+=%{MyEnc()}       " fileencoding
-    setlocal statusline+=%{MyFt()}        " file type
+    setlocal statusline+=%{MyOpt(&fenc)}  " fileencoding
+    setlocal statusline+=%{MyOpt(&ft)}    " file type
     setlocal statusline+=%#StatusLine#    " change coloring
-    setlocal statusline+=\ L%04l          " cursor position: 4 digits line   number
-    setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
+    " setlocal statusline+=\ L%04l          " cursor position: 4 digits line   number
+    " setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
     setlocal statusline+=\ %02p%%         " cursor position: percent of file
     setlocal statusline+=\ #%02n          " cursor position: 2 digits buffer number
     setlocal statusline+=\                " a space
@@ -298,18 +303,34 @@ function! MyStatusline(full) " {{{
   endif
 endfunction
 
-function! MyFt() abort
-  if &ft != ""
-    return &ft . " "
+function MyRuler()
+  if &laststatus
+    " hi statuslineNC ctermbg=gray ctermfg=black
+    " hi statuslineNC   guibg=gray   guifg=black
+    " hi statusline   ctermbg=gray ctermfg=black
+    " hi statusline     guibg=gray   guifg=black
+    set laststatus=0 ruler 
+    set rulerformat=%80(%=%#statusline#
+          \\ %t%m%r%h%w
+          \\ %{substitute(&ff\,'\\(.\\).\\+'\,'\\1'\,'')}
+          \\ %{MyOpt(&fenc)}%{MyOpt(&ft)}
+          \%02p%%
+          \\ %)
+          " vimbuddy
+          " \\ %{VimBuddy()}
+          " line number, column and percent
+          " \L%04l\ C%03v\ %02p%%
+  else
+    set noruler
+    set laststatus=2
   endif
-  return ""
 endfunction
 
-function! MyEnc() abort
-  if &fenc != ""
-    return &fenc . " "
+function MyOpt(opt) abort
+  if a:opt != ""
+    return a:opt . " "
   endif
-  return &enc . " "
+  return ""
 endfunction
 
 function! StatuslineGitBranch() abort
@@ -381,6 +402,8 @@ if exists("##ModeChanged")  " {{{
   augroup myRelativeNumber
     au!
     autocmd ModeChanged *:n   setlocal norelativenumber
+    " das naechste funktioniert leider nicht.
+    " autocmd ModeChanged *:no*   setlocal relativenumber
     autocmd ModeChanged *:[vV]   if &filetype!~'help' | setlocal relativenumber | endif
     " autocmd ModeChanged *:o setlocal relativenumber " operator pending mode scheint nicht zu funktionieren
     autocmd ModeChanged *:i   setlocal norelativenumber
@@ -443,7 +466,8 @@ nnoremap <F9> :echo "hi<" .  synIDattr(            synID(line("."),col("."),1)  
 " fun
 nnoremap <silent> <F10> :noautocmd Matrix<CR>
 " fullscreen shell.vim; work around bug where the statusline disappears
-nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline(1)<cr>
+" nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline(1)<cr>
+nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline(1)<cr>:call MyRuler()<cr>
 nnoremap <silent> <S-F11> :if &guioptions=~'\Cm'<bar>set guioptions-=m<bar>set guioptions-=T<bar>set guioptions-=r<bar>else<bar>set guioptions+=m<bar>set guioptions+=T<bar>set guioptions+=r<bar>endif<cr>
 " show buffers and start buffer command
 nnoremap <F12> :ls<cr>:buffer 
@@ -533,7 +557,8 @@ xnoremap * y/\V<C-R>=substitute(escape(@@,"/\\"),"\n","\\\\n","ge")<CR><CR>
 xnoremap # y?\V<C-R>=substitute(escape(@@,"?\\"),"\n","\\\\n","ge")<CR><CR>
 
 " auto create vimgrep line on ; in visual mode
-xnoremap ; y:<C-U>vimgrep /\V<c-r>=escape(@@,"/\\")<CR>/j <C-R>=join(split(&path, ","), "/* ")<CR>/*
+xnoremap <C-;> y:<C-U>vimgrep /\V<c-r>=escape(@@,"/\\")<CR>/j <C-R>=join(split(&path, ","), "/* ")<CR>/*
+xnoremap ; :<C-U>vimgrep /\c\v<<c-r><c-w>>/j <C-R>=join(split(&path, ","), "/* ")<CR>/*
 
 " Increment visualy selected numbers; see :he increment
 xnoremap <c-a> :IncN<CR>
