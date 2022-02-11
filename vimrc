@@ -575,20 +575,25 @@ xnoremap <c-a> :IncN<CR>
 " xnoremap <c-l> u
 
 " move around windows
-nnoremap <silent> <A-h> <C-W>h
-nnoremap <silent> <A-j> <C-W>j
-nnoremap <silent> <A-k> <C-W>k
-nnoremap <silent> <A-l> <C-W>l
-" move window around
+" nnoremap <silent> <A-h> <C-W>h
+" nnoremap <silent> <A-j> <C-W>j
+" nnoremap <silent> <A-k> <C-W>k
+" nnoremap <silent> <A-l> <C-W>l
+" this works better with MyRuler()
+nnoremap <silent> <A-h> :wincmd h<cr>
+nnoremap <silent> <A-j> :wincmd j<cr>
+nnoremap <silent> <A-k> :wincmd k<cr>
+nnoremap <silent> <A-l> :wincmd l<cr>
+" move windows around
 nmap <A-Left>   <plug>(tradewinds-h)
 nmap <A-Down>   <plug>(tradewinds-j)
 nmap <A-Up>     <plug>(tradewinds-k)
 nmap <A-Right>  <plug>(tradewinds-l)
 " change window size
-nnoremap <silent> <A-C-Left>   10<C-W><
-nnoremap <silent> <A-C-Down>    5<C-W>-
-nnoremap <silent> <A-C-Up>      5<C-W>+
-nnoremap <silent> <A-C-Right>  10<C-W>>
+nnoremap <silent> <C-S-H>      10<C-W><
+nnoremap <silent> <C-S-J>       5<C-W>-
+nnoremap <silent> <C-S-K>       5<C-W>+
+nnoremap <silent> <C-S-L>      10<C-W>>
 
 " Swap v and CTRL-V, because Block mode is more useful that Visual mode
 nnoremap    v   <C-V>
@@ -598,13 +603,9 @@ xnoremap <C-V>     v
 
 " dragvisuals.vim
 xmap <expr> <Left>  DVB_Drag('left')
-xmap <expr> <C-S-H> DVB_Drag('left')
 xmap <expr> <Down>  DVB_Drag('down')
-xmap <expr> <C-S-J> DVB_Drag('down')
 xmap <expr> <Up>    DVB_Drag('up')
-xmap <expr> <C-S-K> DVB_Drag('up')
 xmap <expr> <Right> DVB_Drag('right')
-xmap <expr> <C-S-L> DVB_Drag('right')
 " vmap  <expr>  D DVB_Duplicate() " default
 
 " short for :Align
