@@ -1,4 +1,6 @@
 
+setlocal colorcolumn=80
+
 " global substitute
 nmap <leader>gs :set hidden<cr>*N<leader>u:cdo s///g<left><left>
 

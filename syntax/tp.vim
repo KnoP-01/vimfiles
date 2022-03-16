@@ -5,6 +5,8 @@
 " URL:      	http://github.com/onerobotics/vim-tp
 " License:  	MIT
 " Modified: Patrick Knosowski knosowski@graeffrobotics.de
+" Version: 1.0.0
+" Last Change: 29. Apr 2021
 
 if exists("b:current_syntax")
   finish
@@ -218,7 +220,7 @@ hi def link     tpKeyword           Keyword
 " syn region      tpComment           start="--eg:" end=";" contains=@spell
 " syn match       tpRemark            /\(\s*\d*:\s*\)\@<=\/\/.*/
 syn match       tpComment           /^\s*\d*:\s*!.*\ze ;/	contains=@spell
-syn match       tpError             /\(!.\{32}\)\@<=.*\ze ;/ containedin=tpComment
+syn match       tpError             /\(!.\{32}\)\@<=.*\ze ;/ containedin=tpComment contained
 syn region      tpComment           start="--eg:" end="\ze;" contains=@spell
 " question Knosowski: why not contains=@spell here?
 syn match       tpRemark            /\(\s*\d*:\s*\)\@<=\/\/.*\ze;/

@@ -45,6 +45,10 @@ call plug#begin('~/.vim/plugged') " {{{
   let g:loaded_AlignMapsPlugin=1  " AlignMaps.vim; get rid of maps from AlignMapsPlugin
   Plug 'KnoP-01/DrChipsVis'
 
+  " Align alternative
+  Plug 'tommcdo/vim-lion'
+  let g:lion_squeeze_spaces=1 " add 1 space befor and after
+
   " motoman plugin"
   " Plug 'matthijsk/motoman-inform-vim-syntax'
   Plug 'KnoP-01/motoman-inform-vim-syntax'
@@ -191,6 +195,8 @@ set backspace=indent,eol,start    " allow backspacing over everything in insert 
 " better diff
 set diffopt=filler,icase,iwhite   " settings for diff mode: keep window lines synchronised, ignore case, ignore different amount of white spaces
 set diffopt+=internal,algorithm:patience
+command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_
+      \ | diffthis | wincmd p | diffthis
 
 set backup            " write a backup.file~
 " set directory-=.      " redirect .swp files to C:\Users\<user>\AppData\Local\Temp
@@ -277,9 +283,9 @@ function! MyStatusline(full) " {{{
   setlocal statusline+=%r               " Readonly flag       [RO]
   setlocal statusline+=%h               " Help buffer flag    [help]
   setlocal statusline+=%w               " Preview window flag [Preview]
+  setlocal statusline+=\                " a space
+  setlocal statusline+=%=               " align right from here on
   if a:full
-    setlocal statusline+=\                " a space
-    setlocal statusline+=%=               " align right from here on
     " setlocal statusline+=%{mode(1)}
     " setlocal statusline+=\                " a space
     setlocal statusline+=%#Error#         " change coloring
@@ -295,12 +301,14 @@ function! MyStatusline(full) " {{{
     " setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
     setlocal statusline+=\ %02p%%         " cursor position: percent of file
     setlocal statusline+=\ #%02n          " cursor position: 2 digits buffer number
-    setlocal statusline+=\                " a space
-    " setlocal statusline+=%#SpecialChar#   " change coloring
-    setlocal statusline+=%{VimBuddy()}    " fun
-    setlocal statusline+=\                " a space
-    " setlocal statusline+=%{mode('1')}               " current mode (debug purpose only)
   endif
+  setlocal statusline+=\                " a space
+  setlocal statusline+=%{VimBuddy()}    " fun
+  if !a:full
+    setlocal statusline+=..zzZZZ          " sleeping vimbuddy
+  endif
+  setlocal statusline+=\                " a space
+  " setlocal statusline+=%{mode('1')}               " current mode (debug purpose only)
 endfunction
 
 function MyRuler()
@@ -557,7 +565,7 @@ xnoremap * y/\V<C-R>=substitute(escape(@@,"/\\"),"\n","\\\\n","ge")<CR><CR>
 xnoremap # y?\V<C-R>=substitute(escape(@@,"?\\"),"\n","\\\\n","ge")<CR><CR>
 
 " auto create vimgrep line on ; in visual mode
-xnoremap <C-;> y:<C-U>vimgrep /\V<c-r>=escape(@@,"/\\")<CR>/j <C-R>=join(split(&path, ","), "/* ")<CR>/*
+xnoremap <A-;> y:<C-U>vimgrep /\V<c-r>=escape(@@,"/\\")<CR>/j <C-R>=join(split(&path, ","), "/* ")<CR>/*
 xnoremap ; :<C-U>vimgrep /\c\v<<c-r><c-w>>/j <C-R>=join(split(&path, ","), "/* ")<CR>/*
 
 " Increment visualy selected numbers; see :he increment
@@ -818,6 +826,9 @@ set termguicolors
 " colorscheme tortus
 
 colorscheme tortusless              "  ***
+" highlight Typedef           guibg=black         guifg=lightmagenta       gui=NONE
+
+" colorscheme murphy
 
 " colorscheme true-monochrome         "  ***
 " hi ColorColumn ctermbg=0 guibg=#1c1c1c
