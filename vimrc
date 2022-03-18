@@ -131,6 +131,9 @@ call plug#begin('~/.vim/plugged') " {{{
   " nmap gs <plug>SwitchFwd
   " nmap ga <plug>SwitchBwd
 
+  " a monochrome colorscheme
+  Plug 'jaredgorski/fogbell.vim'
+
 call plug#end()
 " PlugUpdate
 command! MyPlugUpdate   :set statusline=%F%m%r%h%w shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=! <bar> noau PlugUpdate
@@ -828,6 +831,8 @@ set termguicolors
 colorscheme tortusless              "  ***
 " highlight Typedef           guibg=black         guifg=lightmagenta       gui=NONE
 
+" colorscheme fogbell " very nice monochrome colorscheme!"
+"
 " colorscheme murphy
 
 " colorscheme true-monochrome         "  ***
