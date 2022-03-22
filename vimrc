@@ -4,7 +4,7 @@
 " and think about the poor pandas if you do!
 
 " {{{ init
-" Vim Rather Then Vi
+" vim rather than vi
 set nocompatible
 
 " Language English
@@ -183,7 +183,7 @@ augroup END
 set fileencodings=ucs-bom,utf-8,latin1
 
 " truecolor in terminals which support it. May not work in all cases!
-if has('termguicolors') && $COLORTERM ==# 'truecolor'
+if has('termguicolors') && $COLORTERM ==# 'truecolor' || has("win32")
   set termguicolors
 endif
 
@@ -220,10 +220,10 @@ endif
 set guioptions+=a         " put visually selected text into * register (gui only)
 set clipboard=autoselect  " same for terminals
 
-set guioptions-=r     " no right scroll bar. Siehe <S-F11> unten
+set guioptions-=r     " no right scroll bar
 set guioptions-=L     " no left scroll bar in case of vertical split
-" set guioptions+=l     " left scroll bar
-" set guioptions+=R     " right scroll bar in case of vertical split
+" set guioptions+=l     " left scroll bar. Siehe <S-F11> unten
+" set guioptions+=R     " right scroll bar in case of vertical split. Siehe <S-F11> unten
 
 set guioptions-=m    " kein Menu per default. Siehe <S-F11> unten
 set guioptions-=T    " keine Toolbar per default. Siehe <S-F11> unten
@@ -232,7 +232,7 @@ set guioptions+=k    " keep window size when adding/removing menu/scrollbar
 set nrformats-=octal  " don't use octal in case of leading 0
 
 set scrolloff=2       " scroll offset at top or bottom
-set sidescrolloff=5   " scroll offset at left or right
+set sidescrolloff=15   " scroll offset at left or right
 
 set history=50        " keep 50 lines of command line history
 
@@ -258,7 +258,7 @@ set display+=lastline " show more of the line in case of wrap
 set noeb                  " no error bell
 set novb                  " no visual bell
 
-" I don't use browse
+" I don't use :browse
 " set browsedir=buffer      " start browsing at dir of current buffer
 
 set mouse=a               " enable mouse in normal, visual, insert and commnd-line mode
@@ -273,15 +273,28 @@ set selection=inclusive   " allow selection of line break char (CR or LF or both
 " set expandtab             " use spaces instead of tab
 set shiftround            " Round indent to multiple of 'shiftwidth'.
 
-set nojoinspaces          " ein statt 2 spaces nach "saetzen" (nach . ! ?)
+set nojoinspaces          " ein statt 2 spaces nach "saetzen" (nach . ! ?) bei J (normal mode Join command)
 
 set winaltkeys=no         " disable menu with alt. necessary for <A-x> mappings
 
 set splitright            " vertival split opens new window to the right
 " }}}
 " Statusline:
-function! MyStatusline(full) " {{{
-  setlocal statusline=%F                " Path to the file in the buffer, as typed or relative to current directory
+function! MyStatusline(full) abort " {{{
+  "
+  " first set rulerformat, then statusline
+  " ruler is used in full screen mode after <F11>
+  set rulerformat=%80(%=%#statusline#
+        \\ %t%M%R%H%W
+        \\ %{substitute(&ff\,'\\(.\\).\\+'\,'\\1'\,'')}
+        \\ %{MyOpt(&fenc)}%{MyOpt(&ft)}
+        \%02p%%
+        \\ %)
+  " line number, column and percent
+  " \L%04l\ C%03v\ %02p%%
+  "
+  " now statusline
+  setlocal statusline=%F                " Full path to the file in the buffer
   setlocal statusline+=%m               " Modified flag       [+] ; [-] if 'modifiable' is off
   setlocal statusline+=%r               " Readonly flag       [RO]
   setlocal statusline+=%h               " Help buffer flag    [help]
@@ -289,7 +302,6 @@ function! MyStatusline(full) " {{{
   setlocal statusline+=\                " a space
   setlocal statusline+=%=               " align right from here on
   if a:full
-    " setlocal statusline+=%{mode(1)}
     " setlocal statusline+=\                " a space
     setlocal statusline+=%#Error#         " change coloring
     setlocal statusline+=%{get(b:\,'gitbranch'\,'')}
@@ -300,8 +312,8 @@ function! MyStatusline(full) " {{{
     setlocal statusline+=%{MyOpt(&fenc)}  " fileencoding
     setlocal statusline+=%{MyOpt(&ft)}    " file type
     setlocal statusline+=%#StatusLine#    " change coloring
-    " setlocal statusline+=\ L%04l          " cursor position: 4 digits line   number
-    " setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
+    setlocal statusline+=\ L%04l          " cursor position: 4 digits line   number
+    setlocal statusline+=\ C%03v          " cursor position: 3 digits column number
     setlocal statusline+=\ %02p%%         " cursor position: percent of file
     setlocal statusline+=\ #%02n          " cursor position: 2 digits buffer number
   endif
@@ -311,29 +323,14 @@ function! MyStatusline(full) " {{{
     setlocal statusline+=..zzZZZ          " sleeping vimbuddy
   endif
   setlocal statusline+=\                " a space
-  " setlocal statusline+=%{mode('1')}               " current mode (debug purpose only)
+  "
 endfunction
 
-function MyRuler()
+function MyRuler() abort
   if &laststatus
-    " hi statuslineNC ctermbg=gray ctermfg=black
-    " hi statuslineNC   guibg=gray   guifg=black
-    " hi statusline   ctermbg=gray ctermfg=black
-    " hi statusline     guibg=gray   guifg=black
     set laststatus=0 ruler 
-    set rulerformat=%80(%=%#statusline#
-          \\ %t%m%r%h%w
-          \\ %{substitute(&ff\,'\\(.\\).\\+'\,'\\1'\,'')}
-          \\ %{MyOpt(&fenc)}%{MyOpt(&ft)}
-          \%02p%%
-          \\ %)
-          " vimbuddy
-          " \\ %{VimBuddy()}
-          " line number, column and percent
-          " \L%04l\ C%03v\ %02p%%
   else
-    set noruler
-    set laststatus=2
+    set laststatus=2 noruler
   endif
 endfunction
 
@@ -477,9 +474,8 @@ nnoremap <F9> :echo "hi<" .  synIDattr(            synID(line("."),col("."),1)  
 " fun
 nnoremap <silent> <F10> :noautocmd Matrix<CR>
 " fullscreen shell.vim; work around bug where the statusline disappears
-" nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline(1)<cr>
 nnoremap <silent> <F11> :Fullscreen<CR>:sleep 51m<CR>:call MyStatusline(1)<cr>:call MyRuler()<cr>
-nnoremap <silent> <S-F11> :if &guioptions=~'\Cm'<bar>set guioptions-=m<bar>set guioptions-=T<bar>set guioptions-=r<bar>else<bar>set guioptions+=m<bar>set guioptions+=T<bar>set guioptions+=r<bar>endif<cr>
+nnoremap <silent> <S-F11> :if &guioptions=~'\Cm'<bar>set guioptions-=m<bar>set guioptions-=T<bar>set guioptions-=l<bar>set guioptions-=R<bar>else<bar>set guioptions+=m<bar>set guioptions+=T<bar>set guioptions+=l<bar>set guioptions+=R<bar>endif<cr>
 " show buffers and start buffer command
 nnoremap <F12> :ls<cr>:buffer 
 " }}}
@@ -533,8 +529,6 @@ inoremap <left> <c-g>U<left>
 inoremap <right> <c-g>U<right>
 " make Y similar to C, and D. Original Y is already yy
 nnoremap Y y$
-" make use of ctrl-q
-nnoremap <c-q> :qa<cr>
 
 " center when searching next/previous
 nnoremap * *zz
@@ -567,7 +561,7 @@ cnoremap <Right>  <Space><BS><Right>
 xnoremap * y/\V<C-R>=substitute(escape(@@,"/\\"),"\n","\\\\n","ge")<CR><CR>
 xnoremap # y?\V<C-R>=substitute(escape(@@,"?\\"),"\n","\\\\n","ge")<CR><CR>
 
-" auto create vimgrep line on ; in visual mode
+" automagically generate vimgrep line on ; in visual mode
 xnoremap <A-;> y:<C-U>vimgrep /\V<c-r>=escape(@@,"/\\")<CR>/j <C-R>=join(split(&path, ","), "/* ")<CR>/*
 xnoremap ; :<C-U>vimgrep /\c\v<<c-r><c-w>>/j <C-R>=join(split(&path, ","), "/* ")<CR>/*
 
@@ -669,7 +663,7 @@ let g:knopVerbose=0
 " let g:rapidGroupName=0
 " let g:rapidNewStyleIndent=1
 " let g:rapidNoCommentIndent=0 " undokumentiert
-let g:rapidCommentIndent=0
+" let g:rapidCommentIndent=0
 " let g:rapidCommentTextObject=0
 " let g:rapidFormatComments=1
 " let g:rapidAutoComment=0
@@ -720,7 +714,7 @@ let g:rapidSpaceIndent=0
 " let g:krlShortenQFPath=0
 " let g:krlNoCommentIndent=0
 " let g:krlIndentBetweenDef = 0
-let g:krlCommentIndent=1
+" let g:krlCommentIndent=1
 " let g:krlCommentTextObject=0
 " let g:krlFormatComments=0
 " let g:krlAutoComment=0
@@ -764,7 +758,6 @@ let g:krlFoldLevel=2
 
 " Colorscheme:
 " colorscheme: {{{
-set termguicolors
 
 " let g:rapidGroupName=0
 " let g:krlGroupName=0
@@ -844,7 +837,11 @@ colorscheme tortusless              "  ***
 
 " Other Plugin Settings:
 " Netrw: {{{
-let g:netrw_winsize = 25        " sets the width to 25% of the page
+let g:netrw_preview      = 1    " position of the preview window opened with p
+let g:netrw_alto         = 0    " position of the edit window opened with o
+let g:netrw_altv         = 0    " position of the edit window opened with v
+let g:netrw_liststyle    = 3    " tree view
+let g:netrw_winsize      = 50   " size in % of an opened window with o or v
 let g:netrw_browse_split = 0    " reuse current window
 " }}}
 " Autodate: {{{

@@ -1,6 +1,7 @@
 * `%normal` := issue a normal mode command on all lines in a buffer.
 * `[I` := Display all lines that contain the keyword under the cursor.
 * `<leader>l` := open this file  
+* `<leader>o` := :only (close all other windows)
   
 ------------------------------------------------------------------------------
 # RegEx
@@ -14,6 +15,7 @@
 * `i_CTRL-w` := delete last word, I always foget about that
 * `:B <cmd>` := execute command on a visual block
 * `<leader>gs` := global substitute in Rapid/KRL-files
+* `<leader>a` := short for :Align
   
 ------------------------------------------------------------------------------
 # New Discoveries
