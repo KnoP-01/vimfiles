@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.2.7
-" Last Change: 18. Mar 2022
+" Last Change: 22. Mar 2022
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -146,6 +146,9 @@ if !exists("*s:KnopVerboseEcho()")
     let l:out = fnameescape( a:in )
     let l:out = substitute(l:out, '\\#', '#', "g") " # and % will get escaped by fnameescape() but must not be escaped for set path...
     let l:out = substitute(l:out, '\\%', '%', "g")
+    if !has("win32")
+      let l:out = substitute(l:out, '\$', '\\$', "g") " escape $ sign only on none windows
+    endif
     let l:out = substitute(l:out, '\\ ', '\\\\\\ ', 'g') " escape spaces with three backslashes
     let l:out = substitute(l:out, ',', '\\\\,', 'g') " escape comma and semicolon with two backslashes
     let l:out = substitute(l:out, ';', '\\\\;', "g")
@@ -662,19 +665,26 @@ if !exists("*s:KnopVerboseEcho()")
     endif
     "
     " second search src file name = a:currentWord
-    call s:KnopVerboseEcho("Search .src files in &path...")
-    let l:path = s:KnopPreparePath(&path,a:currentWord.'.[sS][rR][cC]').s:KnopPreparePath(&path,a:currentWord.'.[sS][uU][bB]')
-    if !filereadable('./'.a:currentWord.'.[sS][rR][cC]') " suppress message about missing file
-      let l:path = substitute(l:path, '\.[\\/]'.a:currentWord.'.\[sS\]\[rR\]\[cC\] ', ' ','g')
-    endif
-    if !filereadable('./'.a:currentWord.'.[sS][uU][bB]') " suppress message about missing file
-      let l:path = substitute(l:path, '\.[\\/]'.a:currentWord.'.\[sS\]\[uU\]\[bB\] ', ' ','g')
-    endif
-    if (s:KnopSearchPathForPatternNTimes('\c\v^\s*(global\s+)?def(fct\s+\w+(\[[0-9,]*\])?)?\s+'.a:currentWord.">",l:path,'1','krl') == 0)
-      call s:KnopVerboseEcho("Found src file. The quickfix window will open. See :he quickfix-window",1)
-      return 0
-      "
-    endif
+    try
+      let l:saved_fileignorecase = &fileignorecase
+      setlocal fileignorecase
+      call s:KnopVerboseEcho("Search .src files in &path...")
+      let l:path = s:KnopPreparePath(&path,a:currentWord.'.[sS][rR][cC]').s:KnopPreparePath(&path,a:currentWord.'.[sS][uU][bB]')
+      if !filereadable('./'.a:currentWord.'.[sS][rR][cC]') " suppress message about missing file
+        let l:path = substitute(l:path, '\.[\\/]'.a:currentWord.'.\[sS\]\[rR\]\[cC\] ', ' ','g')
+      endif
+      if !filereadable('./'.a:currentWord.'.[sS][uU][bB]') " suppress message about missing file
+        let l:path = substitute(l:path, '\.[\\/]'.a:currentWord.'.\[sS\]\[uU\]\[bB\] ', ' ','g')
+      endif
+      if (s:KnopSearchPathForPatternNTimes('\c\v^\s*(global\s+)?def(fct\s+\w+(\[[0-9,]*\])?)?\s+'.a:currentWord.">",l:path,'1','krl') == 0)
+        call s:KnopVerboseEcho("Found src file. The quickfix window will open. See :he quickfix-window",1)
+        return 0
+        "
+      endif
+    finally
+      let &fileignorecase = l:saved_fileignorecase
+      unlet l:saved_fileignorecase
+    endtry
     "
     " third search global def(fct)?
     call s:KnopVerboseEcho("Search global def(fct)? definitions in &path...")

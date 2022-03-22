@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.2.7
-" Last Change: 21. Feb 2022
+" Last Change: 22. Mar 2022
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -128,6 +128,9 @@ if !exists("*s:KnopVerboseEcho()")
     let l:out = fnameescape( a:in )
     let l:out = substitute(l:out, '\\#', '#', "g") " # and % will get escaped by fnameescape() but must not be escaped for set path...
     let l:out = substitute(l:out, '\\%', '%', "g")
+    if !has("win32")
+      let l:out = substitute(l:out, '\$', '\\$', "g") " escape $ sign only on none windows
+    endif
     let l:out = substitute(l:out, '\\ ', '\\\\\\ ', 'g') " escape spaces with three backslashes
     let l:out = substitute(l:out, ',', '\\\\,', 'g') " escape comma and semicolon with two backslashes
     let l:out = substitute(l:out, ';', '\\\\;', "g")
@@ -624,31 +627,15 @@ if !exists("*s:KnopVerboseEcho()")
     "
     " search EIO.cfg
     call s:KnopVerboseEcho("search EIO.cfg")
-    if filereadable(simplify(fnameescape(expand("%:p:h"))."/EIO.cfg"))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/EIO.cfg')
-    elseif filereadable(simplify(fnameescape(expand("%:p:h"))."/EIO.Cfg"))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/EIO.Cfg')
-    elseif filereadable(simplify(fnameescape(expand("%:p:h"))."/EIO.CFG"))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/EIO.CFG')
-    elseif filereadable(simplify(fnameescape(expand("%:p:h"))."/SYSPAR/EIO.cfg"))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/SYSPAR/EIO.cfg')
-    elseif filereadable(simplify(fnameescape(expand("%:p:h"))."/SYSPAR/EIO.Cfg"))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/SYSPAR/EIO.Cfg')
-    elseif filereadable(simplify(fnameescape(expand("%:p:h"))."/SYSPAR/EIO.CFG"))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/SYSPAR/EIO.CFG')
-    elseif filereadable(simplify(fnameescape(expand("%:p:h"))."/../../SYSPAR/EIO.cfg"))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/../../SYSPAR/EIO.cfg')
-    elseif filereadable(simplify(fnameescape(expand("%:p:h"))."/../../SYSPAR/EIO.Cfg"))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/../../SYSPAR/EIO.Cfg')
-    elseif filereadable(simplify(fnameescape(expand("%:p:h"))."/../../SYSPAR/EIO.CFG"))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/../../SYSPAR/EIO.CFG')
-    elseif filereadable(simplify(fnameescape(expand("%:p:h")).'/../../../SYSPAR/EIO.cfg'))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/../../../SYSPAR/EIO.cfg')
-    elseif filereadable(simplify(fnameescape(expand("%:p:h")).'/../../../SYSPAR/EIO.Cfg'))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/../../../SYSPAR/EIO.Cfg')
-    elseif filereadable(simplify(fnameescape(expand("%:p:h")).'/../../../SYSPAR/EIO.CFG'))
-      let l:path = simplify(fnameescape(expand("%:p:h")).'/../../../SYSPAR/EIO.CFG')
-    else
+    " findfile() uses suffixesadd, but does not respect 'fileignorecase'
+    let l:path = fnameescape(findfile("EIO"))
+    if l:path == ""
+      let l:path = fnameescape(findfile("eio"))
+    endif
+    if l:path == ""
+      let l:path = fnameescape(findfile("Eio"))
+    endif
+    if l:path == ""
       call s:KnopVerboseEcho("No EIO.cfg found!",1)
       return -1
       "
@@ -1151,29 +1138,32 @@ if get(g:,'rapidPath',1)
 
   let s:pathcurrfile = s:KnopFnameescape4Path(substitute(expand("%:p:h"), '\\', '/', 'g'))
   let s:rapidpath=''
-  if finddir(s:pathcurrfile.'/../../../RAPID')    !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../../RAPID/**,'   )   | endif
-  if finddir(s:pathcurrfile.'/../../../SYSPAR')   !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../../SYSPAR/**,'  )   | endif
-  if finddir(s:pathcurrfile.'/../../../HOME')     !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../../HOME/**,'    )   | endif
-  if finddir(s:pathcurrfile.'/../../../BACKINFO') !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../../BACKINFO/**,')   | endif
-  if finddir(s:pathcurrfile.'/../../../CS')       !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../../CS/**,'      )   | endif
+  if s:KnopDirExists(s:pathcurrfile.'/../../../RAPID')    !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../../RAPID/**,'   )   | endif
+  if s:KnopDirExists(s:pathcurrfile.'/../../../SYSPAR')   !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../../SYSPAR/**,'  )   | endif
+  if s:KnopDirExists(s:pathcurrfile.'/../../../HOME')     !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../../HOME/**,'    )   | endif
+  if s:KnopDirExists(s:pathcurrfile.'/../../../BACKINFO') !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../../BACKINFO/**,')   | endif
+  if s:KnopDirExists(s:pathcurrfile.'/../../../CS')       !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../../CS/**,'      )   | endif
   if s:rapidpath == ''
-    if finddir(s:pathcurrfile.'/../../RAPID')     !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../RAPID/**,'      )   | endif
-    if finddir(s:pathcurrfile.'/../../SYSPAR')    !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../SYSPAR/**,'     )   | endif
-    if finddir(s:pathcurrfile.'/../../HOME')      !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../HOME/**,'       )   | endif
-    if finddir(s:pathcurrfile.'/../../BACKINFO')  !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../BACKINFO/**,'   )   | endif
-    if finddir(s:pathcurrfile.'/../../CS')        !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../CS/**,'         )   | endif
+    if s:KnopDirExists(s:pathcurrfile.'/../../RAPID')     !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../RAPID/**,'      )   | endif
+    if s:KnopDirExists(s:pathcurrfile.'/../../SYSPAR')    !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../SYSPAR/**,'     )   | endif
+    if s:KnopDirExists(s:pathcurrfile.'/../../HOME')      !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../HOME/**,'       )   | endif
+    if s:KnopDirExists(s:pathcurrfile.'/../../BACKINFO')  !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../BACKINFO/**,'   )   | endif
+    if s:KnopDirExists(s:pathcurrfile.'/../../CS')        !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../../CS/**,'         )   | endif
   endif
   if s:rapidpath == ''
-    if finddir(s:pathcurrfile.'/../RAPID')        !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../RAPID/**,'         )   | endif
-    if finddir(s:pathcurrfile.'/../SYSPAR')       !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../SYSPAR/**,'        )   | endif
-    if finddir(s:pathcurrfile.'/../HOME')         !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../HOME/**,'          )   | endif
-    if finddir(s:pathcurrfile.'/../BACKINFO')     !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../BACKINFO/**,'      )   | endif
-    if finddir(s:pathcurrfile.'/../CS')           !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../CS/**,'            )   | endif
+    if s:KnopDirExists(s:pathcurrfile.'/../RAPID')        !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../RAPID/**,'         )   | endif
+    if s:KnopDirExists(s:pathcurrfile.'/../SYSPAR')       !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../SYSPAR/**,'        )   | endif
+    if s:KnopDirExists(s:pathcurrfile.'/../HOME')         !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../HOME/**,'          )   | endif
+    if s:KnopDirExists(s:pathcurrfile.'/../BACKINFO')     !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../BACKINFO/**,'      )   | endif
+    if s:KnopDirExists(s:pathcurrfile.'/../CS')           !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/../CS/**,'            )   | endif
   endif
   if s:rapidpath == ''
-    if finddir(s:pathcurrfile.'/SYSPAR')          !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/SYSPAR/**,'           )   | endif " for .prg files
+    if s:KnopDirExists(s:pathcurrfile.'/SYSPAR')          !='' | let s:rapidpath.=simplify(s:pathcurrfile.'/SYSPAR/**,'           )   | endif " for .prg files
   endif
 
+  if has("win32")
+    let s:rapidpath = substitute(s:rapidpath,'\\','\\\\\\','g') " mache aus einem backslash wieder drei, simplify() oben hat das reduziert
+  endif
   execute "setlocal path=.,".s:rapidpath
   let b:undo_ftplugin = b:undo_ftplugin." pa<"
 

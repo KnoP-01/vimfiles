@@ -47,7 +47,7 @@ nnoremap <leader>abb  :Align! p0P0llrlrlrlrlrlrlrllllrlrlrlrlrlrl \. , \[ \]<cr>
 xnoremap <leader>abb  :Align! p0P0llrlrlrlrlrlrlrllllrlrlrlrlrlrl \. , \[ \]<cr>
 
 " align EIO.cfg for readability
-function AlignEio() abort
+function! AlignEio() abort
   %s/\\\s*\n\s\+/\\ /
   g/^\s*$/d
   normal gg
@@ -59,7 +59,7 @@ endfunction
 command! EioAlign call AlignEio()
 
 " undo align EIO.cfg for readability
-function UnAlignEio() abort
+function! UnAlignEio() abort
   g/\n[^#]/s/\([^#]\)$/\1\r/
   g/\\\s*\S/s/\\/\\\r/g
   %s/\s\s\+-/ -/g
