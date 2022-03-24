@@ -2,6 +2,9 @@
 * `[I` := Display all lines that contain the keyword under the cursor.
 * `<leader>l` := open this file  
 * `<leader>o` := :only (close all other windows)
+* `:<C-R><C-W>` := insert word under cursor in command line <cword>
+* `:<C-R><C-A>` := insert WORD under cursor in command line <cWORD>
+* `:<C-R><C-L>` := insert line under cursor in command line
   
 ------------------------------------------------------------------------------
 # RegEx

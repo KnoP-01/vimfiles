@@ -33,6 +33,14 @@ call plug#begin('~/.vim/plugged') " {{{
 
   Plug 'vim/killersheep'
 
+  " context
+  Plug 'wellle/context.vim'
+  let g:context_enabled = 0
+  let g:context_filetype_blacklist = []
+  nnoremap <leader>cc :ContextPeek<cr>
+  nnoremap <leader>ce :ContextEnable<cr>
+  nnoremap <leader>cd :ContextDisable<cr>
+
   " vim script test framework
   Plug 'junegunn/vader.vim'
 
@@ -232,7 +240,7 @@ set guioptions+=k    " keep window size when adding/removing menu/scrollbar
 set nrformats-=octal  " don't use octal in case of leading 0
 
 set scrolloff=2       " scroll offset at top or bottom
-set sidescrolloff=15   " scroll offset at left or right
+set sidescrolloff=8   " scroll offset at left or right
 
 set history=50        " keep 50 lines of command line history
 
