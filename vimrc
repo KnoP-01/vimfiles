@@ -293,7 +293,10 @@ function! MyStatusline(full) abort " {{{
   " first set rulerformat, then statusline
   " ruler is used in full screen mode after <F11>
   set rulerformat=%80(%=%#statusline#
-        \\ %t%M%R%H%W
+        \\ %t%M%R%H%W\ 
+        \\%#Error#
+        \\%{get(b:\,'gitbranch'\,'')}
+        \\%#StatusLine#
         \\ %{substitute(&ff\,'\\(.\\).\\+'\,'\\1'\,'')}
         \\ %{MyOpt(&fenc)}%{MyOpt(&ft)}
         \%02p%%
@@ -530,6 +533,20 @@ xnoremap <silent>ai :<C-u>call IndTxtObj(0)<CR>
 xnoremap <silent>ii :<C-u>call IndTxtObj(1)<CR>
 onoremap <silent>ai :<C-u>call IndTxtObj(0)<CR>
 onoremap <silent>ii :<C-u>call IndTxtObj(1)<CR>
+" }}}
+" Surround Visual Selection: with ", ', |, *, <>, (), [], and {} {{{
+xnoremap s" "xs"<C-R>x"<esc>
+xnoremap s' "xs'<C-R>x'<esc>
+xnoremap s<bar> "xs<bar><C-R>x<bar><esc>
+xnoremap s* "xs*<C-R>x*<esc>
+xnoremap s< "xs<<C-R>x><esc>
+xnoremap s> "xs<<C-R>x><esc>
+xnoremap s( "xs(<C-R>x)<esc>
+xnoremap s) "xs(<C-R>x)<esc>
+xnoremap s[ "xs[<C-R>x]<esc>
+xnoremap s] "xs[<C-R>x]<esc>
+xnoremap s{ "xs{<C-R>x}<esc>
+xnoremap s} "xs{<C-R>x}<esc>
 " }}}
 " Other Mappings: {{{
 " don't break undo and repeat with left/right arrow in insert mode
@@ -845,12 +862,16 @@ colorscheme tortusless              "  ***
 
 " Other Plugin Settings:
 " Netrw: {{{
-let g:netrw_preview      = 1    " position of the preview window opened with p
-let g:netrw_alto         = 0    " position of the edit window opened with o
-let g:netrw_altv         = 0    " position of the edit window opened with v
-let g:netrw_liststyle    = 3    " tree view
-let g:netrw_winsize      = 50   " size in % of an opened window with o or v
-let g:netrw_browse_split = 0    " reuse current window
+let g:netrw_preview      = 1        " position of the preview window opened with p
+let g:netrw_alto         = 0        " position of the edit window opened with o
+let g:netrw_altv         = 0        " position of the edit window opened with v
+" let g:netrw_liststyle    = 1        " list with date
+" let g:netrw_liststyle    = 2        " ls style
+" let g:netrw_liststyle    = 3        " tree view
+let g:netrw_liststyle    = 4        " flat list
+let g:netrw_sort_by      = "exten"  " possible values: name, time, size, exten
+let g:netrw_winsize      = 50       " size in % of an opened window with o or v
+let g:netrw_browse_split = 0        " reuse current window
 " }}}
 " Autodate: {{{
 " let g:plugin_autodate_disable = 1 " not present enables, any value disables
