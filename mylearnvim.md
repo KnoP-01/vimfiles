@@ -1,3 +1,4 @@
+* `:DiffOrig` := diff current changes with last write
 * `%normal` := issue a normal mode command on all lines in a buffer.
 * `[I` := Display all lines that contain the keyword under the cursor.
 * `<leader>l` := open this file  

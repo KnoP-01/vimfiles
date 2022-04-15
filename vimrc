@@ -203,6 +203,8 @@ set listchars=nbsp:~,tab:>-,trail:*,eol:$
 
 set backspace=indent,eol,start    " allow backspacing over everything in insert mode
 
+set complete-=i                   " don't scan included files
+
 " better diff
 set diffopt=filler,icase,iwhite   " settings for diff mode: keep window lines synchronised, ignore case, ignore different amount of white spaces
 set diffopt+=internal,algorithm:patience
@@ -337,7 +339,7 @@ function! MyStatusline(full) abort " {{{
   "
 endfunction
 
-function MyRuler() abort
+function! MyRuler() abort
   if &laststatus
     set laststatus=0 ruler 
   else
@@ -345,7 +347,7 @@ function MyRuler() abort
   endif
 endfunction
 
-function MyOpt(opt) abort
+function! MyOpt(opt) abort
   if a:opt != ""
     return a:opt . " "
   endif
@@ -435,7 +437,7 @@ if exists("##ModeChanged")  " {{{
   " command line mode
   nnoremap :  :setlocal relativenumber<cr>:
   " map operators to set relativenumber
-  function <SID>My_cRelNum(a) abort
+  function! <SID>My_cRelNum(a) abort
     if v:count > 0
       call feedkeys( v:count . a:a,'n')
       return
@@ -468,7 +470,7 @@ endif
 " }}}
 
 " Uniq:
-command -range Uniq <line1>,<line2>s/\v^(.*)\n\zs(\1\n)+//
+command! -range Uniq <line1>,<line2>s/\v^(.*)\n\zs(\1\n)+//
 
 " Mappings:
 " F Key Mappings: {{{
@@ -547,6 +549,7 @@ xnoremap s[ "xs[<C-R>x]<esc>
 xnoremap s] "xs[<C-R>x]<esc>
 xnoremap s{ "xs{<C-R>x}<esc>
 xnoremap s} "xs{<C-R>x}<esc>
+xnoremap s<space> "xs<space><C-R>x<space><esc>
 " }}}
 " Other Mappings: {{{
 " don't break undo and repeat with left/right arrow in insert mode
@@ -764,7 +767,7 @@ let g:krlCompleteCustom = [
 " let g:krlGroupName=0
 " let g:krlNoHighLink=0
 " let g:krlNoHighlight=1
-" let g:krlShowError=1
+let g:krlShowError=0
 " let g:krlFoldKeyMap=1 " deprecated
 " let g:krlFoldingKeyMap=1
 " let g:krlCloseFolds=1
@@ -877,6 +880,21 @@ let g:netrw_browse_split = 0        " reuse current window
 " let g:plugin_autodate_disable = 1 " not present enables, any value disables
 let g:autodate_keyword_post   = '$'
 let g:autodate_format         = '%d. %3m %Y'
+augroup MyAutoDate
+  au!
+  " don't auto date in my vim contributions
+  autocmd BufRead *daten/scripts/git/knop-01/vim/* AutodateOFF
+augroup END
+" }}}
+
+" MyTestFunc: 
+function! MyTestFunc(a) abort " {{{
+  echo "Testing " . a:a
+  source %
+  execute "call " . a:a . "()"
+  echo v:errors
+endfunction 
+command! -nargs=1 MyTest call MyTestFunc('<args>')
 " }}}
 
 " vim:sw=2 sts=2 et fdm=marker fmr={{{,}}}
