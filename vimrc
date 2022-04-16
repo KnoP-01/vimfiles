@@ -177,7 +177,7 @@ augroup vimrcEx " {{{
 
   " Continue editing where left unless the position is invalid
   autocmd BufReadPost *
-        \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+        \   if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
         \ |   exe "normal! g`\""
         \ | endif
 
@@ -767,7 +767,7 @@ let g:krlCompleteCustom = [
 " let g:krlGroupName=0
 " let g:krlNoHighLink=0
 " let g:krlNoHighlight=1
-let g:krlShowError=0
+" let g:krlShowError=0
 " let g:krlFoldKeyMap=1 " deprecated
 " let g:krlFoldingKeyMap=1
 " let g:krlCloseFolds=1
@@ -880,10 +880,15 @@ let g:netrw_browse_split = 0        " reuse current window
 " let g:plugin_autodate_disable = 1 " not present enables, any value disables
 let g:autodate_keyword_post   = '$'
 let g:autodate_format         = '%d. %3m %Y'
+func! AutoDateOffInVimDev()
+  if expand('<amatch>') !~? '\<krl\w*\.vim\|\<rapid\w*\.vim'
+    AutodateOFF
+  endif
+endfunc
 augroup MyAutoDate
   au!
   " don't auto date in my vim contributions
-  autocmd BufRead *daten/scripts/git/knop-01/vim/* AutodateOFF
+  autocmd BufRead *daten/scripts/git/knop-01/vim/* call AutoDateOffInVimDev()
 augroup END
 " }}}
 
