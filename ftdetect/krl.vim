@@ -1,8 +1,8 @@
-" Kuka Robot Language file type detection for Vim
+" Vim file type detection file
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 17. Apr 2022
+" Last Change: 18. Apr 2022
 " Credits:
 "
 

@@ -655,7 +655,7 @@ nnoremap ' `
 " save with ctrl+s
 nnoremap <c-s> :update<cr>
 " help
-nnoremap <leader>h :he<cr><c-w>L:help 
+nnoremap <leader>h :vert help 
 " edit .vimrc
 nnoremap <leader>e :edit $HOME/.vim/vimrc<cr>
 " edit mylearnvim.txt
@@ -771,7 +771,7 @@ let g:krlCompleteCustom = [
 " let g:krlFoldKeyMap=1 " deprecated
 " let g:krlFoldingKeyMap=1
 " let g:krlCloseFolds=1
-let g:krlFoldLevel=2
+" let g:krlFoldLevel=0
 " let g:krlFoldMethodSyntax=0
 " let g:krlNoIndent=0
 " let g:krlNoSpaceIndent=0
@@ -901,5 +901,12 @@ function! MyTestFunc(a) abort " {{{
 endfunction 
 command! -nargs=1 MyTest call MyTestFunc('<args>')
 " }}}
+function! AlignExpectedToButGot() abort
+  silent! %s/Expected/\rExpected/g
+  silent! g/Expected/s/but got/\r but got/g
+endfunction
+augroup MyTestingAuGroup
+  au! BufReadPost errors.txt call AlignExpectedToButGot()
+augroup END
 
 " vim:sw=2 sts=2 et fdm=marker fmr={{{,}}}

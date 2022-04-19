@@ -18,3 +18,4 @@ omap <silent>if :normal Vif<CR>
 syntax match vimOper /!/
 " highlight default link vimOper Operator
 
+setl keywordprg=:vertical\ help

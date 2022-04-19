@@ -1,8 +1,8 @@
-" Kuka Robot Language syntax file for Vim
+" Vim syntax file
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 15. Apr 2022
+" Last Change: 18. Apr 2022
 " Credits: Thanks for contributions to this to Michael Jagusch
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -15,11 +15,7 @@
 "     :syntime report
 
 " Init {{{
-" Remove any old syntax stuff that was loaded (5.x) or quit when a syntax file
-" was already loaded (6.x).
-if v:version < 600
-  syntax clear
-elseif exists("b:current_syntax")
+if exists("b:current_syntax")
   finish
 endif
 
@@ -45,23 +41,27 @@ syn spell notoplevel
 " }}} init
 
 " Comment and Folding {{{ 
-"
+
 " Special Comment
+
 " TODO Comment
 syn keyword krlTodo contained TODO FIXME XXX
 highlight default link krlTodo Todo
+
 " Debug Comment
 syn keyword krlDebug contained DEBUG
 highlight default link krlDebug Debug
-"
-"
+
 " Comment
-" NOTE1: Comment highlighting must harmonize with ftplugin/krl.vim folding (see krlFold)
 " none move fold comment until second ;
-syn match krlFoldComment /\c\v^\s*;\s*fold>[^;]*/ containedin=krlFold contains=krlSingleQuoteString,krlInteger,krlFloat,krlMovement,krlDelimiter,krlBoolean
+syn match krlFoldComment /\c\v^\s*;\s*%(end)?fold>[^;]*/ containedin=krlFold contains=krlSingleQuoteString,krlInteger,krlFloat,krlMovement,krlDelimiter,krlBoolean
+highlight default link krlFoldComment Comment
+
 " move fold comment until second ;
-syn match krlFoldComment /\c\v^\s*;\s*fold>[^;]*<s?%(ptp|lin|circ|spl)(_rel)?>[^;]*/ containedin=krlFold contains=krlInteger,krlFloat,krlMovement,krlDelimiter
-" continues movement as part of a move fold comment
+syn match krlMoveFoldComment /\c\v^\s*;\s*fold>[^;]*<s?%(ptp|lin|circ|spl)(_rel)?>[^;]*/ containedin=krlFold contains=krlInteger,krlFloat,krlMovement,krlDelimiter
+highlight default link krlMoveFoldComment Comment
+
+" things to highlight in a fold line
 syn keyword krlFoldHighlights CONT IN SYN OUT containedin=krlFoldComment
 syn match krlFoldHighlights /\c\v<(M|F|E|A|t|i|bin|binin|UP|SPSMAKRO)\d+>/ containedin=krlFoldComment
 if g:krlGroupName
@@ -71,12 +71,16 @@ else
 endif
 syn keyword krlVkrcFoldConstants EIN AUS containedin=krlFoldComment
 highlight default link krlVkrcFoldConstants Boolean
+
 " Comment without Fold, also includes endfold lines and fold line part after second ;
-syn match krlComment /\c\v;\s*%(<fold>)@!.*$/ containedin=krlFold contains=krlTodo,krlDebug,@Spell
+syn match krlComment /\c\v;\s*%(<%(end)?fold>)@!.*$/ containedin=krlFold contains=krlTodo,krlDebug,@Spell
 " Commented out Fold line: "; ;FOLD PTP..."
 syn match krlComment /\c\v^\s*;\s*;.*$/ contains=krlTodo,krlDebug
-highlight default link krlFoldComment Comment
 highlight default link krlComment Comment
+
+if has("conceal") && get(g:, 'krlConcealFoldTail', 1)
+  syn match krlConcealFoldTail /\c\v(^\s*;\s*fold[^;]*)@250<=;%(--|\s*<fold>|\s*<endfold>)@!.*$/ transparent containedin=krlComment conceal cchar=*
+endif
 " }}} Comment and Folding 
 
 " Header {{{
@@ -104,12 +108,6 @@ highlight default link krlGeomOperator Operator
 " }}} Operator
 
 " Type, StorageClass and Typedef {{{
-" any type (preceded by decl, struc, enum or deffct)
-" TODO optimize performance
-" syn match krlAnyType /\v%(%(DECL\s+|STRUC\s+|ENUM\s+)|%(GLOBAL\s+)|%(CONST\s+)|%(DEFFCT\s+))+\w+>/ contains=krlStorageClass,krlType,krlTypedef
-" syn match krlAnyType /\v%(decl\s+|struc\s+|enum\s+)%(global\s+)?%(const\s+)?\w+>/ contains=krlStorageClass,krlType,krlTypedef
-" syn match krlAnyType /\v%(global\s+)?DEFFCT\s+\w+>/ contains=krlStorageClass,krlType,krlTypedef
-" highlight default link krlAnyType Type
 " Simple data types
 syn keyword krlType bool char real int containedin=krlAnyType
 " External program and function
@@ -118,8 +116,6 @@ syn keyword krlType ext extfct extfctp extp containedin=krlAnyType
 syn keyword krlType signal channel containedin=krlAnyType
 highlight default link krlType Type
 " StorageClass
-" the contained version is for krlAnyType. Unfortunatly krlAnyType isn't working
-" syn keyword krlStorageClass decl global const struc enum contained
 syn keyword krlStorageClass decl global const struc enum
 highlight default link krlStorageClass StorageClass
 " .dat file public
@@ -164,8 +160,8 @@ syn region krlString start=/"/ end=/"/ oneline containedin=krlStructVal contains
 highlight default link krlString String
 syn match krlSpecialChar /[|]/ containedin=krlString
 highlight default link krlSpecialChar SpecialChar
-" String within a fold line " NOT USED may be used in krlComment for none move folds
-syn region krlSingleQuoteString start=/'/ end=/'/ oneline contained
+" String within a fold line
+syn region krlSingleQuoteString start=/'/ end=/'/ oneline contained contains=@Spell
 highlight default link krlSingleQuoteString String
 " Enum
 syn match krlEnumVal /#\s*\a\w*/ containedin=krlStructVal
@@ -217,7 +213,7 @@ syn keyword krlStructure msg_t
 " Predefined structures and enums found in /r1/system/$config.dat
 " BasisTech
 syn keyword krlStructure dig_out_type ctrl_in_t ctrl_out_t fct_out_t fct_in_t odat basis_sugg_t out_sugg_t md_state machine_def_t machine_tool_t machine_frame_t trigger_para constvel_para condstop_para adat tm_sugg_t tqm_tqdat_t sps_prog_type
-syn keyword krlEnum bas_command out_modetype ipo_m_t apo_mode_t funct_type p00_command
+syn keyword krlEnum bas_command out_modetype ipo_m_t apo_mode_t funct_type p00_command timer_actiontype
 "
 " GripperTech
 syn keyword krlStructure grp_typ grp_types grp_sugg_t
