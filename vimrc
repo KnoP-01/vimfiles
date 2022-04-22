@@ -42,7 +42,7 @@ call plug#begin('~/.vim/plugged') " {{{
   nnoremap <leader>cd :ContextDisable<cr>
 
   " vim script test framework
-  Plug 'junegunn/vader.vim'
+  " Plug 'junegunn/vader.vim'
 
   Plug 'KnoP-01/tortus'
   Plug 'KnoP-01/vimbuddy'
@@ -54,8 +54,8 @@ call plug#begin('~/.vim/plugged') " {{{
   Plug 'KnoP-01/DrChipsVis'
 
   " Align alternative
-  Plug 'tommcdo/vim-lion'
-  let g:lion_squeeze_spaces=1 " add 1 space befor and after
+  " Plug 'tommcdo/vim-lion'
+  " let g:lion_squeeze_spaces=1 " add 1 space befor and after
 
   " motoman plugin"
   " Plug 'matthijsk/motoman-inform-vim-syntax'
@@ -105,9 +105,6 @@ call plug#begin('~/.vim/plugged') " {{{
   " let g:diminactive_use_colorcolumn = 0 " see also ColorColumn
   " let g:diminactive_use_syntax = 1
 
-  " Plug 'vim-scripts/RelOps'
-  " let g:relops_check_for_nu = 1
-  " let g:relops_mappings = ['gc']
   " Plug 'vim-scripts/increment.vim--Avadhanula'
   Plug 'mMontu/increment.vim--Avadhanula'
 
@@ -117,14 +114,14 @@ call plug#begin('~/.vim/plugged') " {{{
   " avoid collision with krl- and rapid-<leader>u
   nmap <silent> <Leader>U <Plug>(VDiffupdate)
 
-  " markdown
-  Plug 'godlygeek/tabular'
-  let g:vim_markdown_folding_disabled = 1
-  Plug 'plasticboy/vim-markdown'
-  " let g:instant_markdown_browser = "firefox --new-window"
-  " let g:instant_markdown_python = 1
-  " let g:instant_markdown_logfile = '.\instant_markdown.log'
-  " Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
+  " " markdown
+  " Plug 'godlygeek/tabular'
+  " let g:vim_markdown_folding_disabled = 1
+  " Plug 'plasticboy/vim-markdown'
+  " " let g:instant_markdown_browser = "firefox --new-window"
+  " " let g:instant_markdown_python = 1
+  " " let g:instant_markdown_logfile = '.\instant_markdown.log'
+  " " Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 
   " 
   Plug 'itchyny/landscape.vim'
@@ -772,6 +769,7 @@ let g:krlCompleteCustom = [
 " let g:krlFoldingKeyMap=1
 " let g:krlCloseFolds=1
 " let g:krlFoldLevel=0
+" let g:krlConcealFoldTail=0
 " let g:krlFoldMethodSyntax=0
 " let g:krlNoIndent=0
 " let g:krlNoSpaceIndent=0

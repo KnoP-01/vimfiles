@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 19. Apr 2022
+" Last Change: 15. Apr 2022
 " Credits: Based on indent/vim.vim
 
 " Only load this indent file when no other was loaded.
@@ -115,12 +115,11 @@ endfunction
 function s:KrlPreNoneBlank(lnum) abort
 
   let nPreNoneBlank = prevnonblank(a:lnum)
-  if nPreNoneBlank > 0
-    let nPreRelevant  = search('\v^%(^\s*%(\&\w+|;|continue>))@!^[^;]*\w', 'bnW')
-    if nPreRelevant > 0 && nPreRelevant < nPreNoneBlank
-      return nPreRelevant
-    endif
-  endif
+
+  while nPreNoneBlank > 0 && getline(nPreNoneBlank) =~? '\v^\s*(\&\w\+|;|continue>)'
+    " Previouse none blank line irrelevant. Look further aback.
+    let nPreNoneBlank = prevnonblank(nPreNoneBlank - 1)
+  endwhile
 
   return nPreNoneBlank
 endfunction

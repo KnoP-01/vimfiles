@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 19. Apr 2022
+" Last Change: 20. Apr 2022
 
 " Init {{{
 if exists("g:loaded_krl")
@@ -38,24 +38,34 @@ endfunction
 
 " Folding {{{
 function krl#FoldText() abort
-  return substitute( substitute( getline(v:foldstart), '\v\c%(;\s*FOLD>\s+|;[^;]*$)', '', 'g'), '\(.*\)', '\1 ---', 'g')
+  return substitute( substitute( getline(v:foldstart), '\v\c%(;\s*FOLD>\s+|;[^;]*$)', '', 'g'), '\(.*\)', '\1 -----', 'g')
 endfunction
 
-function s:KrlS1OnMoveEndFold(lnum, patternAnyFold, patternMoveFold, patternEndFold) abort
+function s:FoldLevelFirstLine(line, patternFold) abort
+  if a:line =~? a:patternFold
+    return 1
+  endif
+  return 0
+endfunction
 
-  " This attempt to optimize away that for loop below did not work.
-  "
-  " " make pattern case insensitive for searchpair()
-  " let l:patternAnyFold = substitute(a:patternAnyFold, '^', '\c', '')
-  " let l:patternEndFold = substitute(a:patternEndFold, '^', '\c', '')
-  " " look backwards to find matching fold
-  " let foundPair = searchpair(l:patternAnyFold, '', l:patternEndFold, 'bnW')
-  " if foundPair > 0 && getline(foundPair) =~? a:patternMoveFold
-  "   " return s1 for movement fold
-  "   return "s1"
-  " endif
-  " " return = for any other fold
-  " return "="
+function s:FoldLevel(do, lnum, returnLiteral) abort
+
+  let foldLevelPrevLine = foldlevel(a:lnum - 1)
+  if  foldLevelPrevLine < 0 || a:returnLiteral
+    return a:do
+  endif
+
+  let foldLevelChange = 0
+  if     a:do == "a1"
+    let foldLevelChange = 1
+  elseif a:do == "s1"
+    let foldLevelChange = (-1)
+  endif
+
+  return foldLevelPrevLine + foldLevelChange
+endfunction
+
+function s:Return_S1_OnMoveEndFold(lnum, patternAnyFold, patternMoveFold, patternEndFold) abort
 
   let foundEndfold = 1
 
@@ -72,7 +82,8 @@ function s:KrlS1OnMoveEndFold(lnum, patternAnyFold, patternMoveFold, patternEndF
 
     if foundEndfold == 0
       if getline(i) =~? a:patternMoveFold
-        " return s1 for movement fold
+        " Return "s1" for movement fold.
+        " Always return literal "s1" for any kind of endfold
         return "s1"
       endif
       break
@@ -81,42 +92,58 @@ function s:KrlS1OnMoveEndFold(lnum, patternAnyFold, patternMoveFold, patternEndF
   endfor
 
   " return = for any other fold
-  return "="
+  let dontReturnLiteral = v:false
+  return s:FoldLevel("=", a:lnum, dontReturnLiteral)
 endfunction
 
-function krl#FoldExpr(lnum, level) abort
+function krl#FoldExpr(lnum, krlFoldLevel) abort
 
-  if a:lnum <= 0 || a:lnum > line("$")
+  if a:lnum < 1 || a:lnum > line("$") || a:krlFoldLevel == 0
     return 0
   endif
 
   let patternAnyFold  = '\v^\s*;\s*FOLD>'
   let patternMoveFold = '\v^\s*;\s*FOLD>.*<%(S?%(LIN|PTP|CIRC)%(_REL)?|Parameters)>'
   let patternEndFold  = '\v^\s*;\s*ENDFOLD>'
+  let line = getline(a:lnum)
+  if a:lnum > 1
+    " we are not in line 1, look for previous line as well
+    let prevLine = getline(a:lnum - 1)
+  endif
+  let returnLiteral = (prevLine =~? patternAnyFold || prevLine =~? patternEndFold)
 
-  if krl#IsVkrc() || a:level == 2
+  if krl#IsVkrc() || a:krlFoldLevel == 2
 
-    if getline(a:lnum) =~? patternAnyFold
-      return "a1"
+    if a:lnum == 1
+      return s:FoldLevelFirstLine(line, patternAnyFold)
     endif
 
-    if getline(a:lnum) =~? patternEndFold
+    if line =~? patternAnyFold
+      return s:FoldLevel("a1", a:lnum, returnLiteral)
+    endif
+
+    if line =~? patternEndFold 
+      " Always return literal "s1" for any kind of endfold
       return "s1"
     endif
 
-  elseif a:level == 1
+  elseif a:krlFoldLevel == 1
 
-    if getline(a:lnum) =~? patternMoveFold
-      return "a1"
+    if a:lnum == 1
+      return s:FoldLevelFirstLine(line, patternMoveFold)
     endif
 
-    if getline(a:lnum) =~? patternEndFold
-      return s:KrlS1OnMoveEndFold(a:lnum, patternAnyFold, patternMoveFold, patternEndFold)
+    if line =~? patternMoveFold
+      return s:FoldLevel("a1", a:lnum, returnLiteral)
+    endif
+
+    if line =~? patternEndFold
+      return s:Return_S1_OnMoveEndFold(a:lnum, patternAnyFold, patternMoveFold, patternEndFold)
     endif
 
   endif
 
-  return "="
+  return s:FoldLevel("=", a:lnum, returnLiteral)
 endfunction
 " }}} Folding
 
