@@ -1,4 +1,4 @@
-nnoremap <F1> :if expand('%:t')=~'dat' 
+nnoremap <F1> :if expand('%:t:e')=~?'dat' 
 			\<bar> e %:r.src 
 			\<bar> else 
 			\<bar> e %:r.dat 

@@ -472,7 +472,7 @@ command! -range Uniq <line1>,<line2>s/\v^(.*)\n\zs(\1\n)+//
 " Mappings:
 " F Key Mappings: {{{
 " get rid of trailing white spaces and tabs; use two spaces instead of tab
-nnoremap <F5> :%s/\s\+$//<CR>:%s/\t/  /g<CR>``
+nnoremap <F5> :silent! %s/\s\+$//<CR>:silent! %s/\t/  /g<CR>``
 " indent the whole file
 nnoremap <F6> gg=G``zz
 " toggle Rolodex

@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 18. Apr 2022
+" Last Change: 02. May 2022
 " Credits: Thanks for contributions to this to Michael Jagusch
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -109,11 +109,11 @@ highlight default link krlGeomOperator Operator
 
 " Type, StorageClass and Typedef {{{
 " Simple data types
-syn keyword krlType bool char real int containedin=krlAnyType
+syn keyword krlType bool char real int
 " External program and function
-syn keyword krlType ext extfct extfctp extp containedin=krlAnyType
+syn keyword krlType ext extfct extfctp extp
 " Communication
-syn keyword krlType signal channel containedin=krlAnyType
+syn keyword krlType signal channel
 highlight default link krlType Type
 " StorageClass
 syn keyword krlStorageClass decl global const struc enum
@@ -390,7 +390,7 @@ if get(g:, 'krlShowError', 1)
   " some more or less common typos
   "
   " vars or funcs >24 chars are not possible in krl. a234567890123456789012345
-  syn match krlError0 /\w\{25,}/ containedin=krlFunction,krlNames,krlLabel,krlAnyType,krlEnumVal,krlSysvars
+  syn match krlError0 /\w\{25,}/ containedin=krlFunction,krlNames,krlLabel,krlEnumVal,krlSysvars
   "
   " should be interrupt (on|off) \w+
   syn match krlError1 /\vinterrupt[ \t(]+[_$a-zA-Z0-9]+[_$a-zA-Z0-9.\[\]()+\-*/]*[ \t)]+o%(n|ff)>/
