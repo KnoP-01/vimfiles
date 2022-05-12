@@ -19,8 +19,7 @@ function krl#IsVkrc() abort
   if exists("b:krlIsVkrc")
     return b:krlIsVkrc
   endif
-  if bufname("%") =~? '\v(folge|up|makro(saw|sps|step|trigger)?)\d*\.src'
-  " if bufname("%") =~? '\v%(folge|up)\d+\.src$'
+  if bufname("%") =~? '\v%(folge|up|makro%(saw|sps|step|trigger|submit)?)\d*\.src'
     for l:s in range(1, 8)
       if getline(l:s) =~? '\v^\s*\&param\s+tpvw_version>'
         let b:krlIsVkrc = 1
@@ -33,7 +32,15 @@ function krl#IsVkrc() abort
 endfunction
 
 function krl#IsVkrcFolgeOrUP() abort
-  return krl#IsVkrc() && bufname("%") =~? '\v%(folge|up)\d+\.src$'
+  if exists("b:krlIsVkrcFolgeOrUp")
+    return b:krlIsVkrcFolgeOrUp
+  endif
+  if krl#IsVkrc() && bufname("%") =~? '\v%(folge|up)\d+\.src$'
+    let b:krlIsVkrcFolgeOrUp = 1
+    return 1
+  endif
+  let b:krlIsVkrcFolgeOrUp = 0
+  return 0
 endfunction
 " }}} VKRC
 
@@ -43,10 +50,7 @@ function krl#FoldText() abort
 endfunction
 
 function s:FoldLevelFirstLine(line, patternFold) abort
-  if a:line =~? a:patternFold
-    return 1
-  endif
-  return 0
+  return a:line =~? a:patternFold
 endfunction
 
 function s:FoldLevel(do, lnum, returnLiteral) abort
@@ -103,13 +107,13 @@ function krl#FoldExpr(lnum, krlFoldLevel) abort
     return 0
   endif
 
-  if krl#IsVkrc() && a:krlFoldLevel <= 1
+  if krl#IsVkrc() && a:krlFoldLevel == 1
     let patternAnyFold  = '\v^\s*;\s*FOLD>%(\s+S?%(LIN|PTP|CIRC)%(_REL)?)@!'
   else
     let patternAnyFold  = '\v^\s*;\s*FOLD>'
   endif
-  let patternMoveFold = '\v^\s*;\s*FOLD>.*<%(S?%(LIN|PTP|CIRC)%(_REL)?|Parameters)>'
-  let patternEndFold  = '\v^\s*;\s*ENDFOLD>'
+  let patternMoveFold   = '\v^\s*;\s*FOLD>.*<%(S?%(LIN|PTP|CIRC)%(_REL)?|Parameters)>'
+  let patternEndFold    = '\v^\s*;\s*ENDFOLD>'
   let line = getline(a:lnum)
   if a:lnum > 1
     " we are not in line 1, look for previous line as well

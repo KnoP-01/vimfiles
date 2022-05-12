@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 02. May 2022
+" Last Change: 12. May 2022
 " Credits: Thanks for contributions to this to Michael Jagusch
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -271,7 +271,9 @@ highlight default link krlStatement Statement
 syn keyword krlConditional if then else endif switch case default endswitch skip endskip
 highlight default link krlConditional Conditional
 " Repeat
-syn keyword krlRepeat for to step endfor while endwhile repeat until loop endloop exit
+syn keyword krlRepeat for to endfor while endwhile repeat until loop endloop exit
+" STEP is used as variable in VKRC, this pattern should match STEP -, 5 or VAR
+syn match krlRepeat /\v\cstep\s+%(-|\w)/me=e-1
 highlight default link krlRepeat Repeat
 " Label
 syn keyword krlLabel goto
