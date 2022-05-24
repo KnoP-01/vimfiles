@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 11. May 2022
+" Last Change: 16. May 2022
 
 " Init {{{
 if exists("g:loaded_krl")
@@ -19,7 +19,7 @@ function krl#IsVkrc() abort
   if exists("b:krlIsVkrc")
     return b:krlIsVkrc
   endif
-  if bufname("%") =~? '\v%(folge|up|makro%(saw|sps|step|trigger|submit)?)\d*\.src'
+  if bufname("%") =~? '\v%(folge|up|makro%(neustart|saw|sps|step|submit|trigger)?)\d*\.src'
     for l:s in range(1, 8)
       if getline(l:s) =~? '\v^\s*\&param\s+tpvw_version>'
         let b:krlIsVkrc = 1

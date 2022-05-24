@@ -738,11 +738,11 @@ let g:rapidSpaceIndent=0
 " let g:krlEndwiseUpperCase=1
 " let g:krlShortenQFPath=0
 " let g:krlNoCommentIndent=0
-" let g:krlIndentBetweenDef = 0
+let g:krlIndentBetweenDef = 0
 let g:krlCommentIndent=1
 " let g:krlCommentTextObject=0
 " let g:krlFormatComments=0
-" let g:krlAutoComment=0
+let g:krlAutoComment=0
 " let g:krlMoveAroundKeyMap=0
 " let g:krlGoDefinitionKeyMap=1
 " nnoremap gd gd
@@ -752,14 +752,14 @@ let g:krlCommentIndent=1
 " let g:krlListUsageKeyMap=1
 " let g:krlAutoFormKeyMap=1
 " let g:krlCompleteStd = 0
-let g:krlCompleteCustom = [
-      \'R1/Program/sonstiges/acol.src', 
-      \'R1/System/bas.src', 
-      \'R1/Graeff TP/global_var.dat', 
-      \'R1/Graeff TP/mymessage.src', 
-      \'R1/Graeff TP/mymessage.dat', 
-      \'R1/Graeff TP/global_fct.src']
-" let g:krlPathToBodyFiles='d:\daten\scripts\vim_resource\krl resource\'
+" let g:krlCompleteCustom = [
+"       \'R1/Program/sonstiges/acol.src', 
+"       \'R1/System/bas.src', 
+"       \'R1/Graeff TP/global_var.dat', 
+"       \'R1/Graeff TP/mymessage.src', 
+"       \'R1/Graeff TP/mymessage.dat', 
+"       \'R1/Graeff TP/global_fct.src']
+let g:krlPathToBodyFiles='~/.vim/_krl_resources/'
 " let g:krlAutoFormUpperCase=1
 " let g:krlGroupName=0
 " let g:krlNoHighLink=0

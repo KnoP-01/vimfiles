@@ -1,0 +1,7 @@
+
+<global>deffct <datatype> <name>(<|>)
+  decl <datatype> <returnvar>
+  
+  
+  return <returnvar>
+endfct
