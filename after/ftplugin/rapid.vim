@@ -24,7 +24,7 @@ nmap <leader>gs :set hidden<cr>*N<leader>u:cdo s///g<left><left>
 " Das hier ist die git-for-win shell version
 if has("win32")
   let g:rapidPathToSumatraPDF='c:\apps\SumatraPDF\SumatraPDF.exe'
-  let g:rapidPathToRefGuide='d:\daten\doku\abb\RefGuide_RW6.10.02\abb_reference_inst_func_dat.pdf'
+  let g:rapidPathToRefGuide='d:\daten\doku\abb\RefGuide_RW6.13.02\abb_reference_inst_func_dat_6.13.02.pdf'
   nnoremap <buffer> <silent> K :let rapidCmd=
         \"! start '" .
         \g:rapidPathToSumatraPDF .
@@ -48,24 +48,23 @@ xnoremap <leader>abb  :Align! p0P0llrlrlrlrlrlrlrllllrlrlrlrlrlrl \. , \[ \]<cr>
 
 " align EIO.cfg for readability
 function! AlignEio() abort
-  %s/\\\s*\n\s\+/\\ /
+  %s/\\\s*\n\s\+/ /
   g/^\s*$/d
-  normal gg
-  call search('\<EIO_SIGNAL\>')
-  normal j0
-  Align -SignalType -SignalLabel -UnitMap -Category -Unit
+  for i in [
+        \  '\<SYSSIG_OUT\>'
+        \ ,'\<SYSSIG_IN\>'
+        \ ,'\<EIO_CROSS\>'
+        \ ,'\<EIO_SIGNAL\>'
+        \ ]
+    normal gg
+    if search(i)
+      normal j
+      Align \s-\w\+
+    endif
+  endfor
   normal zt
 endfunction
 command! EioAlign call AlignEio()
-
-" undo align EIO.cfg for readability
-function! UnAlignEio() abort
-  g/\n[^#]/s/\([^#]\)$/\1\r/
-  g/\\\s*\S/s/\\/\\\r/g
-  %s/\s\s\+-/ -/g
-  %s/^\s\+-/      -/
-endfunction
-command! EioUnAlign call UnAlignEio()
 
 if exists('g:loaded_switch')
 

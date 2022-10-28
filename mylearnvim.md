@@ -1,3 +1,4 @@
+:%s/pattern/\=add(1, submatch(0))/g
 * `:DiffOrig` := diff current changes with last write
 * `%normal` := issue a normal mode command on all lines in a buffer.
 * `[I` := Display all lines that contain the keyword under the cursor.
@@ -6,6 +7,10 @@
 * `:<C-R><C-W>` := insert word under cursor in command line <cword>
 * `:<C-R><C-A>` := insert WORD under cursor in command line <cWORD>
 * `:<C-R><C-L>` := insert line under cursor in command line
+* `gu<motion or text object>` := to lower case
+* `gU<motion or text object>` := to upper case
+* `g~<motion or text object>` := switch case
+* `!sort -kN -V` := sort for column N numeric without leading zeros
   
 ------------------------------------------------------------------------------
 # RegEx

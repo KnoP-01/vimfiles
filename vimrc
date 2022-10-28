@@ -420,13 +420,16 @@ if exists("##ModeChanged")  " {{{
   augroup myRelativeNumber
     au!
     autocmd ModeChanged *:n   setlocal norelativenumber
-    " das naechste funktioniert leider nicht.
-    " autocmd ModeChanged *:no*   setlocal relativenumber
     autocmd ModeChanged *:[vV]   if &filetype!~'help' | setlocal relativenumber | endif
-    " autocmd ModeChanged *:o setlocal relativenumber " operator pending mode scheint nicht zu funktionieren
     autocmd ModeChanged *:i   setlocal norelativenumber
+    " das naechste funktioniert leider nicht.
+    " autocmd ModeChanged *:no    setlocal relativenumber
+    " autocmd ModeChanged *:no*   setlocal relativenumber
+    " autocmd ModeChanged *:o     setlocal relativenumber " operator pending mode scheint nicht zu funktionieren
+    " autocmd ModeChanged *:o*    setlocal relativenumber " operator pending mode scheint nicht zu funktionieren
+    " autocmd ModeChanged *:*o*   setlocal relativenumber
     " autocmd ModeChanged *:R   setlocal norelativenumber " unnoetig
-    " autocmd ModeChanged *:c   setlocal norelativenumber " functioniert nicht wg setlocal
+    " autocmd ModeChanged *:c   setlocal norelativenumber " functioniert nicht
     " autocmd ModeChanged *:tl  setlocal norelativenumber " keine Ahnung, benutz ich zZt nicht
     " beim umschalten in v, V oder ^V triggert CursorMoved wenn der Cursor auf einer Fold-Zeile ist, daher das if mode...
     " autocmd CursorMoved *     if mode()!~'[vV]' | setlocal norelativenumber | endif
@@ -434,35 +437,35 @@ if exists("##ModeChanged")  " {{{
   " command line mode
   nnoremap :  :setlocal relativenumber<cr>:
   " map operators to set relativenumber
-  function! <SID>My_cRelNum(a) abort
-    if v:count > 0
-      call feedkeys( v:count . a:a,'n')
-      return
-    endif
-    setlocal relativenumber
-    call feedkeys(a:a,'n')
-  endfunction
-  nnoremap c  :<c-u>call <SID>My_cRelNum('c')<cr>
-  nnoremap d  :<c-u>call <SID>My_cRelNum('d')<cr>
-  nnoremap y  :<c-u>call <SID>My_cRelNum('y')<cr>
-  nnoremap g~ :<c-u>call <SID>My_cRelNum('g~')<cr>
-  nnoremap gu :<c-u>call <SID>My_cRelNum('gu')<cr>
-  nnoremap gU :<c-u>call <SID>My_cRelNum('gU')<cr>
-  nnoremap !  :<c-u>call <SID>My_cRelNum('!')<cr>
-  nnoremap =  :<c-u>call <SID>My_cRelNum('=')<cr>
-  nnoremap gq :<c-u>call <SID>My_cRelNum('gq')<cr>
-  nnoremap gw :<c-u>call <SID>My_cRelNum('gw')<cr>
-  nnoremap g? :<c-u>call <SID>My_cRelNum('g?')<cr>
-  nnoremap >  :<c-u>call <SID>My_cRelNum('>')<cr>
-  nnoremap <  :<c-u>call <SID>My_cRelNum('<')<cr>
-  nnoremap zf :<c-u>call <SID>My_cRelNum('zf')<cr>
-  nnoremap g@ :<c-u>call <SID>My_cRelNum('g@')<cr>
-  " commentary operator
-  nmap gc :setlocal relativenumber<cr><Plug>Commentary
-  xmap gc  <Plug>Commentary
-  omap gc  <Plug>Commentary
-  nmap gcc <Plug>CommentaryLine
-  nmap gcu <Plug>Commentary<Plug>Commentary
+  " function! <SID>My_cRelNum(a) abort
+  "   if v:count > 0
+  "     call feedkeys( v:count . a:a,'n')
+  "     return
+  "   endif
+  "   setlocal relativenumber
+  "   call feedkeys(a:a,'n')
+  " endfunction
+  " nnoremap c  :<c-u>call <SID>My_cRelNum('c')<cr>
+  " nnoremap d  :<c-u>call <SID>My_cRelNum('d')<cr>
+  " nnoremap y  :<c-u>call <SID>My_cRelNum('y')<cr>
+  " nnoremap g~ :<c-u>call <SID>My_cRelNum('g~')<cr>
+  " nnoremap gu :<c-u>call <SID>My_cRelNum('gu')<cr>
+  " nnoremap gU :<c-u>call <SID>My_cRelNum('gU')<cr>
+  " nnoremap !  :<c-u>call <SID>My_cRelNum('!')<cr>
+  " nnoremap =  :<c-u>call <SID>My_cRelNum('=')<cr>
+  " nnoremap gq :<c-u>call <SID>My_cRelNum('gq')<cr>
+  " nnoremap gw :<c-u>call <SID>My_cRelNum('gw')<cr>
+  " nnoremap g? :<c-u>call <SID>My_cRelNum('g?')<cr>
+  " nnoremap >  :<c-u>call <SID>My_cRelNum('>')<cr>
+  " nnoremap <  :<c-u>call <SID>My_cRelNum('<')<cr>
+  " nnoremap zf :<c-u>call <SID>My_cRelNum('zf')<cr>
+  " nnoremap g@ :<c-u>call <SID>My_cRelNum('g@')<cr>
+  " " commentary operator
+  " nmap gc :setlocal relativenumber<cr><Plug>Commentary
+  " xmap gc  <Plug>Commentary
+  " omap gc  <Plug>Commentary
+  " nmap gcc <Plug>CommentaryLine
+  " nmap gcu <Plug>Commentary<Plug>Commentary
 endif
 " }}}
 
@@ -592,17 +595,6 @@ xnoremap ; :<C-U>vimgrep /\c\v<<c-r><c-w>>/j <C-R>=join(split(&path, ","), "/* "
 
 " Increment visualy selected numbers; see :he increment
 xnoremap <c-a> :IncN<CR>
-
-" DON'T use this, use gu{motion}, gU{motion} and g~{motion}
-" change current word to upper/lower case in insert mode
-" inoremap <c-u> <esc>viwUea
-" inoremap <c-l> <esc>viwuea
-" change current word to upper/lower case in normal mode
-" nnoremap <c-u> viwU
-" nnoremap <c-l> viwu
-" change current visual selection to uppe/lower case since I cant remember u and U
-" xnoremap <c-u> U
-" xnoremap <c-l> u
 
 " move around windows
 " nnoremap <silent> <A-h> <C-W>h
@@ -738,7 +730,7 @@ let g:rapidSpaceIndent=0
 " let g:krlEndwiseUpperCase=1
 " let g:krlShortenQFPath=0
 " let g:krlNoCommentIndent=0
-let g:krlIndentBetweenDef = 0
+" let g:krlIndentBetweenDef = 0
 let g:krlCommentIndent=1
 " let g:krlCommentTextObject=0
 " let g:krlFormatComments=0
@@ -759,7 +751,7 @@ let g:krlAutoComment=0
 "       \'R1/Graeff TP/mymessage.src', 
 "       \'R1/Graeff TP/mymessage.dat', 
 "       \'R1/Graeff TP/global_fct.src']
-let g:krlPathToBodyFiles='~/.vim/_krl_resources/'
+" let g:krlPathToBodyFiles='~/.vim/_krl_resources/'
 " let g:krlAutoFormUpperCase=1
 " let g:krlGroupName=0
 " let g:krlNoHighLink=0
