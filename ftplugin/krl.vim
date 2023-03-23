@@ -1,8 +1,8 @@
 " Vim file type plugin
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
-" Version: 3.0.0
-" Last Change: 11. May 2022
+" Version: 3.0.1
+" Last Change: 08. Feb 2023
 "
 " ToDo's {{{
 " }}} ToDo's
@@ -84,8 +84,8 @@ endif
 " Endwise support (tpope) {{{
 if exists("loaded_endwise")
   let b:endwise_addition  = '\=submatch(0)=~#"DEF\\>" ? "END" '
-  let b:endwise_addition .= ': submatch(0)=~#"CASE" ? "ENDSWITCH" '
-  let b:endwise_addition .= ': submatch(0)=~#"DEFAULT" ? "ENDSWITCH" '
+  " let b:endwise_addition .= ': submatch(0)=~#"CASE" ? "ENDSWITCH" '
+  " let b:endwise_addition .= ': submatch(0)=~#"DEFAULT" ? "ENDSWITCH" '
   let b:endwise_addition .= ': submatch(0)=~#"REPEAT" ? "UNTIL <condition>" '
   let b:endwise_addition .= ': submatch(0)=~?"def\\>" ? "end" '
   let b:endwise_addition .= ': submatch(0)=~?"case" ? "endswitch" '

@@ -2,7 +2,7 @@
 " Language: Helper functions used for Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 14. Jun 2022
+" Last Change: 30. Jan 2023
 
 " Init {{{
 if exists("g:loaded_krl_extras")
@@ -14,6 +14,8 @@ let s:keepcpo = &cpo
 set cpo&vim
 " }}} Init 
 
+" FIX ME: Hier wird global iskeyword gesetzt aber nur das buffer local
+" iskeyword wieder zurueck gesetzt
 function krl_extras#AlterIsKeyWord(force) abort
   if !get(g:,'krlKeyWord',1) || a:force
     " temporary set iskeyword

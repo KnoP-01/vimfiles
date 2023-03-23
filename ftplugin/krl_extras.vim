@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 28. Jun 2022
+" Last Change: 17. Jan 2023
 "
 
 " Init {{{
@@ -817,6 +817,7 @@ if !exists("*s:KrlSearchVkrcMarker()")
         if l:type != 'ENUMVALUE'
           for l:i in getqflist()
             if get(l:i,'text') !~ '\v\c^\s*(global\s+)?enum>'
+                  \|| get(l:i,'text') =~ '\v\c^\s*(global\s+)?enum\s+'.l:currentWord
               call add(l:qftmp1,l:i)
             endif
           endfor
@@ -960,24 +961,17 @@ if get(g:,'krlCompleteStd',1)
   if expand("%:p:t") !~ '\c\.dat$'
     call knop_extras#AddFileToCompleteOption(substitute(expand("%:p:t"),'\c\.s\%(rc\|ub\)$','.dat',''),[s:pathToCurrentFile])
   endif
-  " R1/System/$config.dat
-  call knop_extras#AddFileToCompleteOption('R1/System/$config.dat',s:pathList,s:pathToCurrentFile.'/'.'$config.dat')
-  " R1/System/Global_Points.dat
-  call knop_extras#AddFileToCompleteOption('R1/System/Global_Points.dat',s:pathList,s:pathToCurrentFile.'/'.'Global_Points.dat')
-  " R1/System/MsgLib.src
-  call knop_extras#AddFileToCompleteOption('R1/System/MsgLib.src',s:pathList,s:pathToCurrentFile.'/'.'MsgLib.src')
-  " R1/Mada/$machine.dat
-  call knop_extras#AddFileToCompleteOption('R1/Mada/$machine.dat',s:pathList,s:pathToCurrentFile.'/'.'$machine.dat')
-  " R1/Mada/$robcor.dat
-  call knop_extras#AddFileToCompleteOption('R1/Mada/$robcor.dat',s:pathList,s:pathToCurrentFile.'/'.'$robcor.dat')
-  " STEU/Mada/$custom.dat
-  call knop_extras#AddFileToCompleteOption('Steu/Mada/$custom.dat',s:pathList,s:pathToCurrentFile.'/'.'$custom.dat')
-  " STEU/Mada/$machine.dat
-  call knop_extras#AddFileToCompleteOption('Steu/Mada/$machine.dat',s:pathList)
-  " STEU/Mada/$option.dat
-  call knop_extras#AddFileToCompleteOption('Steu/Mada/$option.dat',s:pathList,s:pathToCurrentFile.'/'.'$option.dat')
-  " TP/Signals.dat
-  call knop_extras#AddFileToCompleteOption('R1/TP/Signals.dat',s:pathList,s:pathToCurrentFile.'/'.'Signals.dat')
+  call knop_extras#AddFileToCompleteOption('R1/System/MsgLib.src'        , s:pathList  , s:pathToCurrentFile.'/'.'MsgLib.src')
+  call knop_extras#AddFileToCompleteOption('R1/System/bas.src'           , s:pathList  , s:pathToCurrentFile.'/'.'bas.src')
+  call knop_extras#AddFileToCompleteOption('R1/System/$config.dat'       , s:pathList  , s:pathToCurrentFile.'/'.'$config.dat')
+  call knop_extras#AddFileToCompleteOption('R1/System/Global_Points.dat' , s:pathList  , s:pathToCurrentFile.'/'.'Global_Points.dat')
+  call knop_extras#AddFileToCompleteOption('R1/System/MsgLib.src'        , s:pathList  , s:pathToCurrentFile.'/'.'MsgLib.src')
+  call knop_extras#AddFileToCompleteOption('R1/Mada/$machine.dat'        , s:pathList  , s:pathToCurrentFile.'/'.'$machine.dat')
+  call knop_extras#AddFileToCompleteOption('R1/Mada/$robcor.dat'         , s:pathList  , s:pathToCurrentFile.'/'.'$robcor.dat')
+  call knop_extras#AddFileToCompleteOption('Steu/Mada/$custom.dat'       , s:pathList  , s:pathToCurrentFile.'/'.'$custom.dat')
+  call knop_extras#AddFileToCompleteOption('Steu/Mada/$machine.dat'      , s:pathList) " fallback auf aktuelles verzeichnis s.o. R1/Mada/
+  call knop_extras#AddFileToCompleteOption('Steu/Mada/$option.dat'       , s:pathList  , s:pathToCurrentFile.'/'.'$option.dat')
+  call knop_extras#AddFileToCompleteOption('R1/TP/Signals.dat'           , s:pathList  , s:pathToCurrentFile.'/'.'Signals.dat')
   "
   " syntax file
   let s:pathList=[]

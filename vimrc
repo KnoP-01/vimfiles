@@ -653,6 +653,8 @@ nnoremap <leader>l :edit $HOME/.vim/mylearnvim.md<cr>
 nnoremap <leader><leader> <C-^>
 " Close all other splits
 nnoremap <leader>o :only<cr>
+" Toggle wrap
+nnoremap <silent> <leader>w :set wrap!<cr>
 
 " my auto insert closing pair
 inoremap ' ''<c-g>U<left>
@@ -660,6 +662,10 @@ inoremap " ""<c-g>U<left>
 inoremap ( ()<c-g>U<left>
 inoremap [ []<c-g>U<left>
 inoremap { {}<c-g>U<left>
+
+" prefere vertical split
+nnoremap <c-w>f :vert wincmd f<cr>
+xnoremap <c-w>f :<c-u>vert wincmd f<cr>
 " }}}
 
 " My Plugin Settings:
