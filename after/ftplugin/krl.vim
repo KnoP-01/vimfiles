@@ -1,7 +1,14 @@
-nnoremap <F1> :if expand('%:t:e')=~?'dat' 
-			\<bar> e %:r.src 
+command! CleanReals :%s/\(\.\d\d\{-}\)0\+\>/\1/gc
+nnoremap <silent> <F1> :if expand('%:t:e')=~?'dat' 
+			\<bar> let b:krlsaveview = winsaveview() <bar> e %:r.src 
+			\<bar> if exists("b:krlsaveview")
+			\<bar>   call winrestview(get(b:, 'krlsaveview'))
+			\<bar> endif
 			\<bar> else 
-			\<bar> e %:r.dat 
+			\<bar> let b:krlsaveview = winsaveview() <bar> e %:r.dat 
+			\<bar> if exists("b:krlsaveview")
+			\<bar>   call winrestview(get(b:, 'krlsaveview'))
+			\<bar> endif
 			\<bar> endif<CR>
 
 " global substitute

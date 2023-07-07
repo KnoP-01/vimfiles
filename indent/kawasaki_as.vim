@@ -1,7 +1,7 @@
 " Vim indent file
 " Language: Kawasaki AS-language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
-" Version: 1.0.0
+" Version: 1.0.1
 " Last Change: 23. Mar 2023
 
 " Only load this indent file when no other was loaded.
@@ -15,7 +15,7 @@ setlocal nocindent
 setlocal nosmartindent
 setlocal autoindent
 setlocal indentexpr=GetAsIndent()
-setlocal indentkeys=!^F,o,O,=~end,0=~else,0=~value,0=~any
+setlocal indentkeys=!^F,o,O,=~end,0=~else,0=~until,0=~value,0=~svalue,0=~any
 let b:undo_indent = "setlocal lisp< cindent< smartindent< autoindent< indentexpr< indentkeys<"
 
 if get(g:,'asSpaceIndent',1)
@@ -61,9 +61,9 @@ function GetAsIndent() abort
     let addShiftwidthPattern ..=               '\.program>'
     let addShiftwidthPattern ..=               '|'
   endif
-  let addShiftwidthPattern   ..=               'if>|while>|for>'
+  let addShiftwidthPattern   ..=               'if>|while>|for>|do>'
   let addShiftwidthPattern   ..=               '|else>'
-  let addShiftwidthPattern   ..=               '|value>|any>'
+  let addShiftwidthPattern   ..=               '|s?value>|any>'
   let addShiftwidthPattern   ..=             ')'
 
   " Define Subtract 'shiftwidth' pattern
@@ -72,9 +72,9 @@ function GetAsIndent() abort
     let subtractShiftwidthPattern ..=          '\.end>'
     let subtractShiftwidthPattern ..=          '|'
   endif
-  let subtractShiftwidthPattern   ..=          'end>'
-  let subtractShiftwidthPattern   ..=          '|else(if)?>'
-  let subtractShiftwidthPattern   ..=          '|value>|any>>'
+  let subtractShiftwidthPattern   ..=          'end>|until>'
+  let subtractShiftwidthPattern   ..=          '|else>'
+  let subtractShiftwidthPattern   ..=          '|s?value>|any>'
   let subtractShiftwidthPattern   ..=        ')'
 
   " Add shiftwidth
@@ -88,8 +88,8 @@ function GetAsIndent() abort
   endif
 
   " First value after a case gets the indent of the case.
-  if currentLine =~? '\c\v^\s*value>'
-        \&& preNoneBlankLine =~? '\c\v^\s*case>'
+  if currentLine =~? '\c\v^\s*s?value>'
+        \&& preNoneBlankLine =~? '\c\v^\s*s?case>'
     let ind = ind + &sw
   endif
 

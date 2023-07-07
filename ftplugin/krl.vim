@@ -1,8 +1,8 @@
 " Vim file type plugin
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
-" Version: 3.0.1
-" Last Change: 08. Feb 2023
+" Version: 3.0.0
+" Last Change: 12. May 2023
 "
 " ToDo's {{{
 " }}} ToDo's
@@ -84,8 +84,8 @@ endif
 " Endwise support (tpope) {{{
 if exists("loaded_endwise")
   let b:endwise_addition  = '\=submatch(0)=~#"DEF\\>" ? "END" '
-  " let b:endwise_addition .= ': submatch(0)=~#"CASE" ? "ENDSWITCH" '
-  " let b:endwise_addition .= ': submatch(0)=~#"DEFAULT" ? "ENDSWITCH" '
+  let b:endwise_addition .= ': submatch(0)=~#"CASE" ? "ENDSWITCH" '
+  let b:endwise_addition .= ': submatch(0)=~#"DEFAULT" ? "ENDSWITCH" '
   let b:endwise_addition .= ': submatch(0)=~#"REPEAT" ? "UNTIL <condition>" '
   let b:endwise_addition .= ': submatch(0)=~?"def\\>" ? "end" '
   let b:endwise_addition .= ': submatch(0)=~?"case" ? "endswitch" '
@@ -93,8 +93,8 @@ if exists("loaded_endwise")
   let b:endwise_addition .= ': submatch(0)=~?"repeat" ? "until <condition>" '
   let b:endwise_addition .= ': submatch(0)=~#"\\u" ? "END" . toupper(submatch(0)) '
   let b:endwise_addition .= ': "end" . tolower(submatch(0))'
-  let b:endwise_words     = 'def,deffct,defdat,then,while,for,repeat,case,default'
-  let b:endwise_pattern   = '^\s*\(\(global\s\+\)\?\zsdef\|\(global\s\+\)\?def\zs\(dat\|fct\)\|\zsif\|\zswhile\|\zsfor\|\zscase\|\zsdefault\|\zsrepeat\)\>\ze'
+  let b:endwise_words     = 'def,deffct,defdat,then,loop,while,for,repeat,case,default'
+  let b:endwise_pattern   = '^\s*\(\(global\s\+\)\?\zsdef\|\(global\s\+\)\?def\zs\(dat\|fct\)\|\zsif\|\zsloop\|\zswhile\|\zsfor\|\zscase\|\zsdefault\|\zsrepeat\)\>\ze'
   let b:endwise_syngroups = 'krlConditional,krlTypedef,krlRepeat'
 endif
 " }}} Endwise

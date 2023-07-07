@@ -71,6 +71,7 @@ call plug#begin('~/.vim/plugged') " {{{
   " erweiterung fuer netrw
   Plug 'tpope/vim-vinegar'
   nmap - <C-W>v<Plug>VinegarUp
+  nmap _ <Plug>VinegarUp
   " ein- und auskommentieren
   Plug 'tpope/vim-commentary'
   " auto-endif et al
@@ -99,6 +100,7 @@ call plug#begin('~/.vim/plugged') " {{{
   " let g:matchup_matchparen_deferred             = 1     " delay until display matching paren
   " let g:matchup_matchparen_deferred_show_delay  = 800   " delay until display matching paren
   let g:matchup_matchparen_offscreen        = {'method':'popup'}
+  let g:matchup_surround_enabled = 1
 
   " focus
   Plug 'blueyed/vim-diminactive/'
@@ -666,6 +668,14 @@ inoremap { {}<c-g>U<left>
 " prefere vertical split
 nnoremap <c-w>f :vert wincmd f<cr>
 xnoremap <c-w>f :<c-u>vert wincmd f<cr>
+
+" save and restore viewpoint when ctrl-6
+nnoremap <silent> <c-^> :let b:vimrcsaveview = winsaveview() 
+      \<bar> e #
+      \<bar> if exists("b:vimrcsaveview")
+      \<bar>   call winrestview(get(b:, 'vimrcsaveview'))
+      \<bar> endif<CR>
+
 " }}}
 
 " My Plugin Settings:
@@ -700,22 +710,23 @@ let g:knopVerbose=0
 let g:rapidConcealStructs=0
 " let g:rapidAutoFormKeyMap=1
 " let g:rapidCompleteStd = 0
-let g:rapidCompleteCustom = [
-      \'TASK1/PROGMOD/Service.mod', 
-      \'TASK3/PROGMOD/CyclicProg.mod',
-      \'TASK1/PROGMOD/MainRob1.mod',
-      \'TASK1/PROGMOD/MainRob2.mod',
-      \'TASK1/PROGMOD/MainRob3.mod',
-      \'TASK1/PROGMOD/Admin.mod',
-      \'TASK1/PROGMOD/Berechnung.mod',
-      \'TASK1/PROGMOD/Blisterfunktionen.mod',
-      \'TASK1/PROGMOD/Daten.mod',
-      \'TASK1/PROGMOD/Greifer.mod',
-      \'TASK1/PROGMOD/KLT_DATEN.mod',
-      \'TASK1/PROGMOD/Gestell_DATEN.mod',
-      \'TASK1/SYSMOD/mvBefehle.sys',
-      \'TASK1/SYSMOD/Befehle.sys']
-" let g:rapidPathToBodyFiles='d:\daten\scripts\vim_resource\rapid resource\'
+" let g:rapidCompleteCustom = [
+"       \'TASK1/PROGMOD/Service.mod', 
+"       \'TASK3/PROGMOD/CyclicProg.mod',
+"       \'TASK1/PROGMOD/MainRob1.mod',
+"       \'TASK1/PROGMOD/MainRob2.mod',
+"       \'TASK1/PROGMOD/MainRob3.mod',
+"       \'TASK1/PROGMOD/Admin.mod',
+"       \'TASK1/PROGMOD/Berechnung.mod',
+"       \'TASK1/PROGMOD/Blisterfunktionen.mod',
+"       \'TASK1/PROGMOD/Daten.mod',
+"       \'TASK1/PROGMOD/Greifer.mod',
+"       \'TASK1/PROGMOD/KLT_DATEN.mod',
+"       \'TASK1/PROGMOD/Gestell_DATEN.mod',
+"       \'TASK1/SYSMOD/mvBefehle.sys',
+"       \'TASK1/SYSMOD/Befehle.sys']
+" let g:rapidPathToBodyFiles='d:\daten\scripts\vim_resource\rapid_resource\'
+let g:rapidPathToBodyFiles='~/.vim/_rapid_resources/'
 " let g:rapidNoHighLink=1
 " let g:rapidShowError=0
 " let g:rapidNoIndent=0
@@ -757,7 +768,7 @@ let g:krlAutoComment=0
 "       \'R1/Graeff TP/mymessage.src', 
 "       \'R1/Graeff TP/mymessage.dat', 
 "       \'R1/Graeff TP/global_fct.src']
-" let g:krlPathToBodyFiles='~/.vim/_krl_resources/'
+let g:krlPathToBodyFiles='~/.vim/_krl_resources/'
 " let g:krlAutoFormUpperCase=1
 " let g:krlGroupName=0
 " let g:krlNoHighLink=0
