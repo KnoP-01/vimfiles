@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.3.0
-" Last Change: 27. Jun 2023
+" Last Change: 21. Jul 2023
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -294,7 +294,7 @@ else
   highlight default link rapidKeyword Keyword
   " Exception
   syn keyword rapidException Exit ErrRaise ExitCycle Raise RaiseToUser Retry Return TryNext
-  syn match rapidException /^\s*Stop\s*[\\;]/me=e-1
+  syn match rapidException /\s\+Stop\s*[\\;]/me=e-1
   highlight default link rapidException Exception
   " }}} Statements, keywords et al
 

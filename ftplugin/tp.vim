@@ -2,7 +2,7 @@
 " Language: Fanuc TP
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 1.0.0
-" Last Change: 03. Jul 2023
+" Last Change: 16. Jun 2023
 "
 " Suggestions of improvement are very welcome. Please email me!
 "
@@ -28,12 +28,7 @@ let b:undo_ftplugin = "setlocal sua<"
 
 let b:match_ignorecase = 1
 let b:match_words = '\<IF\>.*:\<ELSE\>.*:\<ENDIF\>.*,'
-      \.'\<FOR\>.*:\<ENDFOR\>.*,'
-      \.'\<LBL\[\(\d\+\)\>.*:\<JMP LBL\[\1\>.*,'
-      \.'\<JMP LBL\[\(\d\+\)\>.*:\<LBL\[\1\>.*'
-      " \.'\%(\<JMP\s\+\)\?\<LBL\[\(\d\+\).*:\<LBL\[\1.*:\<LBL\[\1.*,'
-      " \.'\<LBL\[\(\d\+\).*:\<LBL\[\1.*:\%(\<JMP\s\+\)\?\<LBL\[\1.*,'
-      " \.'\<LBL\[\(\d\+\).*:\%(\<JMP\s\+\)\?\<LBL\[\1.*:\<LBL\[\1.*'
+\ . '\<FOR\>.*:\<ENDFOR\>.*'
 
 let &cpo = s:keepcpo
 unlet s:keepcpo

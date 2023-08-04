@@ -694,7 +694,7 @@ let g:knopVerbose=0
 " augroup END
 " let g:rapidEndwiseUpperCase=1
 " let g:rapidGroupName=0
-" let g:rapidNewStyleIndent=1
+let g:rapidNewStyleIndent=1
 " let g:rapidNoCommentIndent=0 " undokumentiert
 " let g:rapidCommentIndent=0
 " let g:rapidCommentTextObject=0
@@ -707,7 +707,7 @@ let g:knopVerbose=0
 " let g:rapidListUsageKeyMap=1
 " let g:rapidConcealStructsKeyMap=1 " deprecated
 " let g:rapidConcealStructKeyMap=1
-let g:rapidConcealStructs=0
+let g:rapidConcealStructs=2
 " let g:rapidAutoFormKeyMap=1
 " let g:rapidCompleteStd = 0
 " let g:rapidCompleteCustom = [

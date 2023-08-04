@@ -7,34 +7,34 @@ nmap <leader>gs :set hidden<cr>*N<leader>u:cdo s///g<left><left>
 " keyword lookup with K
 "
 " Das folgende ist die cmd.exe version
-" if has("win32")
-"   let g:rapidPathToSumatraPDF='c:\apps\SumatraPDF\SumatraPDF.exe'
-"   let g:rapidPathToRefGuide='d:\daten\doku\abb\RefGuide_RW6.10\abb_reference_inst_func_dat.pdf'
-"   nnoremap <buffer> <silent> K :let rapidCmd=
-"         \"! start " .
-"         \g:rapidPathToSumatraPDF .
-"         \" -named-dest \"" .
-"         \expand("<cword>") .
-"         \" -\" " .
-"         \g:rapidPathToRefGuide
-"         \<bar>
-"         \silent execute rapidCmd<cr>
-" endif
-"
-" Das hier ist die git-for-win shell version
 if has("win32")
   let g:rapidPathToSumatraPDF='c:\apps\SumatraPDF\SumatraPDF.exe'
   let g:rapidPathToRefGuide='d:\daten\doku\abb\RefGuide_RW6.13.02\abb_reference_inst_func_dat_6.13.02.pdf'
   nnoremap <buffer> <silent> K :let rapidCmd=
-        \"! start '" .
+        \"! start " .
         \g:rapidPathToSumatraPDF .
-        \"' -named-dest \\\"" .
+        \" -named-dest \"" .
         \expand("<cword>") .
-        \" -\\\" '" .
-        \g:rapidPathToRefGuide .
-        \"'"<bar>
+        \" -\" " .
+        \g:rapidPathToRefGuide
+        \<bar>
         \silent execute rapidCmd<cr>
 endif
+"
+" Das hier ist die git-for-win shell version
+" if has("win32")
+"   let g:rapidPathToSumatraPDF='c:\apps\SumatraPDF\SumatraPDF.exe'
+"   let g:rapidPathToRefGuide='d:\daten\doku\abb\RefGuide_RW6.13.02\abb_reference_inst_func_dat_6.13.02.pdf'
+"   nnoremap <buffer> <silent> K :let rapidCmd=
+"         \"! start '" .
+"         \g:rapidPathToSumatraPDF .
+"         \"' -named-dest \\\"" .
+"         \expand("<cword>") .
+"         \" -\\\" '" .
+"         \g:rapidPathToRefGuide .
+"         \"'"<bar>
+"         \silent execute rapidCmd<cr>
+" endif
 
 " indention settings
 setlocal softtabstop=4
