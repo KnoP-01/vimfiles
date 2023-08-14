@@ -2,7 +2,7 @@
 " Language: Kawasaki AS-language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 1.0.2
-" Last Change: 03. Aug 2023
+" Last Change: 14. Aug 2023
 "
 " Note to self:
 " for testing perfomance
@@ -57,7 +57,7 @@ highlight default link asComment Comment
 " }}} Comment and Folding 
 
 " Header {{{
-syn match asHeader /^\.\w\+/
+syn match asHeader /^\.\u[A-Z0-9_]*/
 highlight default link asHeader PreProc
 " }}} Header
 
@@ -241,9 +241,10 @@ highlight default link asFunction Function
 " }}} Function
 
 " Error {{{
-syn match asErrorIdentifierNameTooLong /\w\{16,}/ containedin=ALLBUT,asComment
-highlight default link asErrorIdentifierNameTooLong Error
-
+if get(g:,'asShowError',1)
+  syn match asErrorIdentifierNameTooLong /\w\{16,}/ containedin=ALLBUT,asComment
+  highlight default link asErrorIdentifierNameTooLong Error
+endif
 " }}}
 
 " Finish {{{

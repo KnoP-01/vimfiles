@@ -2,7 +2,7 @@
 " Language: Kawasaki AS-language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 1.0.1
-" Last Change: 24. Mar 2023
+" Last Change: 14. Aug 2023
 "
 
 " Init {{{
@@ -65,18 +65,18 @@ if get(g:,'asMoveAroundKeyMap',1)
   endfunction " <SID>KnopNTimesSearch()
 
   " Move around functions
-  nnoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1                     <Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v^\.(END)@!'       , 'sw')<cr>
-  nnoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1                     <Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v^\.(END)@!'       , 'bsw')<cr>
+  nnoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1                     <Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v^\.(END)@!\u'       , 'sw')<cr>
+  nnoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1                     <Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v^\.(END)@!\u'       , 'bsw')<cr>
   nnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1                     <Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c^\.END\>'           , 'sw')<cr>
   nnoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1                     <Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c^\.END\>'           , 'bsw')<cr>
 
-  onoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>exe "normal!  V"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v^\.(END)@!.*\n'   , 'seWz')<cr>
-  onoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>exe "normal!  V"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v\n\.(END)@!.*\n'  , 'sebW')<cr>
+  onoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>exe "normal!  V"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v^\.(END)@!\u.*\n'   , 'seWz')<cr>
+  onoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>exe "normal!  V"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v\n\.(END)@!\u.*\n'  , 'sebW')<cr>
   onoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>exe "normal!  V"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v^\.END.*\n'       , 'seWz')<cr>
   onoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>exe "normal!  V"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v\n\.END.*\n'      , 'sebW')<cr>
 
-  xnoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v^\.(END)@!.*\n'   , 'seWz')<cr>
-  xnoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v\n\.(END)@!.*\n'  , 'sebW')<cr>
+  xnoremap <silent><buffer> ]] :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v^\.(END)@!\u.*\n'   , 'seWz')<cr>
+  xnoremap <silent><buffer> [[ :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v\n\.(END)@!\u.*\n'  , 'sebW')<cr>
   xnoremap <silent><buffer> ][ :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v^\.END.*\n'       , 'seWz')<cr>
   xnoremap <silent><buffer> [] :<C-U>let b:knopCount=v:count1<Bar>exe "normal! gv"<Bar>call <SID>KnopNTimesSearch( b:knopCount , '\c\v\n\.END.*\n'      , 'sebW')<cr>
 
