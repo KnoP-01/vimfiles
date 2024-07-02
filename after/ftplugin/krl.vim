@@ -19,6 +19,30 @@ if exists('g:loaded_switch')
   let b:switch_custom_definitions =
         \ [
         \   {
+        \     '\C\<AUF\>'  : 'ZU',
+        \     '\C\<ZU\>' : 'AUF',
+        \   },
+        \   {
+        \     '\C\<Auf\>'  : 'Zu',
+        \     '\C\<Zu\>' : 'Auf',
+        \   },
+        \   {
+        \     '\c\<auf\>'  : 'zu',
+        \     '\c\<zu\>' : 'auf',
+        \   },
+        \   {
+        \     '\C\<MIT\>'  : 'OHNE',
+        \     '\C\<OHNE\>' : 'MIT',
+        \   },
+        \   {
+        \     '\C\<Mit\>'  : 'Ohne',
+        \     '\C\<Ohne\>' : 'Mit',
+        \   },
+        \   {
+        \     '\c\<mit\>'  : 'ohne',
+        \     '\c\<ohne\>' : 'mit',
+        \   },
+        \   {
         \     '\C\<TRUE\>'  : 'FALSE',
         \     '\C\<FALSE\>' : 'TRUE',
         \   },

@@ -539,19 +539,55 @@ onoremap <silent>ai :<C-u>call IndTxtObj(0)<CR>
 onoremap <silent>ii :<C-u>call IndTxtObj(1)<CR>
 " }}}
 " Surround Visual Selection: with ", ', |, *, <>, (), [], and {} {{{
-xnoremap s" "xs"<C-R>x"<esc>
-xnoremap s' "xs'<C-R>x'<esc>
-xnoremap s<bar> "xs<bar><C-R>x<bar><esc>
-xnoremap s* "xs*<C-R>x*<esc>
-xnoremap s< "xs<<C-R>x><esc>
-xnoremap s> "xs<<C-R>x><esc>
-xnoremap s( "xs(<C-R>x)<esc>
-xnoremap s) "xs(<C-R>x)<esc>
-xnoremap s[ "xs[<C-R>x]<esc>
-xnoremap s] "xs[<C-R>x]<esc>
-xnoremap s{ "xs{<C-R>x}<esc>
-xnoremap s} "xs{<C-R>x}<esc>
-xnoremap s<space> "xs<space><C-R>x<space><esc>
+" my auto insert closing pair
+inoremap ' ''<c-g>U<left>
+inoremap " ""<c-g>U<left>
+inoremap ( ()<c-g>U<left>
+inoremap [ []<c-g>U<left>
+inoremap { {}<c-g>U<left>
+
+function! <SID>MySurround(surroundChar) abort
+  execute "normal gv"
+  let l:mode = visualmode()
+
+  if     l:mode ==# "v"
+    execute "normal c" . a:surroundChar
+  elseif l:mode ==# ""
+    execute "normal c" . a:surroundChar
+  elseif l:mode ==# "V"
+    let l:line1 = line(".")
+    execute "normal o"
+    let l:line2 = line(".")
+    if l:line1<=l:line2
+      let l:upperLine = l:line1
+      let l:lowerLine = l:line2
+    else
+      let l:upperLine = l:line2
+      let l:lowerLine = l:line1
+    endif
+    execute "normal V" . l:upperLine . "gg0v" . l:lowerLine . "gg$c" . a:surroundChar
+  endif
+
+  if a:surroundChar=~".."
+    execute "normal P"
+  else
+    execute "normal p"
+  endif
+endfunction
+
+xnoremap s'       :<c-u>call <SID>MySurround("'")<cr>
+xnoremap s"       :<c-u>call <SID>MySurround('"')<cr>
+xnoremap s(       :<c-u>call <SID>MySurround("(")<cr>
+xnoremap s)       :<c-u>call <SID>MySurround("(")<cr>
+xnoremap s[       :<c-u>call <SID>MySurround("[")<cr>
+xnoremap s]       :<c-u>call <SID>MySurround("[")<cr>
+xnoremap s{       :<c-u>call <SID>MySurround("{")<cr>
+xnoremap s}       :<c-u>call <SID>MySurround("{")<cr>
+xnoremap s<       :<c-u>call <SID>MySurround("<>")<cr>
+xnoremap s>       :<c-u>call <SID>MySurround("<>")<cr>
+xnoremap s*       :<c-u>call <SID>MySurround("**")<cr>
+xnoremap s<bar>   :<c-u>call <SID>MySurround("<bar><bar>")<cr>
+xnoremap s<space> :<c-u>call <SID>MySurround("<space><space>")<cr>
 " }}}
 " Other Mappings: {{{
 " don't break undo and repeat with left/right arrow in insert mode
@@ -657,13 +693,6 @@ nnoremap <leader><leader> <C-^>
 nnoremap <leader>o :only<cr>
 " Toggle wrap
 nnoremap <silent> <leader>w :set wrap!<cr>
-
-" my auto insert closing pair
-inoremap ' ''<c-g>U<left>
-inoremap " ""<c-g>U<left>
-inoremap ( ()<c-g>U<left>
-inoremap [ []<c-g>U<left>
-inoremap { {}<c-g>U<left>
 
 " prefere vertical split
 nnoremap <c-w>f :vert wincmd f<cr>

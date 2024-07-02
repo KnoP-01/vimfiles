@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.3.0
-" Last Change: 21. Jul 2023
+" Last Change: 25. Mar 2024
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -224,7 +224,7 @@ else
   syn keyword rapidType buatypenum buatechnum buadirnum 
   highlight default link rapidType Type
   " Storage class
-  syn keyword rapidStorageClass LOCAL TASK VAR PERS CONST ALIAS NOVIEW NOSTEPIN VIEWONLY READONLY SYSMODULE INOUT
+  syn keyword rapidStorageClass LOCAL TASK VAR PERS CONST ALIAS NOVIEW NOSTEPIN VIEWONLY READONLY SYSMODULE INOUT REF
   highlight default link rapidStorageClass StorageClass
   " Not a typedef but I like to have those highlighted different then types,
   " structures or strorage classes
@@ -383,6 +383,10 @@ else
 
   " Structure value {{{
   " rapid structrure values. added to be able to conceal them
+  if getbufvar('%', "&buftype")=="quickfix"
+    " don't conceal in quickfix window
+    setlocal conceallevel=0 concealcursor=
+  endif
   syn region rapidConcealableString matchgroup=rapidConcealableString start=/"/ skip=/""/ end=/"/ oneline keepend extend contained contains=rapidStringDoubleQuote,rapidEscapedBackSlash,rapidCharCode,rapidErrorSingleBackslash,rapidErrorStringTooLong,@Spell conceal 
   highlight default link rapidConcealableString String
   syn region rapidStructVal matchgroup=rapidStructDelimiter start=/\[/ end=/\]/ contains=rapidStructVal,rapidBoolean,rapidDec,rapidHex,rapidOct,rapidBin,rapidFloat,rapidConcealableString,rapidDelimiter,rapidConstant,rapidErrNo,rapidIntNo,rapidOperator keepend extend conceal cchar=* 

@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.2.7
-" Last Change: 12. May 2023
+" Last Change: 25. Mar 2024
 " Credits: Peter Oddings (KnopUniqueListItems/xolox#misc#list#unique)
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -1221,7 +1221,6 @@ unlet s:pathToCurrentFile
 if !exists("*<SID>RapidConcealLevel")
   function <SID>RapidConcealLevel(lvl) abort
     " g:rapidConcealStructs may be used as input for a:lvl
-
 
     if a:lvl == 2
       " conceal all structure values

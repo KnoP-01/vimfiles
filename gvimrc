@@ -37,7 +37,7 @@ endif
 " set guifont=Crisp:h18:cANSI:qDRAFT " geht so
 " set guifont=Hack:h16:cANSI:qDRAFT " geht so
 
-" testzeile: ()[]{}1||l!1lI71 2Z 5S 6b 08B0 pgq coO0Q ODODCO הצüִײÜ '` ,. :; +-*/= `''"'""` <-> <=>
+" testzeile: [](){}1||l!1lI71 2Z 5S 6b 08B0 pgq coO0Q 0DOCO הצüִײÜ '` ,. :; +-*/= `''"'""` <-> <=>
 if 0
 	let g:loeschmich="testzeile: ()[]{}1|!|l!1lI71 2Z 5S 6b 08B0 pgq coO0Q ODODCO הצüִײÜ '` ,. :; +-*/= `''\"'\"\"`" <-> <=>
 endif

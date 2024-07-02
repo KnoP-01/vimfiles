@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 17. Jan 2023
+" Last Change: 12. Feb 2024
 "
 
 " Init {{{
@@ -810,7 +810,14 @@ if !exists("*s:KrlSearchVkrcMarker()")
       if !krl#IsVkrc()
         let l:nonecomment = '^[^;]*'
       endif
-      if knop_extras#SearchPathForPatternNTimes('\c\v'.l:nonecomment.'<'.l:currentWord.'>',knop_extras#PreparePath(&path,'*.[sS][rR][cC]').' '.knop_extras#PreparePath(&path,'*.[sS][uU][bB]').' '.knop_extras#PreparePath(&path,'*.[dD][aA][tT]').' ','','krl')==0
+      if knop_extras#SearchPathForPatternNTimes('\c\v'.l:nonecomment.'<'.l:currentWord.'>',
+            \ knop_extras#PreparePath(&path,'*.[sS][rR][cC]').' '
+            \.knop_extras#PreparePath(&path,'*.[sS][uU][bB]').' '
+            \.knop_extras#PreparePath(&path,'*.[dD][aA][tT]').' '
+            \.knop_extras#PreparePath(&path,'*.[kK][fF][dD]').' '
+            \.knop_extras#PreparePath(&path,'*.[kK][xX][rR]').' '
+            \.knop_extras#PreparePath(&path,'*.[cC][oO][nN][fF][iI][gG]').' '
+            \,'','krl')==0
         call setqflist(knop_extras#UniqueListItems(getqflist()))
         " rule out ENUM declaration if not looking for ENUM values
         let l:qftmp1 = []

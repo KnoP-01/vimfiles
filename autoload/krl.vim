@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 22. Jun 2022
+" Last Change: 09. Apr 2024
 
 " Init {{{
 if exists("g:loaded_krl")
@@ -108,11 +108,11 @@ function krl#FoldExpr(lnum, krlFoldLevel) abort
   endif
 
   if krl#IsVkrc() && a:krlFoldLevel == 1
-    let patternAnyFold  = '\v^\s*;\s*FOLD>%(\s+S?%(LIN|PTP|CIRC)%(_REL)?)@!'
+    let patternAnyFold  = '\v^\s*;\s*FOLD>%(\s+(S|K)?%(LIN|PTP|CIRC)%(_REL)?)@!'
   else
     let patternAnyFold  = '\v^\s*;\s*FOLD>'
   endif
-  let patternMoveFold   = '\v^\s*;\s*FOLD>.*<%(S?%(LIN|PTP|CIRC)%(_REL)?|Parameters)>'
+  let patternMoveFold   = '\v^\s*;\s*FOLD>.*<%((S|K)?%(LIN|PTP|CIRC)%(_REL)?|Parameters)>'
   let patternEndFold    = '\v^\s*;\s*ENDFOLD>'
   let line = getline(a:lnum)
   let prevLine = " "
