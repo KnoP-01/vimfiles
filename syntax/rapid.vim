@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.3.0
-" Last Change: 25. Mar 2024
+" Last Change: 10. Sep 2024
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -187,6 +187,8 @@ else
   syn keyword rapidType cameradev cameratarget 
   " arc Weldguide and MultiPass data types
   syn keyword rapidType adaptdata trackdata multidata 
+  " GAP
+  syn keyword rapidType partdata partadv ee_event menudata
   " dispense data types
   syn keyword rapidType beaddata equipdata
   " Spot data types
