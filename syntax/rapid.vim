@@ -2,7 +2,7 @@
 " Language: ABB Rapid Command
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 2.3.0
-" Last Change: 10. Sep 2024
+" Last Change: 18. Sep 2024
 " Credits: Thanks for beta testing to Thomas Baginski
 "
 " Suggestions of improvement are very welcome. Please email me!
@@ -309,7 +309,7 @@ else
   syn keyword rapidMovement MoveAbsJ MoveC MoveExtJ MoveJ MoveL 
   syn keyword rapidMovement MoveCAO MoveCDO MoveCGO MoveCSync MoveJAO MoveJDO MoveJGO MoveJSync MoveLAO MoveLDO MoveLGO MoveLSync 
   syn keyword rapidMovement SearchC SearchExtJ SearchL
-  syn keyword rapidMovement TriggC TriggJ TriggL TriggJIOs TriggLIOs
+  syn keyword rapidMovement TriggAbsJ TriggC TriggJ TriggL TriggJIOs TriggLIOs
   " Arc instructions
   syn keyword rapidMovement ArcC ArcC1 ArcC2 ArcCEnd ArcC1End ArcC2End ArcCStart ArcC1Start ArcC2Start 
   syn keyword rapidMovement ArcL ArcL1 ArcL2 ArcLEnd ArcL1End ArcL2End ArcLStart ArcL1Start ArcL2Start ArcMoveExtJ 

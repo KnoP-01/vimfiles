@@ -48,7 +48,7 @@ xnoremap <leader>abb  :Align! p0P0llrlrlrlrlrlrlrllllrlrlrlrlrlrl \. , \[ \]<cr>
 
 " align EIO.cfg for readability
 function! AlignEio() abort
-  %s/\\\s*\n\s\+/ /
+  silent! %s/\\\s*\n\s\+/ /
   g/^\s*$/d
   for i in [
         \  '\<SYSSIG_OUT\>'

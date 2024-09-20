@@ -24,6 +24,7 @@ let maplocalleader  = " "
 packadd! editexisting " find existing session if .swp-file exists
 packadd! shellmenu
 packadd! cfilter
+packadd! comment
 " }}}
 " Plugins:
 call plug#begin('~/.vim/plugged') " {{{
@@ -72,8 +73,6 @@ call plug#begin('~/.vim/plugged') " {{{
   Plug 'tpope/vim-vinegar'
   nmap - <C-W>v<Plug>VinegarUp
   nmap _ <Plug>VinegarUp
-  " ein- und auskommentieren
-  Plug 'tpope/vim-commentary'
   " auto-endif et al
   Plug 'tpope/vim-endwise'
   " repeat
