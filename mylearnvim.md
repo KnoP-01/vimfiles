@@ -19,7 +19,7 @@
 ------------------------------------------------------------------------------
 # To Practice On
 * `CTRL-O`, `CTRL-I` := older/newer far jump position
-* `f`,`t`,`F`,`T`,`;` and , := inline movements  
+* `f`,`t`,`F`,`T`,`;` and `,` := inline movements  
 * remember the indent text object
 * `i_CTRL-w` := delete last word, I always foget about that
 * `:B <cmd>` := execute command on a visual block

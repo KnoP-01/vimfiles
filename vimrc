@@ -539,6 +539,7 @@ onoremap <silent>ii :<C-u>call IndTxtObj(1)<CR>
 " }}}
 " Surround Visual Selection: with ", ', |, *, <>, (), [], and {} {{{
 " my auto insert closing pair
+inoremap ` ``<c-g>U<left>
 inoremap ' ''<c-g>U<left>
 inoremap " ""<c-g>U<left>
 inoremap ( ()<c-g>U<left>
@@ -574,6 +575,7 @@ function! <SID>MySurround(surroundChar) abort
   endif
 endfunction
 
+xnoremap s`       :<c-u>call <SID>MySurround("`")<cr>
 xnoremap s'       :<c-u>call <SID>MySurround("'")<cr>
 xnoremap s"       :<c-u>call <SID>MySurround('"')<cr>
 xnoremap s(       :<c-u>call <SID>MySurround("(")<cr>
