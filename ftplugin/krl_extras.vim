@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 12. Feb 2024
+" Last Change: 27. Mar 2025
 "
 
 " Init {{{
@@ -64,7 +64,7 @@ if !exists("*s:KrlSearchVkrcMarker()")
     let l:qf = []
     " search corrosponding dat file
     call knop_extras#VerboseEcho("Search local data list...")
-    let l:filename = substitute(fnameescape(bufname("%")),'\c\.src$','.[dD][aA][tT]','')
+    let l:filename = substitute(fnameescape(bufname("%")),'\c\.s[ur][bc]$','.[dD][aA][tT]','')
     if filereadable(glob(l:filename))
       if (knop_extras#SearchPathForPatternNTimes(a:declPrefix.'<'.a:currentWord.">",l:filename,'','krl') == 0)
         call knop_extras#VerboseEcho("Found local data list declaration. The quickfix window will open. See :he quickfix-window",1)
@@ -115,7 +115,7 @@ if !exists("*s:KrlSearchVkrcMarker()")
     "
     " second search corrosponding dat file
     call knop_extras#VerboseEcho("Search local data list...")
-    let l:filename = substitute(fnameescape(bufname("%")),'\c\.src$','.[dD][aA][tT]','')
+    let l:filename = substitute(fnameescape(bufname("%")),'\c\.s[ur][bc]$','.[dD][aA][tT]','')
     if filereadable(glob(l:filename))
       if (knop_extras#SearchPathForPatternNTimes(a:declPrefix.'<'.a:currentWord.">",l:filename,'1','krl') == 0)
         call knop_extras#VerboseEcho("Found local data list declaration. The quickfix window will open. See :he quickfix-window",1)
@@ -217,6 +217,7 @@ if !exists("*s:KrlSearchVkrcMarker()")
           let l:type = l:type . "FCT"
         endif
         let l:currentWord = substitute(l:currentWord,'\v^%(sys)?%(proc|func)','','')
+        let l:currentWord = substitute(l:currentWord,'\$','\\$','g') " escape dollars in proc/func name (e.g. $xx_IDENT())
         call knop_extras#VerboseEcho([l:currentWord,"appear to be a ".l:type])
         return s:KrlSearchProc(l:currentWord)
         "

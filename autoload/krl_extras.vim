@@ -2,7 +2,7 @@
 " Language: Helper functions used for Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 30. Jan 2023
+" Last Change: 27. Mar 2025
 
 " Init {{{
 if exists("g:loaded_krl_extras")
@@ -111,7 +111,7 @@ function krl_extras#CurrentWordIs() abort
       endif
       return ("string" . l:word)
       "
-    elseif l:currentChar == "$"
+    elseif l:currentChar == "$" && l:nextChar != "("
       return ("sysvar" . l:word)
       "
     elseif l:currentChar == "&"

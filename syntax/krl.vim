@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 22. Jun 2023
+" Last Change: 27. Mar 2025
 " Credits: Thanks for contributions to this to Michael Jagusch
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -245,7 +245,8 @@ highlight default link krlEnum Structure
 " }}} Predefined Structure and Enum
 
 " System variable {{{
-syn match krlSysvars /\<\$\a[a-zA-Z0-9_.]*/
+" this should not match procs like $xx_IDENT() found in LoadDetermination tech package
+syn match krlSysvars /\<\$\a[a-zA-Z0-9_.]* *[^(]/me=e-1
 if g:krlGroupName
   highlight default link krlSysvars Sysvars
 else
@@ -384,7 +385,7 @@ endif
 " }}} BuildInFunction
 
 " Function {{{
-syn match krlFunction /[a-zA-Z_]\w* *(/me=e-1 contains=krlBuildInFunction
+syn match krlFunction /[$a-zA-Z_]\w* *(/me=e-1 contains=krlBuildInFunction
 highlight default link krlFunction Function
 " }}} Function
 
