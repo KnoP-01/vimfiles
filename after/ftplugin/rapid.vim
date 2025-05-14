@@ -66,14 +66,23 @@ function! AlignEio() abort
 endfunction
 command! EioAlign call AlignEio()
 
-function! UnwrapCfg() abort
-  execute "normal mz"
+function! WrapCfg() abort
+  " go to previous empty line
+  normal {
+  " set hopefully unused mark
+  normal mz
+  " get rid of \ at the end of the line
   silent! %s/\\\n//g
+  " only one space
   silent! %s/\s\s\+/ /g
-  silent! %s/^\s\+/  /
-  execute "normal 'z"
+  " no indentaton
+  silent! %s/^\s\+//
+  " wrap parameter names, not negative values
+  silent! %s/.\zs-\([a-zA-Z]\)/\r-\1/g
+  " move cursor back
+  normal 'z
 endfunction
-command! CfgUnwrap call UnwrapCfg()
+command! CfgWrap call WrapCfg()
 
 if exists('g:loaded_switch')
 
