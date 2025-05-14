@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 27. Mar 2025
+" Last Change: 04. Apr 2025
 " Credits: Thanks for contributions to this to Michael Jagusch
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -215,6 +215,9 @@ syn keyword krlEnum step_enum
 " BasisTech
 syn keyword krlStructure dig_out_type ctrl_in_t ctrl_out_t fct_out_t fct_in_t odat hdat basis_sugg_t out_sugg_t md_state machine_def_t machine_tool_t machine_frame_t trigger_para constvel_para condstop_para adat tm_sugg_t tqm_tqdat_t sps_prog_type
 syn keyword krlEnum bas_command out_modetype ipo_m_t apo_mode_t funct_type p00_command timer_actiontype
+"
+" Types found in System Variable demo
+syn keyword krlStructure int_info
 "
 " GripperTech
 syn keyword krlStructure grp_typ grp_types grp_sugg_t
@@ -438,6 +441,9 @@ if get(g:, 'krlShowError', 1)
   " 'for', 'while' or 'repeat' followed by 'do'
   syn match krlError10 /\c\v^\s*(until|while|for)>[^;]*<do>/
   "
+  " global decl must be decl global, error highlight must appear first
+  syn match krlError11 /\c\v^\s*global\s+decl/
+  "
   highlight default link krlError0 Error
   highlight default link krlError1 Error
   highlight default link krlError2 Error
@@ -449,6 +455,7 @@ if get(g:, 'krlShowError', 1)
   highlight default link krlError8 Error
   highlight default link krlError9 Error
   highlight default link krlError10 Error
+  highlight default link krlError11 Error
 endif
 " }}} Error
 

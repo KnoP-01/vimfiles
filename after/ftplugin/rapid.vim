@@ -66,6 +66,15 @@ function! AlignEio() abort
 endfunction
 command! EioAlign call AlignEio()
 
+function! UnwrapCfg() abort
+  execute "normal mz"
+  silent! %s/\\\n//g
+  silent! %s/\s\s\+/ /g
+  silent! %s/^\s\+/  /
+  execute "normal 'z"
+endfunction
+command! CfgUnwrap call UnwrapCfg()
+
 if exists('g:loaded_switch')
 
   if !exists('s:RapidUseFwdBwdDictForSwitch')
