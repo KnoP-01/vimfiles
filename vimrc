@@ -717,6 +717,12 @@ let g:knopVerbose=0
 " let g:knopShortenQFPath=0
 " }}}
 " Rapid For VIM: {{{
+augroup rapid
+  au BufRead MOC.cfg call WrapCfg()
+  au BufRead SYS.cfg call WrapCfg()
+  au BufRead PROC.cfg call WrapCfg()
+  au BufRead EIO.cfg call AlignEio()
+augroup END
 " look also into ~/vimfiles/after/ftplugin/rapid.vim
 " augroup RapidAutoForm
 "   au!

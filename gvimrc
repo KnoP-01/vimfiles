@@ -12,7 +12,27 @@ set guicursor=n-v-c:block-Cursor/lCursor-blinkoff500-blinkon500,
 
 " bewaehrt
 if has("win32")
-    set guifont=terminus:h12
+    " set guifont=terminus:h12
+    " set guifont=terminus:h16
+    " set guifont=terminus:h24
+    " set guifont=Fira_Mono:h10
+    " set guifont=Fira_Mono:h12
+    " set guifont=Fira_Mono:h14
+    " set guifont=Fira_Mono:h18
+    " set guifont=mononoki:h10
+    " set guifont=mononoki:h12
+    " set guifont=mononoki:h14
+    " set guifont=mononoki:h18
+    " set guifont=PT_Mono:h10
+    set guifont=PT_Mono:h12
+    " set guifont=PT_Mono:h14
+    " set guifont=PT_Mono:h18
+    " set guifont=IBM_3270:h12
+    " set guifont=IBM_3270:h16
+    " set guifont=IBM_3270:h24
+    " set guifont=IBM_3270_Semi-Condensed:h24
+    " set guifont=IBM_3270_Semi-Condensed:h24:cANSI:qDRAFT
+    " set guifont=IBM_3270_Semi-Condensed:h24:b:cANSI:qDRAFT
 else
     set guifont=Terminus\ 12
 endif
@@ -37,7 +57,7 @@ endif
 " set guifont=Crisp:h18:cANSI:qDRAFT " geht so
 " set guifont=Hack:h16:cANSI:qDRAFT " geht so
 
-" testzeile: [](){}1||l!1lI71 2Z 5S 6b 08B0 pgq coO0Q 0DOCO הצüִײÜ '` ,. :; +-*/= `''"'""` <-> <=>
+" testzeile: [](){}1|!|l!1lI71 2Z 5S 6b 08B0 pgq9 coO0Q 0DOCO הצüִײÜ '` ,. :; +-*/= `''"'""` <-> <=>
 if 0
-	let g:loeschmich="testzeile: ()[]{}1|!|l!1lI71 2Z 5S 6b 08B0 pgq coO0Q ODODCO הצüִײÜ '` ,. :; +-*/= `''\"'\"\"`" <-> <=>
+  let g:loeschmich="testzeile: ()[]{}1|!|l!1lI71 2Z 5S 6b 08B0 pgq9 coO0Q ODODCO הצüִײÜ '` ,. :; +-*/= `''\"'\"\"`" <-> <=>
 endif

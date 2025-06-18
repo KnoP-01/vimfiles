@@ -9,7 +9,7 @@ nmap <leader>gs :set hidden<cr>*N<leader>u:cdo s///g<left><left>
 " Das folgende ist die cmd.exe version
 if has("win32")
   let g:rapidPathToSumatraPDF='c:\apps\SumatraPDF\SumatraPDF.exe'
-  let g:rapidPathToRefGuide='d:\daten\doku\abb\RefGuide_RW6.13.02\abb_reference_inst_func_dat_6.13.02.pdf'
+  let g:rapidPathToRefGuide='d:\daten\doku\abb\RefGuide_RW6.14-RW6.16\3HAC050917_RAPID_Inst_Func_Dat_RW6.16-en.pdf'
   nnoremap <buffer> <silent> K :let rapidCmd=
         \"! start " .
         \g:rapidPathToSumatraPDF .
@@ -49,7 +49,7 @@ xnoremap <leader>abb  :Align! p0P0llrlrlrlrlrlrlrllllrlrlrlrlrlrl \. , \[ \]<cr>
 " align EIO.cfg for readability
 function! AlignEio() abort
   silent! %s/\\\s*\n\s\+/ /
-  g/^\s*$/d
+  silent! g/^\s*$/d
   for i in [
         \  '\<SYSSIG_OUT\>'
         \ ,'\<SYSSIG_IN\>'
@@ -59,10 +59,10 @@ function! AlignEio() abort
     normal gg
     if search(i)
       normal j
-      Align \s-\w\+
+      Align \s-[0-9a-zA-Z_.]\+
     endif
   endfor
-  normal zt
+  normal! zt
 endfunction
 command! EioAlign call AlignEio()
 
