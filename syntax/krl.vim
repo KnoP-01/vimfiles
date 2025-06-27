@@ -2,7 +2,7 @@
 " Language: Kuka Robot Language
 " Maintainer: Patrick Meiser-Knosowski <knosowski@graeffrobotics.de>
 " Version: 3.0.0
-" Last Change: 04. Apr 2025
+" Last Change: 26. Jun 2025
 " Credits: Thanks for contributions to this to Michael Jagusch
 "          Thanks for beta testing to Thomas Baginski
 "
@@ -63,7 +63,7 @@ highlight default link krlMoveFoldComment Comment
 
 " things to highlight in a fold line
 syn keyword krlFoldHighlights CONT IN SYN OUT containedin=krlFoldComment
-syn match krlFoldHighlights /\c\v<(M|F|E|A|t|i|bin|binin|UP|SPSMAKRO)\d+>/ containedin=krlFoldComment
+syn match krlFoldHighlights /\c\v<(M|F|E|A|t|i|bin|binin|UP|SPSMAKRO)\d+>/ contained containedin=krlFoldComment
 if g:krlGroupName
   highlight default link krlFoldHighlights Sysvars
 else
@@ -441,7 +441,7 @@ if get(g:, 'krlShowError', 1)
   " 'for', 'while' or 'repeat' followed by 'do'
   syn match krlError10 /\c\v^\s*(until|while|for)>[^;]*<do>/
   "
-  " global decl must be decl global, error highlight must appear first
+  " global decl must be decl global, TODO FIXME
   syn match krlError11 /\c\v^\s*global\s+decl/
   "
   highlight default link krlError0 Error

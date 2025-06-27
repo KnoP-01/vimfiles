@@ -33,6 +33,20 @@ if has("win32")
     " set guifont=IBM_3270_Semi-Condensed:h24
     " set guifont=IBM_3270_Semi-Condensed:h24:cANSI:qDRAFT
     " set guifont=IBM_3270_Semi-Condensed:h24:b:cANSI:qDRAFT
+    " nnoremap <C-=> :silent! call IncreaseFontSize()<cr>
+    " nnoremap <C--> :silent! call DecreaseFontSize()<cr>
+    nnoremap <leader>= :silent! call IncreaseFontSize()<cr>
+    nnoremap <leader>- :silent! call DecreaseFontSize()<cr>
+    nnoremap <leader>0 :silent! call DefaultFontSize()<cr>
+    function! IncreaseFontSize() abort
+        let &guifont = substitute(&guifont , '\(\d\+\)$' , '\=submatch(1)+2' , 'g' )
+    endfunction
+    function! DecreaseFontSize() abort
+        let &guifont = substitute(&guifont , '\(\d\+\)$' , '\=submatch(1)-2' , 'g' )
+    endfunction
+    function! DefaultFontSize() abort
+	set guifont=PT_Mono:h12
+    endfunction
 else
     set guifont=Terminus\ 12
 endif
@@ -61,3 +75,6 @@ endif
 if 0
   let g:loeschmich="testzeile: ()[]{}1|!|l!1lI71 2Z 5S 6b 08B0 pgq9 coO0Q ODODCO ‰ˆ¸ƒ÷‹ '` ,. :; +-*/= `''\"'\"\"`" <-> <=>
 endif
+
+
+" vim:sw=2 sts=2 et fdm=marker fmr={{{,}}}

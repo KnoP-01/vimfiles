@@ -80,7 +80,7 @@
 ## Window stuff
 * `<Alt-(hjkl)>`            := move cursor between windows
 * `<Alt-(arrow keys)>`      := move window
-* `<Ctrl-Alt-(arrow keys)>` := change size of window  
+* `<Ctrl-Shift-(hjkl)>` := change size of window  
   
 ## Rapid/Krl
 * `<leader>gs` := global substitute  
