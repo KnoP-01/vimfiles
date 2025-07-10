@@ -35,9 +35,9 @@ if has("win32")
     " set guifont=IBM_3270_Semi-Condensed:h24:b:cANSI:qDRAFT
     " nnoremap <C-=> :silent! call IncreaseFontSize()<cr>
     " nnoremap <C--> :silent! call DecreaseFontSize()<cr>
-    nnoremap <leader>= :silent! call IncreaseFontSize()<cr>
-    nnoremap <leader>- :silent! call DecreaseFontSize()<cr>
-    nnoremap <leader>0 :silent! call DefaultFontSize()<cr>
+    nnoremap <leader>= :call IncreaseFontSize()<cr>
+    nnoremap <leader>- :call DecreaseFontSize()<cr>
+    nnoremap <leader>0 :call DefaultFontSize()<cr>
     function! IncreaseFontSize() abort
         let &guifont = substitute(&guifont , '\(\d\+\)$' , '\=submatch(1)+2' , 'g' )
     endfunction
